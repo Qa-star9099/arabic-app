@@ -1,0 +1,181 @@
+<style>
+@keyframes float-card {
+  0%,100% { transform: translateY(0px) rotate(-1.5deg); }
+  50% { transform: translateY(-8px) rotate(-1.5deg); }
+}
+@keyframes float-card2 {
+  0%,100% { transform: translateY(0px) rotate(2deg); }
+  50% { transform: translateY(-6px) rotate(2deg); }
+}
+@keyframes float-card3 {
+  0%,100% { transform: translateY(0px) rotate(-0.5deg); }
+  50% { transform: translateY(-5px) rotate(-0.5deg); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes slide-in {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes breath-orb {
+  0%,100% { opacity: 0.08; transform: scale(1); }
+  50% { opacity: 0.14; transform: scale(1.1); }
+}
+@keyframes count-up { from { opacity:0; } to { opacity:1; } }
+@keyframes shimmer-bar {
+  0% { width: 0%; }
+  100% { width: 87%; }
+}
+@keyframes score-fill {
+  0% { stroke-dashoffset: 220; }
+  100% { stroke-dashoffset: 50; }
+}
+.fc1 { animation: float-card 4s ease-in-out infinite; }
+.fc2 { animation: float-card2 4.5s ease-in-out infinite 0.8s; }
+.fc3 { animation: float-card3 3.8s ease-in-out infinite 1.4s; }
+.fu1 { animation: fade-up 0.6s ease 0.1s both; }
+.fu2 { animation: fade-up 0.6s ease 0.25s both; }
+.fu3 { animation: fade-up 0.6s ease 0.4s both; }
+.fu4 { animation: fade-up 0.6s ease 0.55s both; }
+.fu5 { animation: fade-up 0.6s ease 0.7s both; }
+.si1 { animation: slide-in 0.5s ease 0.3s both; }
+.si2 { animation: slide-in 0.5s ease 0.5s both; }
+.si3 { animation: slide-in 0.5s ease 0.7s both; }
+.orb1 { animation: breath-orb 4s ease-in-out infinite; }
+.orb2 { animation: breath-orb 4s ease-in-out infinite 1.5s; }
+.bar-anim { animation: shimmer-bar 1.8s cubic-bezier(0.4,0,0.2,1) 0.6s both; }
+.score-anim { animation: score-fill 1.8s cubic-bezier(0.4,0,0.2,1) 0.6s both; }
+</style>
+
+<div style="background: #080B1A; border-radius: var(--border-radius-lg); padding: 1.25rem;">
+<h2 class="sr-only">Welcome screen showcasing app value props with floating feature cards and social proof</h2>
+
+<div style="max-width: 340px; margin: 0 auto; background: #080B1A; border-radius: 36px; overflow: hidden; position: relative; border: 1px solid rgba(255,255,255,0.06); min-height: 640px; display: flex; flex-direction: column;">
+
+  <div style="position: absolute; inset: 0; overflow: hidden; pointer-events: none;">
+    <div class="orb1" style="position: absolute; top: -60px; right: -60px; width: 260px; height: 260px; border-radius: 50%; background: #533AB7;"></div>
+    <div class="orb2" style="position: absolute; top: 80px; left: -80px; width: 220px; height: 220px; border-radius: 50%; background: #1D9E75;"></div>
+    <div style="position: absolute; inset: 0; background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.025) 1px, transparent 0); background-size: 28px 28px;"></div>
+  </div>
+
+  <div style="position: relative; z-index: 2; display: flex; flex-direction: column; flex: 1;">
+
+    <div style="height: 44px; display: flex; align-items: center; justify-content: space-between; padding: 0 22px; font-size: 13px; color: rgba(255,255,255,0.5);">
+      <span style="font-weight: 500; color: rgba(255,255,255,0.8);">9:41</span>
+      <div style="display: flex; gap: 4px; align-items: center;">
+        <div style="width: 8px; height: 8px; border-radius: 50%; background: #1D9E75;"></div>
+        <span style="font-size: 11px; color: #5DCAA5; letter-spacing: 0.3px;">AI Ready</span>
+      </div>
+      <span style="display: flex; gap: 6px;"><i class="ti ti-wifi" aria-hidden="true"></i><i class="ti ti-battery-3" aria-hidden="true"></i></span>
+    </div>
+
+    <div style="padding: 16px 22px 0; position: relative; height: 220px; flex-shrink: 0;">
+
+      <div class="fc1" style="position: absolute; top: 10px; left: 18px; width: 145px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 14px;">
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <div style="width: 32px; height: 32px; border-radius: 10px; background: rgba(29,158,117,0.2); border: 1px solid rgba(29,158,117,0.3); display: flex; align-items: center; justify-content: center;">
+            <i class="ti ti-microphone" style="font-size: 16px; color: #5DCAA5;" aria-hidden="true"></i>
+          </div>
+          <div>
+            <p style="font-size: 11px; font-weight: 500; color: #ffffff; margin: 0;">Makhraj</p>
+            <p style="font-size: 10px; color: rgba(255,255,255,0.4); margin: 0;">AI evaluation</p>
+          </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+          <span style="font-size: 22px; color: #ffffff; font-family: var(--font-serif);">ع</span>
+          <div style="flex: 1;">
+            <div style="height: 4px; border-radius: 2px; background: rgba(255,255,255,0.08); overflow: hidden; margin-bottom: 3px;">
+              <div class="bar-anim" style="height: 100%; background: #1D9E75; border-radius: 2px; width: 0%;"></div>
+            </div>
+            <p style="font-size: 10px; color: #5DCAA5; margin: 0;">87% accurate</p>
+          </div>
+        </div>
+        <div style="display: flex; gap: 3px;">
+          <div style="width: 6px; height: 10px; border-radius: 2px; background: #1D9E75; opacity: 0.4;"></div>
+          <div style="width: 6px; height: 14px; border-radius: 2px; background: #1D9E75; opacity: 0.6;"></div>
+          <div style="width: 6px; height: 20px; border-radius: 2px; background: #1D9E75;"></div>
+          <div style="width: 6px; height: 16px; border-radius: 2px; background: #1D9E75; opacity: 0.7;"></div>
+          <div style="width: 6px; height: 12px; border-radius: 2px; background: #1D9E75; opacity: 0.5;"></div>
+          <div style="width: 6px; height: 18px; border-radius: 2px; background: #1D9E75; opacity: 0.8;"></div>
+          <div style="width: 6px; height: 10px; border-radius: 2px; background: #1D9E75; opacity: 0.4;"></div>
+        </div>
+      </div>
+
+      <div class="fc2" style="position: absolute; top: 14px; right: 18px; width: 120px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 18px; padding: 14px; text-align: center;">
+        <svg width="72" height="72" style="display: block; margin: 0 auto 8px;">
+          <circle cx="36" cy="36" r="28" fill="none" stroke="rgba(255,255,255,0.07)" stroke-width="5"/>
+          <circle class="score-anim" cx="36" cy="36" r="28" fill="none" stroke="#BA7517" stroke-width="5" stroke-linecap="round" stroke-dasharray="220" stroke-dashoffset="220" transform="rotate(-90 36 36)"/>
+          <text x="36" y="40" text-anchor="middle" fill="#ffffff" font-size="16" font-weight="500" font-family="sans-serif">94</text>
+        </svg>
+        <p style="font-size: 11px; font-weight: 500; color: #FAC775; margin: 0 0 2px;">Today's score</p>
+        <p style="font-size: 10px; color: rgba(255,255,255,0.35); margin: 0;">🔥 7 day streak</p>
+      </div>
+
+      <div class="fc3" style="position: absolute; bottom: 0px; left: 50%; transform: translateX(-50%); width: 160px; background: rgba(83,58,183,0.15); border: 1px solid rgba(83,58,183,0.3); border-radius: 14px; padding: 10px 14px; display: flex; align-items: center; gap: 10px;">
+        <div style="width: 30px; height: 30px; border-radius: 50%; background: #533AB7; display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+          <i class="ti ti-users" style="font-size: 15px; color: #ffffff;" aria-hidden="true"></i>
+        </div>
+        <div>
+          <p style="font-size: 12px; font-weight: 500; color: #ffffff; margin: 0;">12,400+</p>
+          <p style="font-size: 10px; color: rgba(255,255,255,0.4); margin: 0;">Uzbek learners</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="flex: 1; padding: 20px 22px 0;">
+
+      <div class="fu1" style="margin-bottom: 6px;">
+        <span style="font-size: 12px; font-weight: 500; color: #5DCAA5; letter-spacing: 1px;">ARABCHA</span>
+      </div>
+      <h1 class="fu2" style="font-size: 26px; font-weight: 500; color: #ffffff; margin: 0 0 8px; letter-spacing: -0.5px; line-height: 1.25;">The Arabic app built for Uzbeks.</h1>
+      <p class="fu3" style="font-size: 14px; color: rgba(255,255,255,0.5); margin: 0 0 24px; line-height: 1.7;">AI hears your accent. Teaches the sounds your mouth doesn't know yet. In your language.</p>
+
+      <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px;">
+        <div class="si1" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(29,158,117,0.15); border: 1px solid rgba(29,158,117,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ti ti-microphone" style="font-size: 18px; color: #5DCAA5;" aria-hidden="true"></i>
+          </div>
+          <div>
+            <p style="font-size: 13.5px; font-weight: 500; color: #ffffff; margin: 0;">AI Makhraj evaluation</p>
+            <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">Real-time pronunciation feedback</p>
+          </div>
+        </div>
+
+        <div class="si2" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(186,117,23,0.15); border: 1px solid rgba(186,117,23,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ti ti-flame" style="font-size: 18px; color: #FAC775;" aria-hidden="true"></i>
+          </div>
+          <div>
+            <p style="font-size: 13.5px; font-weight: 500; color: #ffffff; margin: 0;">Uzbek-Arab connections</p>
+            <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">Learn 2x faster with shared roots</p>
+          </div>
+        </div>
+
+        <div class="si3" style="display: flex; align-items: center; gap: 12px; padding: 12px 14px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 14px;">
+          <div style="width: 36px; height: 36px; border-radius: 10px; background: rgba(83,58,183,0.15); border: 1px solid rgba(83,58,183,0.25); display: flex; align-items: center; justify-content: center; flex-shrink: 0;">
+            <i class="ti ti-trophy" style="font-size: 18px; color: #AFA9EC;" aria-hidden="true"></i>
+          </div>
+          <div>
+            <p style="font-size: 13.5px; font-weight: 500; color: #ffffff; margin: 0;">Gamified learning</p>
+            <p style="font-size: 12px; color: rgba(255,255,255,0.4); margin: 0;">XP, streaks, badges — stay hooked</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="fu4" style="padding: 0 20px 28px;">
+      <button onclick="sendPrompt('Show me the Goal selection screen')" style="width: 100%; height: 54px; border: none; border-radius: 16px; background: #1D9E75; color: #ffffff; font-size: 16px; font-weight: 500; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; position: relative; overflow: hidden;">
+        <div style="position: absolute; top: 0; right: 0; width: 100px; height: 100%; background: rgba(255,255,255,0.07); clip-path: polygon(30% 0%, 100% 0%, 100% 100%, 0% 100%);"></div>
+        <span style="position: relative;">Get started — it's free</span>
+        <i class="ti ti-arrow-right" style="font-size: 20px; position: relative;" aria-hidden="true"></i>
+      </button>
+      <p class="fu5" style="text-align: center; font-size: 12px; color: rgba(255,255,255,0.25); margin: 12px 0 0;">Already have an account? <span onclick="sendPrompt('Show login screen')" style="color: #5DCAA5; cursor: pointer;">Sign in</span></p>
+    </div>
+
+  </div>
+</div>
+</div>

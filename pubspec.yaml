@@ -1,0 +1,116 @@
+name: arabcha
+description: Arabic learning app built for Uzbek speakers — AI pronunciation evaluation, gamified lessons.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # ── State Management & DI ─────────────────────────────────────────────────
+  flutter_riverpod: ^2.5.1
+  riverpod_annotation: ^2.3.5
+
+  # ── Navigation ───────────────────────────────────────────────────────────
+  go_router: ^14.2.7
+
+  # ── Networking ───────────────────────────────────────────────────────────
+  dio: ^5.4.3+1
+  pretty_dio_logger: ^1.4.0
+
+  # ── Serialization ────────────────────────────────────────────────────────
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.9.0
+
+  # ── Local Storage ────────────────────────────────────────────────────────
+  hive_flutter: ^1.1.0
+  flutter_secure_storage: ^9.2.2
+
+  # ── Functional Programming (Either / Result) ─────────────────────────────
+  fpdart: ^1.1.0
+
+  # ── UI / Fonts ───────────────────────────────────────────────────────────
+  google_fonts: ^6.2.1
+
+  # ── Animations ───────────────────────────────────────────────────────────
+  lottie: ^3.1.2
+  flutter_animate: ^4.5.0
+
+  # ── Audio ────────────────────────────────────────────────────────────────
+  just_audio: ^0.9.40
+  record: ^5.1.2
+
+  # ── Utilities ────────────────────────────────────────────────────────────
+  uuid: ^4.4.2
+  path_provider: ^2.1.4
+  connectivity_plus: ^6.1.0
+  package_info_plus: ^8.1.2
+  url_launcher: ^6.3.1
+
+  # ── Social Auth ──────────────────────────────────────────────────────────
+  google_sign_in: ^6.2.1
+  sign_in_with_apple: ^6.1.2
+
+  # ── Notifications ────────────────────────────────────────────────────────
+  firebase_core: ^3.6.0
+  firebase_messaging: ^15.1.3
+
+  # ── Permissions ──────────────────────────────────────────────────────────
+  permission_handler: ^11.3.1
+
+  # ── Splash ───────────────────────────────────────────────────────────────
+  flutter_native_splash: ^2.4.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  # ── Code Generation ───────────────────────────────────────────────────────
+  build_runner: ^2.4.11
+  freezed: ^2.5.2
+  json_serializable: ^6.8.0
+  riverpod_generator: ^2.4.3
+  custom_lint: ^0.7.3
+  riverpod_lint: ^2.6.3
+
+  # ── Testing ───────────────────────────────────────────────────────────────
+  mocktail: ^1.0.4
+
+  flutter_lints: ^5.0.0
+
+dependency_overrides:
+  record_linux: ^1.3.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/images/
+    - assets/icons/
+    - assets/lottie/
+
+#  fonts:
+#    # Geist — UI font (Latin)
+#    - family: Geist
+#      fonts:
+#        - asset: assets/fonts/Geist-Regular.ttf
+#          weight: 400
+#        - asset: assets/fonts/Geist-Medium.ttf
+#          weight: 500
+#        - asset: assets/fonts/Geist-SemiBold.ttf
+#          weight: 600
+#        - asset: assets/fonts/Geist-Bold.ttf
+#          weight: 700
+#
+#    # Noto Naskh Arabic — Arabic script
+#    - family: NotoNaskhArabic
+#      fonts:
+#        - asset: assets/fonts/NotoNaskhArabic-Regular.ttf
+#          weight: 400
+#        - asset: assets/fonts/NotoNaskhArabic-Medium.ttf
+#          weight: 500
+#        - asset: assets/fonts/NotoNaskhArabic-Bold.ttf
+#          weight: 700
