@@ -7,9 +7,11 @@ import 'package:arabcha/app/theme/app_typography.dart';
 import 'package:arabcha/features/placement_test/controllers/placement_test_controller.dart';
 import 'package:arabcha/features/placement_test/models/test_question.dart';
 import 'package:arabcha/app/router/app_router.dart';
+import 'package:arabcha/features/auth/controllers/auth_controller.dart';
 
 class PlacementTestScreen extends ConsumerWidget {
-  const PlacementTestScreen({super.key});
+  const PlacementTestScreen({super.key, this.selectedGoal});
+  final String? selectedGoal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -23,7 +25,7 @@ class PlacementTestScreen extends ConsumerWidget {
     }
 
     if (state.isFinished) {
-      return TestResultScreen(score: _getScoreLevel(state.correctCount));
+      return TestResultScreen(score: _getScoreLevel(state.correctCount), selectedGoal: selectedGoal);
     }
 
     final progress = (state.currentIndex + 1) / state.questions.length;
@@ -810,15 +812,16 @@ class _BottomBar extends StatelessWidget {
   }
 }
 
-class TestResultScreen extends StatefulWidget {
-  const TestResultScreen({super.key, required this.score});
+class TestResultScreen extends ConsumerStatefulWidget {
+  const TestResultScreen({super.key, required this.score, this.selectedGoal});
   final String score;
+  final String? selectedGoal;
 
   @override
-  State<TestResultScreen> createState() => _TestResultScreenState();
+  ConsumerState<TestResultScreen> createState() => _TestResultScreenState();
 }
 
-class _TestResultScreenState extends State<TestResultScreen> with SingleTickerProviderStateMixin {
+class _TestResultScreenState extends ConsumerState<TestResultScreen> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -901,9 +904,21 @@ class _TestResultScreenState extends State<TestResultScreen> with SingleTickerPr
               FadeTransition(
                 opacity: _fadeAnimation,
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (context.mounted) {
-                      context.go(AppRoutes.home);
+                  onPressed: () async {
+                    try {
+                      await ref.read(authControllerProvider.notifier).updateUserData(
+                        learningGoal: widget.selectedGoal ?? 'Umumiy',
+                        level: widget.score,
+                      );
+                      if (context.mounted) {
+                        context.go(AppRoutes.home);
+                      }
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Xatolik: $e')),
+                        );
+                      }
                     }
                   },
                   style: ElevatedButton.styleFrom(

@@ -280,7 +280,10 @@ class _GoalSelectionPageState extends State<GoalSelectionPage>
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: _StartButton(
-                      onPressed: () => context.go(AppRoutes.placementTest),
+                      onPressed: () {
+                        final selectedGoalTitle = _goals[_selectedGoal].title;
+                        context.go(AppRoutes.placementTest, extra: selectedGoalTitle);
+                      },
                     ),
                   ),
                 ),

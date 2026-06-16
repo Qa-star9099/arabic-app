@@ -11,6 +11,9 @@ import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/otp_page.dart';
 import '../../features/auth/presentation/pages/personal_info_page.dart';
 
+import '../../features/auth/controllers/auth_controller.dart';
+import '../../features/auth/models/user_model.dart';
+
 /// Route names — используем constants чтобы избежать строковых опечаток.
 abstract final class AppRoutes {
   static const String splash = '/';
@@ -29,9 +32,60 @@ abstract final class AppRoutes {
 
 /// GoRouter provider — доступен через ref.read(appRouterProvider)
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authControllerProvider);
+  
+  final listenable = ValueNotifier<bool>(false);
+  ref.listen<AsyncValue<UserModel?>>(authControllerProvider, (_, __) {
+    listenable.value = !listenable.value;
+  });
+  
   return GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
+    refreshListenable: listenable,
+    redirect: (context, state) {
+      if (authState.isLoading) return null; // Wait for initial auth state
+
+      final isAuth = authState.value != null;
+      final user = authState.value;
+      
+      final isSplash = state.uri.toString() == AppRoutes.splash;
+      final isAuthRoute = state.uri.toString().startsWith('/auth');
+      final isWelcomeRoute = state.uri.toString() == AppRoutes.welcome;
+      final isOnboardingRoute = state.uri.toString().startsWith('/onboarding') || 
+                                state.uri.toString().startsWith('/placement');
+
+      // 1. Unauthenticated User Flow
+      if (!isAuth) {
+        // Allow them on splash, welcome, or any auth routes (login, otp, etc)
+        if (isSplash || isWelcomeRoute || isAuthRoute) {
+          return null; 
+        }
+        // Otherwise, force them to Welcome
+        return AppRoutes.welcome;
+      }
+
+      // 2. Authenticated User Flow
+      final hasCompletedOnboarding = user?.learningGoal != null;
+
+      if (!hasCompletedOnboarding) {
+        // User needs to onboard. Allow them on onboarding routes.
+        if (isOnboardingRoute) {
+          return null;
+        }
+        // Force to Goal Selection if they try to go anywhere else (like Home, Splash, Welcome)
+        return AppRoutes.goalSelection;
+      }
+
+      // 3. Fully Onboarded User Flow
+      // If they try to go to splash, welcome, auth, or onboarding pages, redirect to Home
+      if (isSplash || isWelcomeRoute || isAuthRoute || isOnboardingRoute) {
+        return AppRoutes.home;
+      }
+
+      // Allow access to Home and inner pages
+      return null;
+    },
     routes: [
       GoRoute(
         path: AppRoutes.splash,
@@ -51,13 +105,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: AppRoutes.placementTest,
         name: 'placement-test',
-        builder: (context, state) => const PlacementTestScreen(),
+        builder: (context, state) {
+          final selectedGoal = state.extra as String?;
+          return PlacementTestScreen(selectedGoal: selectedGoal);
+        },
       ),
       GoRoute(
         path: AppRoutes.placementTestResult,
         name: 'placement-test-result',
         builder: (context, state) {
-          return const TestResultScreen(score: "A1");
+          final extras = state.extra as Map<String, dynamic>? ?? {};
+          final score = extras['score'] as String? ?? "A1";
+          final goal = extras['goal'] as String?;
+          return TestResultScreen(score: score, selectedGoal: goal);
         },
       ),
       GoRoute(
