@@ -40,4 +40,10 @@ abstract final class AppColors {
   static const Color success = emerald;
   static const Color error = Color(0xFFE05252);
   static const Color warning = gold;
+
+  // ── Home Page Pastels (from new UI design) ─────────────────────────────────
+  static const Color pastelGreen = Color(0xFF67E382);
+  static const Color pastelYellow = Color(0xFFE9E57A);
+  static const Color pastelPurple = Color(0xFFD6D7FB);
+  static const Color pastelPeach = Color(0xFFFDE1DD);
 }

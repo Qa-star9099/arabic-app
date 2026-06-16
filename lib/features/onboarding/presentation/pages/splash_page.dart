@@ -317,7 +317,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                           _nameSlide.value.dy * 600,
                         ),
                         child: const Text(
-                          'Arabcha',
+                          'Kalima كلمة',
                           style: TextStyle(
                             fontFamily: 'Geist',
                             fontSize: 32,
@@ -346,7 +346,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
                           _tagSlide.value.dy * 600,
                         ),
                         child: const Text(
-                          'Arabic · the Uzbek way',
+                          'Arab tilini oson va tez o\'rganing! 🚀',
                           style: TextStyle(
                             fontFamily: 'Geist',
                             fontSize: 14,
@@ -418,7 +418,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
             right: 0,
             child: Center(
               child: Text(
-                'POWERED BY AI',
+                'SUN\'IY INTELLEKT YORDAMIDA ⚡',
                 style: TextStyle(
                   fontFamily: 'Geist',
                   fontSize: 11,

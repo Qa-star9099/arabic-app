@@ -26,14 +26,12 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
   late final AnimationController _orbFloatCtrl;
 
   // ── Entrance Animations (Intervals of _entranceCtrl) ──────────────────────
-  late final Animation<double> _subtitleOpacity;
-  late final Animation<double> _subtitleSlide;
+
 
   late final Animation<double> _titleOpacity;
   late final Animation<double> _titleSlide;
 
-  late final Animation<double> _descOpacity;
-  late final Animation<double> _descSlide;
+
 
   late final Animation<double> _feature1Opacity;
   late final Animation<double> _feature1Slide;
@@ -101,19 +99,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
     );
 
     // ── 2. Configure Entrance Animations (Staggered Fade-Up) ─────────────────
-    // Subtitle ("ARABCHA")
-    _subtitleOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.05, 0.45, curve: Curves.easeOut),
-      ),
-    );
-    _subtitleSlide = Tween<double>(begin: 16.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.05, 0.45, curve: Curves.easeOut),
-      ),
-    );
+
 
     // Title ("The Arabic app...")
     _titleOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -129,19 +115,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
       ),
     );
 
-    // Description ("AI hears your accent...")
-    _descOpacity = Tween<double>(begin: 0.0, end: 0.5).animate( // final CSS opacity is 0.5 for description text
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.25, 0.65, curve: Curves.easeOut),
-      ),
-    );
-    _descSlide = Tween<double>(begin: 16.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.25, 0.65, curve: Curves.easeOut),
-      ),
-    );
+
 
     // Feature 1 (AI Makhraj evaluation)
     _feature1Opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
@@ -298,19 +272,14 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
             orb2Opacity: _orb2Opacity,
           ),
 
-          // ── Layer 2: Main Welcome Interface (Scrollable) ────────────────────
+          // ── Layer 2: Main Welcome Interface ─────────────────────────────────────
           SafeArea(
-            child: SingleChildScrollView(
-              physics: const ClampingScrollPhysics(),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  // ── Top Device Status Header Bar ────────────────────────────────
-                  _DeviceStatusHeader(),
-
-                  // ── Showcase Floating Cards Area ───────────────────────────────
-                  const SizedBox(height: 20),
-                  _CardsShowcaseContainer(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Showcase Floating Cards Area ───────────────────────────────
+                const Spacer(flex: 1),
+                _CardsShowcaseContainer(
                     card1Offset: _card1Offset,
                     card2Offset: _card2Offset,
                     card3Offset: _card3Offset,
@@ -319,34 +288,12 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                   ),
 
                   // ── Middle Copy & Features Section ─────────────────────────────
-                  const SizedBox(height: 35),
+                  const Spacer(flex: 1),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // Small tag: "ARABCHA"
-                        AnimatedBuilder(
-                          animation: _entranceCtrl,
-                          builder: (context, _) {
-                            return Opacity(
-                              opacity: _subtitleOpacity.value,
-                              child: Transform.translate(
-                                offset: Offset(0, _subtitleSlide.value),
-                                child: Text(
-                                  'ARABCHA',
-                                  style: AppTypography.labelSmall.copyWith(
-                                    color: AppColors.emeraldLight,
-                                    letterSpacing: 1.2,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 6),
-
                         // Title heading
                         AnimatedBuilder(
                           animation: _entranceCtrl,
@@ -356,7 +303,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                               child: Transform.translate(
                                 offset: Offset(0, _titleSlide.value),
                                 child: const Text(
-                                  'The Arabic app\nbuilt for Uzbeks.',
+                                  'Arab tilini oson o\'rganing!\n🌟 يلا نتعلم',
                                   style: TextStyle(
                                     fontFamily: 'Geist',
                                     fontSize: 26,
@@ -370,30 +317,8 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                             );
                           },
                         ),
-                        const SizedBox(height: 8),
-
-                        // Description tagline
-                        AnimatedBuilder(
-                          animation: _entranceCtrl,
-                          builder: (context, _) {
-                            return Opacity(
-                              opacity: _descOpacity.value,
-                              child: Transform.translate(
-                                offset: Offset(0, _descSlide.value),
-                                child: const Text(
-                                  'AI hears your accent. Teaches the sounds your mouth doesn\'t know yet. In your language.',
-                                  style: TextStyle(
-                                    fontFamily: 'Geist',
-                                    fontSize: 14,
-                                    color: AppColors.textPrimary,
-                                    height: 1.7,
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
                         const SizedBox(height: 24),
+
 
                         // Features List (slide in horizontally)
                         _AnimatedFeatureItem(
@@ -403,8 +328,8 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                           iconColor: AppColors.emeraldLight,
                           iconBg: const Color(0x261D9E75),
                           iconBorder: const Color(0x401D9E75),
-                          title: 'AI Makhraj evaluation',
-                          subtitle: 'Real-time pronunciation feedback',
+                          title: 'Maxrajni SI bilan tekshirish ',
+                          subtitle: 'Talaffuzingiz to\'g\'riligini baholaymiz!',
                         ),
                         const SizedBox(height: 12),
                         _AnimatedFeatureItem(
@@ -414,8 +339,8 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                           iconColor: AppColors.goldLight,
                           iconBg: const Color(0x26BA7517),
                           iconBorder: const Color(0x40BA7517),
-                          title: 'Uzbek-Arab connections',
-                          subtitle: 'Learn 2x faster with shared roots',
+                          title: 'O\'zaro bog\'liq O\'zbek-Arab so\'zlari ',
+                          subtitle: 'Umumiy so\'zlar orqali 2x tez o\'rganing!',
                         ),
                         const SizedBox(height: 12),
                         _AnimatedFeatureItem(
@@ -425,15 +350,15 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                           iconColor: AppColors.violetLight,
                           iconBg: const Color(0x26533AB7),
                           iconBorder: const Color(0x40533AB7),
-                          title: 'Gamified learning',
-                          subtitle: 'XP, streaks, badges — stay hooked',
+                          title: 'Interaktiv o\'rganish metodikasi',
+                          subtitle: 'XP yig\'ing va peshqadam bo\'ling! ممتاز',
                         ),
                       ],
                     ),
                   ),
 
                   // ── Bottom Action Button Section ────────────────────────────────
-                  const SizedBox(height: 36),
+                  const Spacer(flex: 1),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24.0),
                     child: Column(
@@ -467,7 +392,7 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                                 child: Center(
                                   child: Text.rich(
                                     TextSpan(
-                                      text: 'Already have an account? ',
+                                      text: 'Allaqachon akkauntingiz bormi? ',
                                       style: AppTypography.bodySmall.copyWith(
                                         color: const Color(0x40FFFFFF),
                                         fontSize: 12,
@@ -476,9 +401,9 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                                         WidgetSpan(
                                           alignment: PlaceholderAlignment.middle,
                                           child: GestureDetector(
-                                            onTap: () => context.go(AppRoutes.login),
+                                            onTap: () => context.push(AppRoutes.login),
                                             child: Text(
-                                              'Sign in',
+                                              'Tizimga kirish',
                                               style: TextStyle(
                                                 color: AppColors.emeraldLight,
                                                 fontWeight: FontWeight.w500,
@@ -495,13 +420,12 @@ class _WelcomePageState extends State<WelcomePage> with TickerProviderStateMixin
                             );
                           },
                         ),
-                        const SizedBox(height: 32),
+                        const SizedBox(height: 16),
                       ],
                     ),
                   ),
                 ],
               ),
-            ),
           ),
         ],
       ),
@@ -612,72 +536,6 @@ class _AmbientWelcomeOrbs extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _DeviceStatusHeader — customized header representing device status
-// ─────────────────────────────────────────────────────────────────────────────
-class _DeviceStatusHeader extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 22.0, vertical: 8.0),
-      child: SizedBox(
-        height: 32,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            // Time
-            const Text(
-              '9:41',
-              style: TextStyle(
-                fontFamily: 'Geist',
-                fontSize: 13,
-                fontWeight: FontWeight.w500,
-                color: Color(0xCCFFFFFF),
-              ),
-            ),
-
-            // "AI Ready" badge
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 8,
-                  height: 8,
-                  decoration: const BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColors.emerald,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Text(
-                  'AI Ready',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 11,
-                    color: AppColors.emeraldLight,
-                    letterSpacing: 0.3,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-
-            // Outline Icons
-            const Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(Icons.wifi_rounded, size: 14, color: Color(0x80FFFFFF)),
-                SizedBox(width: 6),
-                Icon(Icons.battery_5_bar_rounded, size: 15, color: Color(0x80FFFFFF)),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
 // _CardsShowcaseContainer — absolute positioned floating cards canvas
 // ─────────────────────────────────────────────────────────────────────────────
 class _CardsShowcaseContainer extends StatelessWidget {
@@ -698,7 +556,7 @@ class _CardsShowcaseContainer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 240,
+      height: 280,
       child: Stack(
         clipBehavior: Clip.none,
         children: [
@@ -707,8 +565,8 @@ class _CardsShowcaseContainer extends StatelessWidget {
             animation: card1Offset,
             builder: (context, _) {
               return Positioned(
-                top: 10 + card1Offset.value,
-                left: 18,
+                top: 15 + card1Offset.value,
+                left: 16,
                 child: Transform.rotate(
                   angle: -1.5 * math.pi / 180,
                   child: _MakhrajCard(
@@ -724,8 +582,8 @@ class _CardsShowcaseContainer extends StatelessWidget {
             animation: card2Offset,
             builder: (context, _) {
               return Positioned(
-                top: 14 + card2Offset.value,
-                right: 18,
+                top: 20 + card2Offset.value,
+                right: 16,
                 child: Transform.rotate(
                   angle: 2.0 * math.pi / 180,
                   child: _TodayScoreCard(
@@ -741,7 +599,7 @@ class _CardsShowcaseContainer extends StatelessWidget {
             animation: card3Offset,
             builder: (context, _) {
               return Positioned(
-                bottom: 10 + card3Offset.value,
+                bottom: 12 + card3Offset.value,
                 left: 0,
                 right: 0,
                 child: Center(
@@ -769,11 +627,11 @@ class _MakhrajCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 155,
-      padding: const EdgeInsets.all(14),
+      width: 180,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
         color: const Color(0x0AFFFFFF), // white 4%
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: const Color(0x1AFFFFFF), // white 10%
           width: 1,
@@ -787,10 +645,10 @@ class _MakhrajCard extends StatelessWidget {
           Row(
             children: [
               Container(
-                width: 32,
-                height: 32,
+                width: 38,
+                height: 38,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
+                  borderRadius: BorderRadius.circular(12),
                   color: const Color(0x331D9E75), // emerald 20%
                   border: Border.all(
                     color: const Color(0x4D1D9E75), // emerald 30%
@@ -799,29 +657,29 @@ class _MakhrajCard extends StatelessWidget {
                 ),
                 child: const Icon(
                   Icons.mic_rounded,
-                  size: 16,
+                  size: 20,
                   color: AppColors.emeraldLight,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Makhraj',
+                      'Maxraj مخرج',
                       style: TextStyle(
                         fontFamily: 'Geist',
-                        fontSize: 11,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
                     ),
                     Text(
-                      'AI evaluation',
+                      'AI tekshiruvi',
                       style: TextStyle(
                         fontFamily: 'Geist',
-                        fontSize: 9,
+                        fontSize: 10.5,
                         color: Color(0x66FFFFFF), // white 40%
                       ),
                     ),
@@ -830,7 +688,7 @@ class _MakhrajCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 12),
 
           // Row 2: "ع" + accuracy slider
           Row(
@@ -840,13 +698,13 @@ class _MakhrajCard extends StatelessWidget {
                 'ع',
                 style: TextStyle(
                   fontFamily: 'NotoNaskhArabic',
-                  fontSize: 22,
+                  fontSize: 28,
                   fontWeight: FontWeight.w500,
                   color: Colors.white,
                   height: 1.0,
                 ),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 10),
               Expanded(
                 child: AnimatedBuilder(
                   animation: accuracyProgress,
@@ -856,10 +714,10 @@ class _MakhrajCard extends StatelessWidget {
                       children: [
                         // Slide container
                         Container(
-                          height: 4,
+                          height: 6,
                           decoration: BoxDecoration(
                             color: const Color(0x14FFFFFF), // white 8%
-                            borderRadius: BorderRadius.circular(2),
+                            borderRadius: BorderRadius.circular(3),
                           ),
                           child: Align(
                             alignment: Alignment.centerLeft,
@@ -868,18 +726,18 @@ class _MakhrajCard extends StatelessWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   color: AppColors.emerald,
-                                  borderRadius: BorderRadius.circular(2),
+                                  borderRadius: BorderRadius.circular(3),
                                 ),
                               ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 3),
+                        const SizedBox(height: 4),
                         Text(
-                          '${(accuracyProgress.value * 100).toInt()}% accurate',
+                          '${(accuracyProgress.value * 100).toInt()}% aniq',
                           style: const TextStyle(
                             fontFamily: 'Geist',
-                            fontSize: 9,
+                            fontSize: 10.5,
                             fontWeight: FontWeight.w500,
                             color: AppColors.emeraldLight,
                           ),
@@ -891,19 +749,19 @@ class _MakhrajCard extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 12),
 
           // Row 3: Waveform animation
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              _WaveformBar(height: 10, opacity: 0.4),
-              _WaveformBar(height: 14, opacity: 0.6),
-              _WaveformBar(height: 20, opacity: 1.0),
-              _WaveformBar(height: 16, opacity: 0.7),
-              _WaveformBar(height: 12, opacity: 0.5),
-              _WaveformBar(height: 18, opacity: 0.8),
-              _WaveformBar(height: 10, opacity: 0.4),
+              _WaveformBar(height: 13, opacity: 0.4),
+              _WaveformBar(height: 18, opacity: 0.6),
+              _WaveformBar(height: 26, opacity: 1.0),
+              _WaveformBar(height: 21, opacity: 0.7),
+              _WaveformBar(height: 16, opacity: 0.5),
+              _WaveformBar(height: 23, opacity: 0.8),
+              _WaveformBar(height: 13, opacity: 0.4),
             ],
           ),
         ],
@@ -940,11 +798,11 @@ class _TodayScoreCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 130,
-      padding: const EdgeInsets.all(14),
+      width: 150,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
         color: const Color(0x0AFFFFFF),
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(20),
         border: Border.all(
           color: const Color(0x1AFFFFFF),
           width: 1,
@@ -956,8 +814,8 @@ class _TodayScoreCard extends StatelessWidget {
         children: [
           // Circle score animation
           SizedBox(
-            width: 72,
-            height: 72,
+            width: 86,
+            height: 86,
             child: Stack(
               children: [
                 Positioned.fill(
@@ -974,7 +832,7 @@ class _TodayScoreCard extends StatelessWidget {
                     '94',
                     style: TextStyle(
                       fontFamily: 'Geist',
-                      fontSize: 16,
+                      fontSize: 20,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                     ),
@@ -983,26 +841,26 @@ class _TodayScoreCard extends StatelessWidget {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
 
           // Score text
           Text(
-            'Today\'s score',
+            'Bugungi Natija 🏆',
             style: TextStyle(
               fontFamily: 'Geist',
-              fontSize: 11,
+              fontSize: 13,
               fontWeight: FontWeight.w600,
               color: AppColors.goldLight,
             ),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 3),
 
           // Streak text
           const Text(
-            '🔥 7 day streak',
+            '🔥 7 kunlik seriya',
             style: TextStyle(
               fontFamily: 'Geist',
-              fontSize: 9,
+              fontSize: 11,
               color: Color(0x59FFFFFF), // white 35%
             ),
           ),
@@ -1026,13 +884,13 @@ class _ProgressCirclePainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - 5) / 2;
+    final radius = (size.width - 6) / 2;
 
     // Background circle
     final bgPaint = Paint()
       ..color = backgroundColor
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 5;
+      ..strokeWidth = 6;
 
     canvas.drawCircle(center, radius, bgPaint);
 
@@ -1040,7 +898,7 @@ class _ProgressCirclePainter extends CustomPainter {
     final progressPaint = Paint()
       ..color = color
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 5
+      ..strokeWidth = 6
       ..strokeCap = StrokeCap.round;
 
     final sweepAngle = 2 * math.pi * progress.value;
@@ -1066,11 +924,11 @@ class _UzbekLearnersCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 175,
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+      width: 215,
+      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
       decoration: BoxDecoration(
         color: const Color(0x26533AB7), // rgba(83,58,183,0.15)
-        borderRadius: BorderRadius.circular(14),
+        borderRadius: BorderRadius.circular(16),
         border: Border.all(
           color: const Color(0x4D533AB7), // rgba(83,58,183,0.3)
           width: 1,
@@ -1081,19 +939,19 @@ class _UzbekLearnersCard extends StatelessWidget {
         children: [
           // Icon Circle
           Container(
-            width: 30,
-            height: 30,
+            width: 38,
+            height: 38,
             decoration: const BoxDecoration(
               shape: BoxShape.circle,
               color: AppColors.violet,
             ),
             child: const Icon(
               Icons.people_alt_rounded,
-              size: 15,
+              size: 19,
               color: Colors.white,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 12),
 
           // Count Text
           const Expanded(
@@ -1105,16 +963,16 @@ class _UzbekLearnersCard extends StatelessWidget {
                   '12,400+',
                   style: TextStyle(
                     fontFamily: 'Geist',
-                    fontSize: 12,
+                    fontSize: 15,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),
                 ),
                 Text(
-                  'Uzbek learners',
+                  'O\'zbek o\'quvchilari 🇺🇿',
                   style: TextStyle(
                     fontFamily: 'Geist',
-                    fontSize: 9,
+                    fontSize: 11.5,
                     color: Color(0x66FFFFFF),
                   ),
                 ),
@@ -1260,30 +1118,26 @@ class _GetStartedButton extends StatelessWidget {
             ),
 
             // Button content
-            Material(
-              color: Colors.transparent,
-              child: InkWell(
-                onTap: onPressed,
-                borderRadius: BorderRadius.circular(16),
-                child: const Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'Get started — it\'s free',
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+            Positioned.fill(
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: onPressed,
+                  borderRadius: BorderRadius.circular(16),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'Boshlash — mutlaqo bepul! انطلق',
+                        style: TextStyle(
+                          fontFamily: 'Geist',
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: 10),
-                    Icon(
-                      Icons.arrow_forward_rounded,
-                      size: 20,
-                      color: Colors.white,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),

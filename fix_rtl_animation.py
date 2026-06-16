@@ -1,0 +1,574 @@
+import re
+
+file_path = '/Users/abdulbasitswe/arabic_app/lib/features/placement_test/screens/placement_test_screen.dart'
+with open(file_path, 'r') as f:
+    content = f.read()
+
+# 1. MultipleChoiceWidget
+mc_pattern = r'child: ListView\.separated\(\n\s*itemCount: widget\.question\.options\.length,'
+mc_replacement = r'child: Directionality(\n          textDirection: TextDirection.rtl,\n          child: ListView.separated(\n            itemCount: widget.question.options.length,'
+content = re.sub(mc_pattern, mc_replacement, content)
+content = content.replace('), // End of ListView for MC', '), // End of ListView for MC\n        )') # Wait, regex is safer
+
+# Actually, doing it via a simpler string replace might be tricky for closing brackets.
+# Let's replace the whole widgets.
+
+mc_widget_new = """class _MultipleChoiceWidget extends ConsumerWidget {
+  const _MultipleChoiceWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  final TestQuestion question;
+  final int? selectedAnswer;
+  final bool isSubmitted;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Column(
+      children: [
+        if (question.imageUrl != null) ...[
+          const SizedBox(height: 24),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Image.network(question.imageUrl!, height: 160, width: double.infinity, fit: BoxFit.contain),
+          ),
+        ],
+        const SizedBox(height: 32),
+        Expanded(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: ListView.separated(
+              itemCount: question.options.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final isSelected = selectedAnswer == index;
+                final isCorrectOption = index == question.correctAnswerIndex;
+                
+                Color bgColor = const Color(0xFF1E293B);
+                Color borderColor = Colors.white10;
+
+                if (isSubmitted) {
+                  if (isSelected && isCorrectOption) {
+                    bgColor = AppColors.emerald.withValues(alpha: 0.2);
+                    borderColor = AppColors.emerald;
+                  } else if (isSelected && !isCorrectOption) {
+                    bgColor = AppColors.error.withValues(alpha: 0.2);
+                    borderColor = AppColors.error;
+                  } else if (isCorrectOption) {
+                    borderColor = AppColors.emerald;
+                  }
+                } else if (isSelected) {
+                  bgColor = const Color(0xFF334155);
+                  borderColor = AppColors.emerald;
+                }
+
+                return InkWell(
+                  onTap: isSubmitted ? null : () => ref.read(placementTestControllerProvider.notifier).selectAnswer(index),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: borderColor, width: 2),
+                    ),
+                    child: Text(
+                      question.options[index],
+                      style: AppTypography.body.copyWith(
+                        color: Colors.white,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}"""
+
+content = re.sub(r'class _MultipleChoiceWidget extends ConsumerWidget \{.*?(?=\nclass _MatchPairsWidget|\nclass _AudioTestWidget)', mc_widget_new + "\n", content, flags=re.DOTALL)
+
+
+audio_widget_new = """class _AudioTestWidget extends ConsumerStatefulWidget {
+  const _AudioTestWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  final TestQuestion question;
+  final int? selectedAnswer;
+  final bool isSubmitted;
+
+  @override
+  ConsumerState<_AudioTestWidget> createState() => _AudioTestWidgetState();
+}
+
+class _AudioTestWidgetState extends ConsumerState<_AudioTestWidget> {
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  bool _isPlaying = false;
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _initAudio();
+  }
+
+  Future<void> _initAudio() async {
+    _audioPlayer.playerStateStream.listen((state) {
+      if (mounted) {
+        setState(() {
+          _isPlaying = state.playing && state.processingState != ProcessingState.completed;
+          _isLoading = state.processingState == ProcessingState.loading || state.processingState == ProcessingState.buffering;
+        });
+      }
+    });
+    
+    try {
+      if (widget.question.audioUrl != null && widget.question.audioUrl!.startsWith('http')) {
+        await _audioPlayer.setUrl(widget.question.audioUrl!);
+      } else {
+        await _audioPlayer.setUrl('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+      }
+    } catch (e) {
+      debugPrint("Error loading audio: $e");
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant _AudioTestWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.question.audioUrl != widget.question.audioUrl) {
+      _initAudio();
+    }
+  }
+
+  @override
+  void dispose() {
+    _audioPlayer.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        InkWell(
+          onTap: () async {
+            if (_isPlaying) {
+              await _audioPlayer.pause();
+            } else {
+              if (_audioPlayer.processingState == ProcessingState.completed) {
+                await _audioPlayer.seek(Duration.zero);
+              }
+              await _audioPlayer.play();
+            }
+          },
+          borderRadius: BorderRadius.circular(40),
+          child: Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: AppColors.emerald.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+            ),
+            child: _isLoading 
+                ? const Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: CircularProgressIndicator(color: AppColors.emerald, strokeWidth: 3),
+                  )
+                : Icon(
+                    _isPlaying ? Icons.pause_rounded : Icons.volume_up_rounded, 
+                    color: AppColors.emerald, 
+                    size: 40
+                  ),
+          ),
+        ),
+        const SizedBox(height: 32),
+        Expanded(
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: ListView.separated(
+              itemCount: widget.question.options.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              itemBuilder: (context, index) {
+                final isSelected = widget.selectedAnswer == index;
+                final isCorrectOption = index == widget.question.correctAnswerIndex;
+                
+                Color bgColor = const Color(0xFF1E293B);
+                Color borderColor = Colors.white10;
+
+                if (widget.isSubmitted) {
+                  if (isSelected && isCorrectOption) {
+                    bgColor = AppColors.emerald.withValues(alpha: 0.2);
+                    borderColor = AppColors.emerald;
+                  } else if (isSelected && !isCorrectOption) {
+                    bgColor = AppColors.error.withValues(alpha: 0.2);
+                    borderColor = AppColors.error;
+                  } else if (isCorrectOption) {
+                    borderColor = AppColors.emerald;
+                  }
+                } else if (isSelected) {
+                  bgColor = const Color(0xFF334155);
+                  borderColor = AppColors.emerald;
+                }
+
+                return InkWell(
+                  onTap: widget.isSubmitted ? null : () => ref.read(placementTestControllerProvider.notifier).selectAnswer(index),
+                  borderRadius: BorderRadius.circular(16),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+                    decoration: BoxDecoration(
+                      color: bgColor,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: borderColor, width: 2),
+                    ),
+                    child: Text(
+                      widget.question.options[index],
+                      style: AppTypography.body.copyWith(
+                        color: Colors.white,
+                        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}"""
+
+content = re.sub(r'class _AudioTestWidget extends ConsumerStatefulWidget \{.*?(?=\nclass _MatchPairsWidget)', audio_widget_new + "\n", content, flags=re.DOTALL)
+
+
+fill_in_blank_new = """class _FillInBlankWidget extends ConsumerWidget {
+  const _FillInBlankWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  final TestQuestion question;
+  final int? selectedAnswer;
+  final bool isSubmitted;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    String firstPart = question.questionText.split('___').first;
+    if (firstPart.contains(': ')) {
+        firstPart = firstPart.split(': ').last;
+    }
+    final lastPart = question.questionText.split('___').last;
+
+    return Column(
+      children: [
+        const SizedBox(height: 40),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E293B),
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Wrap(
+              alignment: WrapAlignment.center,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: 8,
+              runSpacing: 12,
+              children: [
+                Text(
+                  firstPart.trim(),
+                  style: AppTypography.heading2.copyWith(color: Colors.white),
+                ),
+                DragTarget<int>(
+                  builder: (context, candidateData, rejectedData) {
+                    return Container(
+                      width: 80,
+                      height: 40,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: selectedAnswer != null ? AppColors.emerald.withValues(alpha: 0.2) : Colors.white10,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(color: selectedAnswer != null ? AppColors.emerald : Colors.white24, width: 2),
+                      ),
+                      child: selectedAnswer != null
+                          ? Text(question.options[selectedAnswer!], style: AppTypography.body.copyWith(color: AppColors.emerald, fontWeight: FontWeight.bold))
+                          : null,
+                    );
+                  },
+                  onAcceptWithDetails: (details) {
+                    if (!isSubmitted) {
+                      ref.read(placementTestControllerProvider.notifier).selectAnswer(details.data);
+                    }
+                  },
+                ),
+                Text(
+                  lastPart.trim(),
+                  style: AppTypography.heading2.copyWith(color: Colors.white),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 60),
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: List.generate(question.options.length, (index) {
+              final isSelected = selectedAnswer == index;
+              if (isSelected) return const SizedBox(width: 80, height: 40); // Placeholder
+              return Draggable<int>(
+                data: index,
+                feedback: Material(
+                  color: Colors.transparent,
+                  child: _buildChip(question.options[index], isDragging: true),
+                ),
+                childWhenDragging: Opacity(opacity: 0.3, child: _buildChip(question.options[index])),
+                child: InkWell(
+                   onTap: isSubmitted ? null : () => ref.read(placementTestControllerProvider.notifier).selectAnswer(index),
+                   child: _buildChip(question.options[index]),
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChip(String text, {bool isDragging = false}) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF334155),
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: isDragging ? [const BoxShadow(color: Colors.black26, blurRadius: 10)] : null,
+      ),
+      child: Text(text, style: AppTypography.body.copyWith(color: Colors.white)),
+    );
+  }
+}"""
+
+content = re.sub(r'class _FillInBlankWidget extends ConsumerWidget \{.*?(?=\nclass _SentenceScrambleWidget)', fill_in_blank_new + "\n", content, flags=re.DOTALL)
+
+
+scramble_widget_new = """class _SentenceScrambleWidget extends ConsumerStatefulWidget {
+  const _SentenceScrambleWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  final TestQuestion question;
+  final List<String>? selectedAnswer;
+  final bool isSubmitted;
+
+  @override
+  ConsumerState<_SentenceScrambleWidget> createState() => _SentenceScrambleWidgetState();
+}
+
+class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget> {
+  List<String> _assembled = [];
+  List<String> _available = [];
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.selectedAnswer != null) {
+      _assembled = List.from(widget.selectedAnswer!);
+      _available = widget.question.scrambledWords!.where((w) => !_assembled.contains(w)).toList();
+    } else {
+      _available = List.from(widget.question.scrambledWords!);
+    }
+  }
+
+  void _onTapAvailable(String word) {
+    if (widget.isSubmitted) return;
+    setState(() {
+      _available.remove(word);
+      _assembled.add(word);
+      ref.read(placementTestControllerProvider.notifier).selectAnswer(_assembled.isNotEmpty ? _assembled : null);
+    });
+  }
+
+  void _onTapAssembled(String word) {
+    if (widget.isSubmitted) return;
+    setState(() {
+      _assembled.remove(word);
+      _available.add(word);
+      ref.read(placementTestControllerProvider.notifier).selectAnswer(_assembled.isNotEmpty ? _assembled : null);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          constraints: const BoxConstraints(minHeight: 100),
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: const Color(0xFF1E293B),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.white10),
+          ),
+          child: Directionality(
+            textDirection: TextDirection.rtl,
+            child: Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _assembled.map((word) => InkWell(
+                onTap: () => _onTapAssembled(word),
+                child: _buildChip(word),
+              )).toList(),
+            ),
+          ),
+        ),
+        const SizedBox(height: 32),
+        Directionality(
+          textDirection: TextDirection.rtl,
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _available.map((word) => InkWell(
+              onTap: () => _onTapAvailable(word),
+              child: _buildChip(word),
+            )).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChip(String text) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: const Color(0xFF334155),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(text, style: AppTypography.body.copyWith(color: Colors.white)),
+    );
+  }
+}"""
+
+content = re.sub(r'class _SentenceScrambleWidget extends ConsumerStatefulWidget \{.*?(?=\nclass TestResultScreen)', scramble_widget_new + "\n", content, flags=re.DOTALL)
+
+
+result_screen_new = """class TestResultScreen extends StatefulWidget {
+  const TestResultScreen({super.key, required this.score});
+  final String score;
+
+  @override
+  State<TestResultScreen> createState() => _TestResultScreenState();
+}
+
+class _TestResultScreenState extends State<TestResultScreen> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _fadeAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: const Interval(0.5, 1.0, curve: Curves.easeIn)));
+    _controller.forward();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Spacer(),
+              ScaleTransition(
+                scale: _scaleAnimation,
+                child: Container(
+                  width: 120,
+                  height: 120,
+                  decoration: BoxDecoration(
+                    color: AppColors.emerald.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.stars_rounded, color: AppColors.emerald, size: 80),
+                ),
+              ),
+              const SizedBox(height: 40),
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: Column(
+                  children: [
+                    Text(
+                      'Test Yakunlandi!',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.heading1.copyWith(color: Colors.white),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'Sizning arab tili darajangiz:',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.body.copyWith(color: Colors.white70),
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: AppColors.emerald,
+                        borderRadius: BorderRadius.circular(24),
+                        boxShadow: [
+                          BoxShadow(color: AppColors.emerald.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10)),
+                        ],
+                      ),
+                      child: Text(
+                        widget.score,
+                        style: AppTypography.heading1.copyWith(color: AppColors.background, fontSize: 40),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const Spacer(),
+              FadeTransition(
+                opacity: _fadeAnimation,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Navigate back or to next screen safely
+                    if (context.mounted) {
+                      context.go(AppRoutes.home); // Or wherever appropriate
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    elevation: 8,
+                    shadowColor: AppColors.primary.withValues(alpha: 0.5),
+                  ),
+                  child: Text(
+                    "Arab tili dunyosiga sho'ng'ish",
+                    style: AppTypography.heading3.copyWith(color: Colors.white),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}"""
+
+content = re.sub(r'class TestResultScreen extends StatelessWidget \{.*', result_screen_new, content, flags=re.DOTALL)
+
+with open(file_path, 'w') as f:
+    f.write(content)
