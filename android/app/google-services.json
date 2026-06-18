@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "123136436815",
+    "project_id": "my-arabic-learn",
+    "storage_bucket": "my-arabic-learn.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123136436815:android:bd3e1fd5048b9011f9983a",
+        "android_client_info": {
+          "package_name": "com.arabcha.arabcha"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "123136436815-h3858hqhaoonvkgvegjug8d5coqk9p1i.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.arabcha.arabcha",
+            "certificate_hash": "f9784523378841b340cd77157aff3662f8a1c8eb"
+          }
+        },
+        {
+          "client_id": "123136436815-aqfcb4tbq4kunjjoqb0svp4969q441p6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDGapXn5CGjs62WFnzCCHXcBblaVO4F-F8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "123136436815-aqfcb4tbq4kunjjoqb0svp4969q441p6.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "123136436815-l73brhaunb7pssee08640uhfnl09oh20.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.arabcha.arabcha"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

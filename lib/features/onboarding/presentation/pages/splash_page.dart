@@ -411,24 +411,6 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
             ),
           ),
 
-          // ── Layer 3: "POWERED BY AI" footer ──────────────────────────────
-          const Positioned(
-            bottom: 32,
-            left: 0,
-            right: 0,
-            child: Center(
-              child: Text(
-                'SUN\'IY INTELLEKT YORDAMIDA ⚡',
-                style: TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 11,
-                  fontWeight: FontWeight.w400,
-                  color: Color(0x2EFFFFFF),
-                  letterSpacing: 1.0,
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );

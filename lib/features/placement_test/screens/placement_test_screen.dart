@@ -10,8 +10,10 @@ import 'package:arabcha/app/router/app_router.dart';
 import 'package:arabcha/features/auth/controllers/auth_controller.dart';
 
 class PlacementTestScreen extends ConsumerWidget {
-  const PlacementTestScreen({super.key, this.selectedGoal});
+  const PlacementTestScreen({super.key, this.selectedGoal, this.expectedLevel, this.dailyGoal});
   final String? selectedGoal;
+  final String? expectedLevel;
+  final String? dailyGoal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -25,7 +27,11 @@ class PlacementTestScreen extends ConsumerWidget {
     }
 
     if (state.isFinished) {
-      return TestResultScreen(score: _getScoreLevel(state.correctCount), selectedGoal: selectedGoal);
+      return TestResultScreen(
+        score: _getScoreLevel(state.correctCount), 
+        selectedGoal: selectedGoal, 
+        dailyGoal: dailyGoal
+      );
     }
 
     final progress = (state.currentIndex + 1) / state.questions.length;
@@ -37,7 +43,17 @@ class PlacementTestScreen extends ConsumerWidget {
           children: [
             _TopBar(
               progress: progress,
-              onClose: () => context.go('/welcome'),
+              onClose: () {
+                if (context.canPop()) {
+                  context.pop();
+                } else {
+                  context.go(AppRoutes.pathSelection, extra: {
+                    'goal': selectedGoal,
+                    'level': expectedLevel,
+                    'dailyGoal': dailyGoal,
+                  });
+                }
+              },
             ),
             Expanded(
               child: SingleChildScrollView(
@@ -813,9 +829,10 @@ class _BottomBar extends StatelessWidget {
 }
 
 class TestResultScreen extends ConsumerStatefulWidget {
-  const TestResultScreen({super.key, required this.score, this.selectedGoal});
+  const TestResultScreen({super.key, required this.score, this.selectedGoal, this.dailyGoal});
   final String score;
   final String? selectedGoal;
+  final String? dailyGoal;
 
   @override
   ConsumerState<TestResultScreen> createState() => _TestResultScreenState();
@@ -906,12 +923,22 @@ class _TestResultScreenState extends ConsumerState<TestResultScreen> with Single
                 child: ElevatedButton(
                   onPressed: () async {
                     try {
-                      await ref.read(authControllerProvider.notifier).updateUserData(
-                        learningGoal: widget.selectedGoal ?? 'Umumiy',
-                        level: widget.score,
-                      );
-                      if (context.mounted) {
-                        context.go(AppRoutes.home);
+                      if (ref.read(authControllerProvider).value != null) {
+                        // If logged in, update data immediately
+                        await ref.read(authControllerProvider.notifier).updateUserData(
+                          learningGoal: widget.selectedGoal ?? 'Umumiy',
+                          level: widget.score,
+                          dailyGoal: widget.dailyGoal ?? '10 daqiqa / kuniga',
+                        );
+                        if (context.mounted) context.go(AppRoutes.home);
+                      } else {
+                        // Otherwise, just save to pending and go to home (or personal info if we need to sign up)
+                        ref.read(pendingOnboardingDataProvider.notifier).state = {
+                          'learningGoal': widget.selectedGoal ?? 'Umumiy',
+                          'level': widget.score,
+                          'dailyGoal': widget.dailyGoal ?? '10 daqiqa / kuniga',
+                        };
+                        if (context.mounted) context.go(AppRoutes.home);
                       }
                     } catch (e) {
                       if (context.mounted) {

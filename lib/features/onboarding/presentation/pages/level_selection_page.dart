@@ -1,14 +1,12 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/router/app_router.dart';
 import '../../../../app/theme/app_colors.dart';
-import '../../../../features/auth/controllers/auth_controller.dart';
 
 // ─── Data model ───────────────────────────────────────────────────────────────
-class _GoalOption {
-  const _GoalOption({
+class _LevelOption {
+  const _LevelOption({
     required this.title,
     required this.subtitle,
     required this.icon,
@@ -22,25 +20,25 @@ class _GoalOption {
   final Color accentLight;
 }
 
-const _goals = [
-  _GoalOption(
-    title: 'Biznes uchun  Arab Tili',
-    subtitle: 'Kelishuvlar · Shartnomalar · Uchrashuvlar',
-    icon: Icons.business_center_rounded,
+const _levels = [
+  _LevelOption(
+    title: 'Boshlang\'ich (A1)',
+    subtitle: 'Men endi o\'rganishni boshlayapman',
+    icon: Icons.filter_1_rounded,
     accentColor: AppColors.emerald,
     accentLight: AppColors.emeraldLight,
   ),
-  _GoalOption(
-    title: 'Sayohat uchun Arab Tili ',
-    subtitle: 'Mehmonxonalar · Aeroportlar · Kundalik hayot',
-    icon: Icons.flight_rounded,
+  _LevelOption(
+    title: 'O\'rta (A2)',
+    subtitle: 'Asosiy so\'zlar va qoidalarni bilaman',
+    icon: Icons.filter_2_rounded,
     accentColor: AppColors.gold,
     accentLight: AppColors.goldLight,
   ),
-  _GoalOption(
-    title: 'Akademik Arab Tili ',
-    subtitle: 'Universitet · Imtihonlar · Izlanishlar',
-    icon: Icons.school_rounded,
+  _LevelOption(
+    title: 'Ilg\'or (B1)',
+    subtitle: 'Erkin suhbatlasha olaman',
+    icon: Icons.filter_3_rounded,
     accentColor: AppColors.violet,
     accentLight: AppColors.violetLight,
   ),
@@ -48,28 +46,28 @@ const _goals = [
 
 // ─── Tagline cycling data ─────────────────────────────────────────────────────
 const _taglineLabels = [
-  'kasb egalari uchun 👨‍💼',
-  'sayohatsevarlar uchun 🌍',
-  'talabalar uchun 🎓',
+  'Qanday darajadasiz? 🎯',
+  'Bilimingizni sinab ko\'ring 🧠',
 ];
 const _taglineColors = [
   AppColors.emeraldLight,
-  AppColors.goldLight,
   AppColors.violetLight,
 ];
 
 // ═════════════════════════════════════════════════════════════════════════════
-class GoalSelectionPage extends StatefulWidget {
-  const GoalSelectionPage({super.key});
+class LevelSelectionPage extends StatefulWidget {
+  const LevelSelectionPage({super.key, required this.selectedGoal});
+  
+  final String selectedGoal;
 
   @override
-  State<GoalSelectionPage> createState() => _GoalSelectionPageState();
+  State<LevelSelectionPage> createState() => _LevelSelectionPageState();
 }
 
-class _GoalSelectionPageState extends State<GoalSelectionPage>
+class _LevelSelectionPageState extends State<LevelSelectionPage>
     with TickerProviderStateMixin {
   // ── State ──────────────────────────────────────────────────────────────────
-  int _selectedGoal = 0;
+  int _selectedLevel = 0;
 
   // ── Tagline cycling ────────────────────────────────────────────────────────
   int _taglineIndex = 0;
@@ -241,7 +239,13 @@ class _GoalSelectionPageState extends State<GoalSelectionPage>
                 // Progress bar header
                 FadeTransition(
                   opacity: _headerFade,
-                  child: const _ProgressHeader(),
+                  child: _ProgressHeader(onBack: () {
+                    if (context.canPop()) {
+                      context.pop();
+                    } else {
+                      context.go(AppRoutes.goalSelection);
+                    }
+                  }),
                 ),
 
                 const Spacer(flex: 1),
@@ -265,12 +269,12 @@ class _GoalSelectionPageState extends State<GoalSelectionPage>
 
                 const Spacer(flex: 1),
 
-                // Goal cards
+                // Level cards
                 FadeTransition(
                   opacity: _cardsFade,
-                  child: _GoalCardsPanel(
-                    selectedIndex: _selectedGoal,
-                    onSelect: (i) => setState(() => _selectedGoal = i),
+                  child: _LevelCardsPanel(
+                    selectedIndex: _selectedLevel,
+                    onSelect: (i) => setState(() => _selectedLevel = i),
                   ),
                 ),
 
@@ -283,8 +287,11 @@ class _GoalSelectionPageState extends State<GoalSelectionPage>
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: _StartButton(
                       onPressed: () {
-                        final selectedGoalTitle = _goals[_selectedGoal].title;
-                        context.go(AppRoutes.levelSelection, extra: selectedGoalTitle);
+                        final selectedLevelTitle = _levels[_selectedLevel].title;
+                        context.go(AppRoutes.dailyGoalSelection, extra: {
+                          'goal': widget.selectedGoal,
+                          'level': selectedLevelTitle,
+                        });
                       },
                     ),
                   ),
@@ -295,7 +302,7 @@ class _GoalSelectionPageState extends State<GoalSelectionPage>
                 // Page dots
                 FadeTransition(
                   opacity: _buttonFade,
-                  child: const _PageDots(currentPage: 0),
+                  child: const _PageDots(currentPage: 1),
                 ),
 
                 const SizedBox(height: 24),
@@ -405,21 +412,20 @@ class _SpinningOrbs extends StatelessWidget {
   }
 }
 
-class _ProgressHeader extends ConsumerWidget {
-  const _ProgressHeader();
+// ─── Progress header (2/3) ────────────────────────────────────────────────────
+class _ProgressHeader extends StatelessWidget {
+  const _ProgressHeader({required this.onBack});
+  final VoidCallback onBack;
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 0),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       child: Row(
         children: [
-          // Back/Sign out button
+          // Back button
           InkWell(
-            onTap: () {
-              // Sign out if they are authenticated so they can see the Welcome Page again
-              ref.read(authControllerProvider.notifier).signOut();
-              context.go(AppRoutes.welcome);
-            },
+            onTap: onBack,
             borderRadius: BorderRadius.circular(8),
             child: Container(
               padding: const EdgeInsets.all(8),
@@ -433,57 +439,65 @@ class _ProgressHeader extends ConsumerWidget {
             ),
           ),
           const SizedBox(width: 16),
-          // Filled segment
           Expanded(
-            child: Container(
-              height: 3,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(2),
-                gradient: const LinearGradient(
-                  colors: [AppColors.emerald, AppColors.emeraldLight],
+            child: Row(
+              children: [
+                Expanded(
+                  child: Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.emerald,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
                 ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 5),
-          // Empty segments
-          Expanded(
-            child: Container(
-              height: 3,
-              decoration: BoxDecoration(
-                color: const Color(0x1AFFFFFF),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Container(
-              height: 4,
-              decoration: BoxDecoration(
-                color: const Color(0x1AFFFFFF),
-                borderRadius: BorderRadius.circular(2),
-              ),
-            ),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Container(
-              height: 4,
-              decoration: BoxDecoration(
-                color: const Color(0x1AFFFFFF),
-                borderRadius: BorderRadius.circular(2),
-              ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: AppColors.emerald,
+                      borderRadius: BorderRadius.circular(2),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColors.emerald.withValues(alpha: 0.5),
+                          blurRadius: 6,
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0x1AFFFFFF),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Container(
+                    height: 4,
+                    decoration: BoxDecoration(
+                      color: const Color(0x1AFFFFFF),
+                      borderRadius: BorderRadius.circular(2),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
           const SizedBox(width: 16),
           const Text(
-            '1/4',
+            '2/4',
             style: TextStyle(
               fontFamily: 'Geist',
-              fontSize: 11,
-              color: Color(0x4DFFFFFF),
-              letterSpacing: 0.5,
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Color(0x66FFFFFF),
             ),
           ),
         ],
@@ -492,7 +506,7 @@ class _ProgressHeader extends ConsumerWidget {
   }
 }
 
-// ─── Hero section ─────────────────────────────────────────────────────────────
+// ─── Hero section (Rings + Arabic letter) ─────────────────────────────────────
 class _HeroSection extends StatelessWidget {
   const _HeroSection({
     required this.heroFloat,
@@ -508,215 +522,172 @@ class _HeroSection extends StatelessWidget {
   });
 
   final Animation<double> heroFloat;
-  final Animation<double> ring1Scale, ring1Opacity;
-  final Animation<double> ring2Scale, ring2Opacity;
-  final Animation<double> ring3Scale, ring3Opacity;
+  final Animation<double> ring1Scale;
+  final Animation<double> ring1Opacity;
+  final Animation<double> ring2Scale;
+  final Animation<double> ring2Opacity;
+  final Animation<double> ring3Scale;
+  final Animation<double> ring3Opacity;
+
   final String taglineText;
   final Color taglineColor;
   final bool taglineVisible;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // Animated Arabic letter with pulse rings
-        AnimatedBuilder(
-          animation: Listenable.merge([
-            heroFloat,
-            ring1Scale,
-            ring2Scale,
-            ring3Scale,
-          ]),
-          builder: (_, __) {
-            return SizedBox(
-              width: 130,
-              height: 130,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Ring 3 (outermost)
-                  Transform.scale(
-                    scale: ring3Scale.value,
-                    child: Container(
-                      width: 130,
-                      height: 130,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.emerald
-                              .withValues(alpha: ring3Opacity.value * 0.15),
-                          width: 1,
-                        ),
-                      ),
-                    ),
+    return SizedBox(
+      height: 240,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          // Ring 3 (outer)
+          AnimatedBuilder(
+            animation: ring3Scale,
+            builder: (_, __) => Transform.scale(
+              scale: ring3Scale.value,
+              child: Container(
+                width: 220,
+                height: 220,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF3B82F6)
+                        .withValues(alpha: ring3Opacity.value * 0.4),
+                    width: 1,
                   ),
-                  // Ring 2
-                  Transform.scale(
-                    scale: ring2Scale.value,
-                    child: Container(
-                      width: 106,
-                      height: 106,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.emerald
-                              .withValues(alpha: ring2Opacity.value * 0.25),
-                          width: 1,
-                        ),
-                      ),
-                    ),
+                ),
+              ),
+            ),
+          ),
+          // Ring 2 (mid)
+          AnimatedBuilder(
+            animation: ring2Scale,
+            builder: (_, __) => Transform.scale(
+              scale: ring2Scale.value,
+              child: Container(
+                width: 170,
+                height: 170,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: const Color(0xFF60A5FA)
+                        .withValues(alpha: ring2Opacity.value * 0.6),
+                    width: 1.5,
                   ),
-                  // Ring 1
-                  Transform.scale(
-                    scale: ring1Scale.value,
-                    child: Container(
-                      width: 82,
-                      height: 82,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: AppColors.emerald
-                              .withValues(alpha: ring1Opacity.value * 0.4),
-                          width: 1,
-                        ),
-                      ),
-                    ),
+                ),
+              ),
+            ),
+          ),
+          // Ring 1 (inner)
+          AnimatedBuilder(
+            animation: ring1Scale,
+            builder: (_, __) => Transform.scale(
+              scale: ring1Scale.value,
+              child: Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: AppColors.emerald
+                        .withValues(alpha: ring1Opacity.value),
+                    width: 2,
                   ),
-                  // Center circle with Arabic letter
-                  Transform.translate(
-                    offset: Offset(0, heroFloat.value),
-                    child: Container(
-                      width: 58,
-                      height: 58,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: const Color(0xFF0D1F1A),
-                        border: Border.all(
-                          color: AppColors.emerald.withValues(alpha: 0.6),
-                          width: 1.5,
-                        ),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'ض',
-                          style: TextStyle(
-                            fontSize: 28,
-                            color: AppColors.emeraldLight,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.emerald.withValues(alpha: 0.15),
+                      blurRadius: 20,
+                      spreadRadius: 5,
                     ),
-                  ),
-                  // Gold mic badge (top-right)
-                  Positioned(
-                    top: 8,
-                    right: 8,
-                    child: Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.gold,
-                        border: Border.all(
-                          color: AppColors.background,
-                          width: 2.5,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.mic_rounded,
-                        size: 15,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  // Violet star badge (bottom-left)
-                  Positioned(
-                    bottom: 8,
-                    left: 8,
-                    child: Container(
-                      width: 26,
-                      height: 26,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.violet,
-                        border: Border.all(
-                          color: AppColors.background,
-                          width: 2,
-                        ),
-                      ),
-                      child: const Icon(
-                        Icons.star_rounded,
-                        size: 13,
-                        color: Colors.white,
-                      ),
-                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          // Arabic letter floating
+          AnimatedBuilder(
+            animation: heroFloat,
+            builder: (_, child) {
+              return Transform.translate(
+                offset: Offset(0, heroFloat.value),
+                child: child,
+              );
+            },
+            child: Container(
+              width: 86,
+              height: 86,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF1E293B),
+                    Color(0xFF0F172A),
+                  ],
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black45,
+                    blurRadius: 16,
+                    offset: Offset(0, 8),
                   ),
                 ],
               ),
-            );
-          },
-        ),
-
-        const SizedBox(height: 24),
-
-        // Title + cycling tagline
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 28),
-          child: Column(
-            children: [
-              const Text(
-                'Arab tili ',
-                style: TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 25,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textPrimary,
-                  letterSpacing: -0.5,
-                  height: 1.2,
+              child: const Center(
+                child: Text(
+                  'مستوى',
+                  style: TextStyle(
+                    fontSize: 32,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
-              const SizedBox(height: 2),
-              AnimatedOpacity(
-                opacity: taglineVisible ? 1.0 : 0.0,
-                duration: const Duration(milliseconds: 250),
+            ),
+          ),
+
+          // Tagline below the letter
+          Positioned(
+            bottom: 0,
+            child: AnimatedOpacity(
+              duration: const Duration(milliseconds: 250),
+              opacity: taglineVisible ? 1.0 : 0.0,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                decoration: BoxDecoration(
+                  color: taglineColor.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: taglineColor.withValues(alpha: 0.2),
+                  ),
+                ),
                 child: Text(
                   taglineText,
                   style: TextStyle(
                     fontFamily: 'Geist',
-                    fontSize: 25,
+                    fontSize: 13,
                     fontWeight: FontWeight.w500,
                     color: taglineColor,
-                    letterSpacing: -0.5,
-                    height: 1.2,
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
-              const Text(
-                'Maqsadingizni tanlang. Biz sizga to\'g\'ri yo\'nalish beramiz! ',
-                style: TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 13,
-                  color: Color(0x66FFFFFF),
-                  height: 1.6,
-                  letterSpacing: 0.1,
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-// ─── Goal cards panel ─────────────────────────────────────────────────────────
-class _GoalCardsPanel extends StatelessWidget {
-  const _GoalCardsPanel({
+// ─── Level Cards Panel ────────────────────────────────────────────────────────
+class _LevelCardsPanel extends StatelessWidget {
+  const _LevelCardsPanel({
     required this.selectedIndex,
     required this.onSelect,
   });
+
   final int selectedIndex;
   final ValueChanged<int> onSelect;
 
@@ -724,181 +695,132 @@ class _GoalCardsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Container(
-        padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(
-          color: const Color(0x07FFFFFF),
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0x12FFFFFF)),
-        ),
-        child: Column(
-          children: List.generate(_goals.length, (i) {
-            final isSelected = i == selectedIndex;
-            final goal = _goals[i];
-            final isLast = i == _goals.length - 1;
-            return Padding(
-              padding: EdgeInsets.only(bottom: isLast ? 0 : 4),
-              child: _GoalCard(
-                goal: goal,
-                isSelected: isSelected,
-                onTap: () => onSelect(i),
-              ),
-            );
-          }),
-        ),
+      child: Column(
+        children: List.generate(_levels.length, (i) {
+          final isSelected = i == selectedIndex;
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _LevelCard(
+              level: _levels[i],
+              sel: isSelected,
+              onTap: () => onSelect(i),
+            ),
+          );
+        }),
       ),
     );
   }
 }
 
-// ─── Single goal card ─────────────────────────────────────────────────────────
-class _GoalCard extends StatefulWidget {
-  const _GoalCard({
-    required this.goal,
-    required this.isSelected,
+class _LevelCard extends StatelessWidget {
+  const _LevelCard({
+    required this.level,
+    required this.sel,
     required this.onTap,
   });
-  final _GoalOption goal;
-  final bool isSelected;
+
+  final _LevelOption level;
+  final bool sel;
   final VoidCallback onTap;
 
   @override
-  State<_GoalCard> createState() => _GoalCardState();
-}
-
-class _GoalCardState extends State<_GoalCard>
-    with SingleTickerProviderStateMixin {
-  late final AnimationController _scaleCtrl;
-  late final Animation<double> _scale;
-
-  @override
-  void initState() {
-    super.initState();
-    _scaleCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 180),
-      lowerBound: 0.97,
-      upperBound: 1.0,
-      value: 1.0,
-    );
-    _scale = _scaleCtrl;
-  }
-
-  @override
-  void dispose() {
-    _scaleCtrl.dispose();
-    super.dispose();
-  }
-
-  void _onTapDown(_) => _scaleCtrl.reverse();
-  void _onTapUp(_) {
-    _scaleCtrl.forward();
-    widget.onTap();
-  }
-  void _onTapCancel() => _scaleCtrl.forward();
-
-  @override
   Widget build(BuildContext context) {
-    final g = widget.goal;
-    final sel = widget.isSelected;
-
     return GestureDetector(
-      onTapDown: _onTapDown,
-      onTapUp: _onTapUp,
-      onTapCancel: _onTapCancel,
-      child: AnimatedBuilder(
-        animation: _scale,
-        builder: (_, child) => Transform.scale(
-          scale: _scale.value,
-          child: child,
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        curve: Curves.easeOut,
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: sel ? const Color(0xFF1E293B) : const Color(0x0AFFFFFF),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: sel ? level.accentColor : const Color(0x14FFFFFF),
+            width: sel ? 2 : 1,
+          ),
+          boxShadow: sel
+              ? [
+                  BoxShadow(
+                    color: level.accentColor.withValues(alpha: 0.2),
+                    blurRadius: 20,
+                    spreadRadius: -5,
+                    offset: const Offset(0, 8),
+                  )
+                ]
+              : [],
         ),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-            color: sel ? g.accentColor.withValues(alpha: 0.08) : Colors.transparent,
-            border: Border.all(
-              color: sel
-                  ? g.accentColor.withValues(alpha: 0.5)
-                  : Colors.transparent,
-              width: 1.5,
-            ),
-          ),
-          child: Row(
-            children: [
-              // Icon box
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 42,
-                height: 42,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
+        child: Row(
+          children: [
+            // Icon container
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 250),
+              width: 42,
+              height: 42,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                color: sel
+                    ? level.accentColor.withValues(alpha: 0.2)
+                    : const Color(0x0DFFFFFF),
+                border: Border.all(
                   color: sel
-                      ? g.accentColor.withValues(alpha: 0.2)
-                      : const Color(0x0DFFFFFF),
-                  border: Border.all(
-                    color: sel
-                        ? g.accentColor.withValues(alpha: 0.3)
-                        : const Color(0x14FFFFFF),
+                      ? level.accentColor.withValues(alpha: 0.3)
+                      : const Color(0x14FFFFFF),
+                ),
+              ),
+              child: Icon(
+                level.icon,
+                size: 20,
+                color: sel ? level.accentLight : const Color(0x73FFFFFF),
+              ),
+            ),
+            const SizedBox(width: 12),
+            // Text
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    level.title,
+                    style: TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 14.5,
+                      fontWeight: FontWeight.w500,
+                      color: sel ? Colors.white : const Color(0xBFFFFFFF),
+                    ),
                   ),
-                ),
-                child: Icon(
-                  g.icon,
-                  size: 20,
-                  color: sel ? g.accentLight : const Color(0x73FFFFFF),
-                ),
-              ),
-              const SizedBox(width: 12),
-              // Text
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      g.title,
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 14.5,
-                        fontWeight: FontWeight.w500,
-                        color: sel ? Colors.white : const Color(0xBFFFFFFF),
-                      ),
+                  const SizedBox(height: 2),
+                  Text(
+                    level.subtitle,
+                    style: TextStyle(
+                      fontFamily: 'Geist',
+                      fontSize: 12,
+                      color: sel
+                          ? level.accentLight.withValues(alpha: 0.8)
+                          : const Color(0x4DFFFFFF),
                     ),
-                    const SizedBox(height: 2),
-                    Text(
-                      g.subtitle,
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 12,
-                        color: sel
-                            ? g.accentLight.withValues(alpha: 0.8)
-                            : const Color(0x4DFFFFFF),
-                      ),
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              // Check circle
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                width: 22,
-                height: 22,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: sel ? g.accentColor : const Color(0x14FFFFFF),
-                  border: sel
-                      ? null
-                      : Border.all(color: const Color(0x1FFFFFFF), width: 1.5),
-                ),
-                child: Icon(
-                  Icons.check_rounded,
-                  size: 13,
-                  color: sel ? Colors.white : const Color(0x33FFFFFF),
-                ),
+            ),
+            // Check circle
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              width: 22,
+              height: 22,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: sel ? level.accentColor : const Color(0x14FFFFFF),
+                border: sel
+                    ? null
+                    : Border.all(color: const Color(0x1FFFFFFF), width: 1.5),
               ),
-            ],
-          ),
+              child: Icon(
+                Icons.check_rounded,
+                size: 13,
+                color: sel ? Colors.white : const Color(0x33FFFFFF),
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -952,7 +874,7 @@ class _StartButton extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'Sayohatni boshlash انطلق',
+                      'Davom etish استمرار',
                       style: TextStyle(
                         fontFamily: 'Geist',
                         fontSize: 16,
@@ -1005,7 +927,7 @@ class _PageDots extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
-      children: List.generate(3, (i) {
+      children: List.generate(4, (i) {
         final active = i == currentPage;
         return AnimatedContainer(
           duration: const Duration(milliseconds: 200),

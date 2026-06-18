@@ -5,6 +5,9 @@ import 'package:arabcha/app/theme/app_typography.dart';
 import 'package:arabcha/features/home/models/course_data.dart';
 import 'package:arabcha/app/router/app_router.dart';
 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
@@ -21,9 +24,17 @@ class HomePage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded, color: Colors.white, size: 20),
-          onPressed: () {
-            context.go('/welcome');
+          icon: const Icon(Icons.restart_alt_rounded, color: Colors.white, size: 20),
+          onPressed: () async {
+            // FOR TESTING ONLY: Reset onboarding state
+            final uid = FirebaseAuth.instance.currentUser?.uid;
+            if (uid != null) {
+              await FirebaseFirestore.instance.collection('users').doc(uid).update({
+                'learningGoal': FieldValue.delete(),
+                'level': FieldValue.delete(),
+              });
+            }
+            await FirebaseAuth.instance.signOut();
           },
         ),
         title: Text(

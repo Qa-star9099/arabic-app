@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>123136436815-l73brhaunb7pssee08640uhfnl09oh20.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.123136436815-l73brhaunb7pssee08640uhfnl09oh20</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>123136436815-h3858hqhaoonvkgvegjug8d5coqk9p1i.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD1ZITi72r_Pn4lLhObD5QRcoSfYZjc04s</string>
+	<key>GCM_SENDER_ID</key>
+	<string>123136436815</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.arabcha.arabcha</string>
+	<key>PROJECT_ID</key>
+	<string>my-arabic-learn</string>
+	<key>STORAGE_BUCKET</key>
+	<string>my-arabic-learn.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:123136436815:ios:52f396ec0783130ff9983a</string>
+</dict>
+</plist>
