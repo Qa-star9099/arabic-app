@@ -6,7 +6,7 @@
 
 ## 1. Project Overview
 
-**Product:** AI-powered Arabic language learning mobile app for the Uzbekistan market.
+**Product:** Arabic language learning mobile app for the Uzbekistan market.
 
 **Platform:** Flutter (iOS + Android), mobile-first.
 
