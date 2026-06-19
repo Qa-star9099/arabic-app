@@ -1,63 +1,66 @@
 # Flutter Architecture Blueprint
 
-> Full architecture reference for the Arabic learning app. Read alongside `CLAUDE.md` and `docs/api-contracts.md`. State management: **Riverpod** (also serves as DI).
 
 ---
 
-## 1. Architecture Decision (ADR-001)
+1. Architecture Decision (ADR-001)
 
-**Status:** Accepted
+Status: Accepted
 
-**Decision:** Feature-First folder structure + Clean Architecture layers + Riverpod.
+Decision: Feature-First folder structure + pragmatic layers + Riverpod + Firebase serverless.
 
-**Context:** Solo developer starting; co-developer joining. Code must be understandable and extensible by two people. Balance speed vs quality.
+Context: Texnik jihatdan yolg'iz dasturchi (PM/QA profil). 4 yillik tajribali arab tili ustozi (content). Kod sodda, tez, kengayuvchan bo'lishi kerak. Tekin MVP.
 
-**Why Feature-First:** features are isolated → parallel work is easy, merge conflicts minimal.
+Why Feature-First: features isolated → parallel ish oson, merge conflict kam.
 
-**Why Clean Architecture:** testable, swappable data sources (API + offline cache), clear boundaries.
+Why Riverpod (not BLoC, not get_it):
 
-**Why Riverpod (not BLoC, not Provider, not get_it):**
-- Less boilerplate than BLoC
-- Compile-time safety (no runtime provider-not-found)
-- Serves as DI too — one tool for state + dependencies (drop get_it)
-- Easy testing via `ProviderContainer` overrides
 
-**Consequences:**
-- (+) Parallel work, easy testing, fast onboarding, single tool for state+DI
-- (−) More setup upfront; slight overhead for trivial screens (mitigated by pragmatic simplicity)
+BLoC'dan kam boilerplate
+Compile-time safety
+State + DI bitta vositada (get_it kerak emas)
+ProviderContainer override orqali oson test
 
----
 
-## 2. Folder Structure
+Why Serverless (Firebase, not custom backend):
 
-```
+
+Tekin — Firebase bepul tier minglab foydalanuvchigacha yetadi
+Sodda — yolg'iz dasturchi backend yozmaydi/saqlamaydi
+Tez — server qurish/deploy yo'q, to'g'ridan Flutter'dan ishlaydi
+Auth, Firestore, (kelajakda) Storage — barchasi Firebase SDK orqali
+
+
+Consequences:
+
+
+(+) Parallel ish, oson test, tez, tekin, backend xizmati shart emas
+(−) Murakkab server logikasi (masalan AI Maxraj) keyin alohida xizmat sifatida qo'shiladi (Bosqich B)
+
+
+
+2. Folder Structure (serverless)
+
 lib/
-├── main.dart                      # Entry point, ProviderScope, Hive init
+├── main.dart                      # Entry point, Firebase init, ProviderScope
 ├── app/
 │   ├── app.dart                   # MaterialApp.router, theme wiring
 │   ├── router/
-│   │   └── app_router.dart        # GoRouter config, route guards
+│   │   └── app_router.dart        # GoRouter config, auth-based redirect
 │   └── theme/
 │       ├── app_theme.dart
 │       ├── app_colors.dart
 │       └── app_typography.dart
 │
 ├── core/
-│   ├── constants/
-│   │   └── api_constants.dart     # base URL, endpoint paths
+│   ├── services/
+│   │   └── tts_service.dart       # flutter_tts / just_audio wrapper (audio)
+│   ├── content/
+│   │   └── secular_filter.dart    # Content boundary (COMPLIANCE!)
 │   ├── error/
-│   │   ├── failures.dart          # ServerFailure, NetworkFailure, CacheFailure
-│   │   └── exceptions.dart        # ServerException, CacheException
-│   ├── network/
-│   │   ├── dio_client.dart        # base Dio setup
-│   │   └── interceptors/
-│   │       ├── auth_interceptor.dart
-│   │       ├── error_interceptor.dart
-│   │       └── refresh_interceptor.dart  # 401 + Mutex lock
+│   │   └── failures.dart          # FirebaseFailure, CacheFailure (sodda)
 │   ├── storage/
-│   │   └── secure_storage.dart    # JWT via flutter_secure_storage
-│   ├── utils/
-│   │   └── result.dart            # typedef for Either<Failure, T>
+│   │   └── local_store.dart       # Hive — onboarding/progress cache
 │   └── widgets/
 │       ├── app_button.dart
 │       ├── app_loader.dart
@@ -65,200 +68,171 @@ lib/
 │
 ├── features/
 │   ├── auth/
-│   │   ├── data/
-│   │   │   ├── datasources/
-│   │   │   │   └── auth_remote_datasource.dart
-│   │   │   ├── models/
-│   │   │   │   ├── user_model.dart        # freezed + json_serializable
-│   │   │   │   └── token_model.dart
-│   │   │   └── repositories/
-│   │   │       └── auth_repository_impl.dart
-│   │   ├── domain/
-│   │   │   ├── entities/
-│   │   │   │   └── user.dart               # pure Dart entity
-│   │   │   ├── repositories/
-│   │   │   │   └── auth_repository.dart     # abstract interface
-│   │   │   └── usecases/
-│   │   │       ├── send_otp.dart
-│   │   │       ├── verify_otp.dart
-│   │   │       └── refresh_token.dart
-│   │   └── presentation/
-│   │       ├── providers/
-│   │       │   ├── auth_provider.dart       # AsyncNotifier
-│   │       │   └── auth_state.dart          # freezed state
-│   │       ├── pages/
-│   │       │   ├── login_page.dart
-│   │       │   └── otp_page.dart
-│   │       └── widgets/
-│   │           └── otp_input_widget.dart
+│   │   ├── models/
+│   │   │   └── user_model.dart            # freezed + json_serializable
+│   │   ├── repositories/
+│   │   │   └── auth_repository.dart        # Firebase Auth + Firestore
+│   │   ├── controllers/
+│   │   │   └── auth_controller.dart        # Riverpod AsyncNotifier
+│   │   └── presentation/pages/
+│   │       ├── login_page.dart
+│   │       ├── otp_page.dart
+│   │       └── personal_info_page.dart
 │   │
-│   ├── onboarding/   # same structure
-│   ├── lesson/       # same structure
-│   ├── makhraj/      # same structure
-│   ├── gamification/ # same structure
-│   └── profile/      # same structure
+│   ├── onboarding/   # splash, welcome, goal, level, daily-goal, path
+│   ├── lesson/       # 8 bosqichli spiral oqim (YADRO — qurilishi kerak)
+│   ├── makhraj/      # talaffuz (Bosqich B — keyin)
+│   ├── placement_test/
+│   ├── home/
+│   └── profile/
 │
-└── injection_note.md  # (none needed — Riverpod providers handle DI)
-```
+└── data/
+    ├── models/                    # word, root, scenario, topic, progress
+    └── repositories/
+        ├── content_repository.dart    # statik JSON o'qish (assets)
+        └── progress_repository.dart   # Firestore yozish/o'qish
 
----
 
-## 3. Layer Flow
+DEAD CODE eslatma: lib/core/constants/api_constants.dart va dio paketi ishlatilmaydi (auth allaqachon Firebase'da). Keyin tozalanadi.
 
-```
+
+
+
+3. Layer Flow (serverless — soddalashgan)
+
 UI (Page / ConsumerWidget)
-   ↓ ref.read(provider.notifier).someAction()
-Provider (AsyncNotifier / Notifier)
+   ↓ ref.read(provider.notifier).action()
+Controller / Provider (AsyncNotifier / Notifier)
    ↓ calls
-UseCase (one business action)
+Repository (to'g'ridan — domain/usecase qatlamsiz, solo-friendly)
    ↓ calls
-Repository (interface in domain/, impl in data/)
-   ↓ calls
-DataSource (Remote: Dio / Local: Hive)
-   ↓
-API or local DB
+Manba:
+   - Firebase (Auth, Firestore)   → progress, user
+   - Statik JSON (assets)          → kontent (so'z, ildiz, sahna)
 
-Dependency Rule: presentation → domain ← data
-domain is pure (no Flutter, no packages).
-```
+Eslatma: Custom API, Dio, interceptors YO'Q. Repository to'g'ridan Firebase
+SDK yoki JSON o'qiydi.
 
----
 
-## 4. Riverpod Provider Patterns
+Pragmatik qaror: To'liq Clean Architecture'dagi domain/, usecases/, abstract repository interface qatlamlari yolg'iz dasturchi uchun ATAYIN qo'shilmaydi. Repository to'g'ridan controller'ga ma'lumot beradi. Keyin jamoa o'ssa qo'shilishi mumkin.
 
-```dart
-// Dependency providers (DI)
-final dioProvider = Provider<Dio>((ref) => DioClient.create());
 
-final authRemoteDataSourceProvider = Provider<AuthRemoteDataSource>(
-  (ref) => AuthRemoteDataSourceImpl(ref.watch(dioProvider)),
-);
 
+
+4. Riverpod Provider Patterns
+
+dart// Repository providers (DI)
 final authRepositoryProvider = Provider<AuthRepository>(
-  (ref) => AuthRepositoryImpl(ref.watch(authRemoteDataSourceProvider)),
+  (ref) => AuthRepository(FirebaseAuth.instance, FirebaseFirestore.instance),
 );
 
-final verifyOtpProvider = Provider(
-  (ref) => VerifyOtp(ref.watch(authRepositoryProvider)),
+final contentRepositoryProvider = Provider<ContentRepository>(
+  (ref) => ContentRepository(),  // assets/JSON o'qiydi
 );
 
-// State provider (AsyncNotifier for async work)
-final authNotifierProvider =
-    AsyncNotifierProvider<AuthNotifier, AuthState>(AuthNotifier.new);
-```
+final progressRepositoryProvider = Provider<ProgressRepository>(
+  (ref) => ProgressRepository(FirebaseFirestore.instance),
+);
 
-```
+// State (AsyncNotifier for async work)
+final authControllerProvider =
+    AsyncNotifierProvider<AuthController, UserModel?>(AuthController.new);
+
 RULES:
-- Dependencies (repos, usecases, dio) → plain Provider, lazy singletons by default
-- Screen state → AsyncNotifierProvider (async) or NotifierProvider (sync)
+- Repositories → plain Provider (lazy singleton)
+- Screen state → AsyncNotifierProvider (async) / NotifierProvider (sync)
 - State classes → freezed, immutable
-- UI uses ConsumerWidget / ConsumerStatefulWidget, never reads providers outside ref
-- Prefer riverpod_generator (@riverpod) once comfortable — reduces boilerplate
-```
+- UI → ConsumerWidget / ConsumerStatefulWidget
+- @riverpod generator ishlatilmoqda (boilerplate kam)
 
----
 
-## 5. Pragmatic Simplicity (when to skip layers)
+5. Pragmatic Simplicity
 
-```
-FULL layers (UseCase + Repository) — when:
-- Complex business logic (Makhraj, Payments, Lesson progress, Auth)
-- Multiple data sources (API + offline cache)
+TO'LIQ logika (Repository + controller logikasi) — qachon:
+- Lesson progress, Spaced Repetition, Auth, (kelajak) Makhraj
 
-SIMPLIFY — when:
-- Trivial CRUD/static screen (e.g. Settings)
-- UseCase would only forward to repository with no added logic
-  → provider may call repository directly
+SODDALASHTIRISH — qachon:
+- Oddiy statik ekran (Settings)
+- Controller to'g'ridan repository chaqiradi
 
-RULE: folder structure stays identical. Add complexity as needed, not upfront.
-```
+QOIDA: papka strukturasi bir xil qoladi. Murakkablik kerak bo'lganда qo'shiladi.
 
----
 
-## 6. Error Handling
+6. Error Handling (sodda)
 
-```
 typedef Result<T> = Either<Failure, T>;   // fpdart
 
-DataSource throws exception
-  → Repository catches, returns Either.left(Failure)
-  → UseCase returns Result<T>
-  → Provider folds Either → emits success or error state
-  → UI shows localized display_message (from API Contract)
+Repository Firebase/JSON xatosini ushlaydi
+  → Either.left(Failure) qaytaradi
+  → Controller folds → success yoki error state
+  → UI lokalizatsiya qilingan xabar ko'rsatadi
 
-Never propagate raw exceptions to UI.
-```
+Raw exception hech qachon UI'ga chiqmaydi.
+Failure turlari: FirebaseFailure, CacheFailure, ContentFailure
 
----
 
-## 7. Networking
+7. Data Manbalari (Networking O'RNIGA)
 
-```
-core/network/dio_client.dart — base config (baseUrl, timeouts, headers)
+Custom API / Dio / interceptors YO'Q.
 
-Interceptors (order matters):
-1. auth_interceptor      → Bearer token on private endpoints
-2. refresh_interceptor   → on 401: refresh with Mutex lock (one refresh at a time)
-3. error_interceptor     → map DioException → Failure
+Ma'lumot manbalari:
+1. Firebase Auth        → kirish, ro'yxat (Google Sign-In tayyor)
+2. Cloud Firestore      → user, progress, streak, SRS holati
+3. Statik JSON (assets) → so'z, ildiz, sahna, mavzu (tekin, offline)
+4. Qurilma TTS          → audio (flutter_tts / just_audio)
 
-Global rules implemented here:
-- Accept-Language header (uz/ru/en, fallback uz)
-- Idempotency-Key (UUID) for side-effecting POSTs
-- Log request_id from error bodies
-```
+Firestore collections:
+- users/{uid}           → profil, learningGoal, level, dailyGoal
+- user_progress/{uid}   → tugatilgan bloklar, streak
+- word_states/{uid}/... → spaced repetition holati
 
----
 
-## 8. Local Storage (Hive)
+8. Local Storage (Hive)
 
-```
 Uses:
-- JWT tokens → flutter_secure_storage (NOT Hive — security)
-- Offline lessons (content JSON + audio file paths) → Hive + file system
-- Guest onboarding state (Option B) → Hive
-- User progress cache → Hive
+- Onboarding/guest holati → Hive
+- User progress cache (offline) → Hive
+- Kontent JSON → assets ichida (Hive kerak emas, ilova ichida)
 
-Local Asset Mapping (CRITICAL):
-- Downloaded lesson JSON contains EXPIRED signed_urls
-- Offline: NEVER use signed_url from JSON
-- Use audio_file_id → look up local file path → play locally
-- If not found locally → fetch fresh GET /content/lessons/{id}
-```
+Eslatma: Audio fayllar — qurilma TTS generatsiya qiladi (oldindan yuklash shart emas).
+Signed URL / remote audio yo'q (serverless).
 
----
 
-## 9. Navigation (go_router)
+9. Navigation (go_router)
 
-```
 app/router/app_router.dart:
-- Declarative routes
-- Route guard: redirect to /login if no valid token on private routes
-- Guest routes (onboarding) accessible without token
-- Navigation decided by app state (e.g. learning_goal == null → onboarding)
-  NOTE: next_screen from API is a hint; client owns final navigation
-```
+- Declarative routes (AppRoutes constants)
+- Auth-based redirect: token yo'q → /welcome; onboarding tugamagan → /onboarding/goal
+- Guest routes (onboarding) token'siz ochiq
+- Navigatsiya app holatига qarab (learningGoal == null → onboarding)
 
----
 
-## 10. Testing Strategy
+10. Testing Strategy
 
-```
-- Unit tests: domain layer (usecases, entities) — pure, fast
-- Provider tests: ProviderContainer with overridden dependencies
-- Widget tests: critical screens (login, lesson, makhraj)
-- Integration: critical paths (onboarding → first lesson → login → sync)
+- Repository tests: fake Firebase / fake JSON
+- Provider tests: ProviderContainer override
+- Widget tests: kritik ekranlar (lesson bosqichlari, placement test)
+- Integration: onboarding → lesson → progress sync
 
-Riverpod makes this easy: override providers with fakes in tests.
-```
+Riverpod override orqali oson.
 
----
 
-## 11. Git Workflow
+11. Git Workflow
 
-```
-main      → stable only, PR-only
-develop   → main working branch
-feature/* → one per feature
+main      → barqaror, PR-only
+develop   → asosiy ishchi branch
+feature/* → har feature uchun
 
-Commit prefixes: feat: fix: refactor: docs: test:
-```
+Commit prefiks: feat: fix: refactor: docs: test:
+
+
+12. Compliance qatlami (MUHIM — secular boundary)
+
+core/content/secular_filter.dart — markazlashgan compliance.
+
+- Har content ko'rsatilishidan oldin filterdan o'tadi
+- Diniy element bo'lsa → bloklaydi/deflect
+- PRD Negative Test Cases bilan bog'liq
+- Audit: deflect loglanadi
+
+Bu bir joyda markazlashgan — har feature o'zi tekshirmaydi.
