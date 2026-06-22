@@ -276,171 +276,159 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
 
           // ── Layer 2: Main Welcome Interface ─────────────────────────────────────
           SafeArea(
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
-                    child: IntrinsicHeight(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          // ── Showcase Floating Cards Area ───────────────────────────────
-                          const Spacer(flex: 1),
-                          _CardsShowcaseContainer(
-                            card1Offset: _card1Offset,
-                            card2Offset: _card2Offset,
-                            card3Offset: _card3Offset,
-                            makhrajAccuracyProgress: _makhrajAccuracyProgress,
-                            todayScoreProgress: _todayScoreProgress,
-                          ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // ── Showcase Floating Cards Area ───────────────────────────────
+                const SizedBox(height: 16),
+                _CardsShowcaseContainer(
+                  card1Offset: _card1Offset,
+                  card2Offset: _card2Offset,
+                  card3Offset: _card3Offset,
+                  makhrajAccuracyProgress: _makhrajAccuracyProgress,
+                  todayScoreProgress: _todayScoreProgress,
+                ),
 
-                          // ── Middle Copy & Features Section ─────────────────────────────
-                          const Spacer(flex: 1),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Title heading
-                                AnimatedBuilder(
-                                  animation: _entranceCtrl,
-                                  builder: (context, _) {
-                                    return Opacity(
-                                      opacity: _titleOpacity.value,
-                                      child: Transform.translate(
-                                        offset: Offset(0, _titleSlide.value),
-                                        child: const Text(
-                                          'Arab tilini oson o\'rganing!\n🌟 هيا نتعلم',
-                                          style: TextStyle(
-                                            fontFamily: 'Geist',
-                                            fontSize: 26,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textPrimary,
-                                            letterSpacing: -0.5,
-                                            height: 1.25,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
+                // ── Middle Copy & Features Section ─────────────────────────────
+                const Spacer(flex: 2),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Title heading
+                      AnimatedBuilder(
+                        animation: _entranceCtrl,
+                        builder: (context, _) {
+                          return Opacity(
+                            opacity: _titleOpacity.value,
+                            child: Transform.translate(
+                              offset: Offset(0, _titleSlide.value),
+                              child: const Text(
+                                'Arab tili biz bilan osonroq! \n هيا نتعلم',
+                                style: TextStyle(
+                                  fontFamily: 'Geist',
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.textPrimary,
+                                  letterSpacing: -0.5,
+                                  height: 1.25,
                                 ),
-                                const SizedBox(height: 24),
-
-                                // Features List (slide in horizontally)
-                                _AnimatedFeatureItem(
-                                  opacity: _feature1Opacity,
-                                  slide: _feature1Slide,
-                                  icon: Icons.mic_rounded,
-                                  iconColor: AppColors.emeraldLight,
-                                  iconBg: const Color(0x261D9E75),
-                                  iconBorder: const Color(0x401D9E75),
-                                  title: 'Maxrajni SI bilan tekshirish ',
-                                  subtitle: 'Talaffuzingiz to\'g\'riligini baholaymiz!',
-                                ),
-                                const SizedBox(height: 12),
-                                _AnimatedFeatureItem(
-                                  opacity: _feature2Opacity,
-                                  slide: _feature2Slide,
-                                  icon: Icons.local_fire_department_rounded,
-                                  iconColor: AppColors.goldLight,
-                                  iconBg: const Color(0x26BA7517),
-                                  iconBorder: const Color(0x40BA7517),
-                                  title: 'O\'zaro bog\'liq O\'zbek-Arab so\'zlari ',
-                                  subtitle: 'Umumiy so\'zlar orqali 2x tez o\'rganing!',
-                                ),
-                                const SizedBox(height: 12),
-                                _AnimatedFeatureItem(
-                                  opacity: _feature3Opacity,
-                                  slide: _feature3Slide,
-                                  icon: Icons.emoji_events_rounded,
-                                  iconColor: AppColors.violetLight,
-                                  iconBg: const Color(0x26533AB7),
-                                  iconBorder: const Color(0x40533AB7),
-                                  title: 'Interaktiv o\'rganish metodikasi',
-                                  subtitle: 'XP yig\'ing va peshqadam bo\'ling! ممتاز',
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
-
-                          // ── Bottom Action Button Section ────────────────────────────────
-                          const Spacer(flex: 1),
-                          Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                // Get Started Button
-                                AnimatedBuilder(
-                                  animation: _entranceCtrl,
-                                  builder: (context, _) {
-                                    return Opacity(
-                                      opacity: _buttonOpacity.value,
-                                      child: Transform.translate(
-                                        offset: Offset(0, _buttonSlide.value),
-                                        child: _GetStartedButton(
-                                          onPressed: () => context.go(AppRoutes.goalSelection),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 12),
-
-                                // Google Sign-In Button
-                                AnimatedBuilder(
-                                  animation: _entranceCtrl,
-                                  builder: (context, _) {
-                                    return Opacity(
-                                      opacity: _footerOpacity.value,
-                                      child: Transform.translate(
-                                        offset: Offset(0, _footerSlide.value),
-                                        child: ElevatedButton(
-                                          onPressed: () {
-                                            ref.read(authControllerProvider.notifier).signInWithGoogle();
-                                          },
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor: Colors.white.withValues(alpha: 0.1),
-                                            foregroundColor: Colors.white,
-                                            padding: const EdgeInsets.symmetric(vertical: 18),
-                                            elevation: 0,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius: BorderRadius.circular(16),
-                                              side: BorderSide(color: Colors.white.withValues(alpha: 0.2)),
-                                            ),
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              const Icon(Icons.g_mobiledata_rounded, size: 28),
-                                              const SizedBox(width: 8),
-                                              const Text(
-                                                'Google orqali tizimga kirish',
-                                                style: TextStyle(
-                                                  fontFamily: 'Geist',
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w600,
-                                                  letterSpacing: -0.2,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                                const SizedBox(height: 16),
-                              ],
-                            ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
+                      const SizedBox(height: 20),
+
+                      // Features List (slide in horizontally)
+                      _AnimatedFeatureItem(
+                        opacity: _feature1Opacity,
+                        slide: _feature1Slide,
+                        icon: Icons.mic_rounded,
+                        iconColor: AppColors.emeraldLight,
+                        iconBg: const Color(0x261D9E75),
+                        iconBorder: const Color(0x401D9E75),
+                        title: 'Maxrajni SI bilan tekshirish ',
+                        subtitle: 'Talaffuzingiz to\'g\'riligini baholaymiz!',
+                      ),
+                      const SizedBox(height: 10),
+                      _AnimatedFeatureItem(
+                        opacity: _feature2Opacity,
+                        slide: _feature2Slide,
+                        icon: Icons.local_fire_department_rounded,
+                        iconColor: AppColors.goldLight,
+                        iconBg: const Color(0x26BA7517),
+                        iconBorder: const Color(0x40BA7517),
+                        title: 'O\'zaro bog\'liq O\'zbek-Arab so\'zlari ',
+                        subtitle: 'Umumiy so\'zlar orqali 2x tez o\'rganing!',
+                      ),
+                      const SizedBox(height: 10),
+                      _AnimatedFeatureItem(
+                        opacity: _feature3Opacity,
+                        slide: _feature3Slide,
+                        icon: Icons.emoji_events_rounded,
+                        iconColor: AppColors.violetLight,
+                        iconBg: const Color(0x26533AB7),
+                        iconBorder: const Color(0x40533AB7),
+                        title: 'Interaktiv o\'rganish metodikasi',
+                        subtitle: 'XP yig\'ing va peshqadam bo\'ling! ممتاز',
+                      ),
+                    ],
                   ),
-                );
-              },
+                ),
+
+                // ── Bottom Action Button Section ────────────────────────────────
+                const Spacer(flex: 3),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      // Get Started Button
+                      AnimatedBuilder(
+                        animation: _entranceCtrl,
+                        builder: (context, _) {
+                          return Opacity(
+                            opacity: _buttonOpacity.value,
+                            child: Transform.translate(
+                              offset: Offset(0, _buttonSlide.value),
+                              child: _GetStartedButton(
+                                onPressed: () => context.go(AppRoutes.goalSelection),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 8),
+
+                      // Simple Login Text Button
+                      AnimatedBuilder(
+                        animation: _entranceCtrl,
+                        builder: (context, _) {
+                          return Opacity(
+                            opacity: _footerOpacity.value,
+                            child: Transform.translate(
+                              offset: Offset(0, _footerSlide.value),
+                              child: TextButton(
+                                onPressed: () {
+                                  context.push(AppRoutes.login);
+                                },
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  foregroundColor: const Color(0xFFE8EEF4),
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                ),
+                                child: RichText(
+                                  text: const TextSpan(
+                                    style: TextStyle(
+                                      fontFamily: 'Geist',
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w400,
+                                      color: Color(0xFF8FA4B8),
+                                    ),
+                                    children: [
+                                      TextSpan(text: "Allaqachon ro'yhatdan o'tganmisiz? "),
+                                      TextSpan(
+                                        text: "Kirish",
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.emerald,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -861,7 +849,7 @@ class _TodayScoreCard extends StatelessWidget {
 
           // Score text
           Text(
-            'Bugungi Natija 🏆',
+            'Bugungi Natija',
             style: TextStyle(
               fontFamily: 'Geist',
               fontSize: 13,
@@ -873,7 +861,7 @@ class _TodayScoreCard extends StatelessWidget {
 
           // Streak text
           const Text(
-            '🔥 7 kunlik seriya',
+            ' 7 kunlik seriya',
             style: TextStyle(
               fontFamily: 'Geist',
               fontSize: 11,
@@ -985,7 +973,7 @@ class _UzbekLearnersCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'O\'zbek o\'quvchilari 🇺🇿',
+                  'O\'quvchilar o\'rganmoqda ',
                   style: TextStyle(
                     fontFamily: 'Geist',
                     fontSize: 11.5,
@@ -1148,8 +1136,8 @@ class _GetStartedButton extends StatelessWidget {
                         style: TextStyle(
                           fontFamily: 'Geist',
                           fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF0B1218),
                         ),
                       ),
                     ],

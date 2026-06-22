@@ -1,0 +1,92 @@
+{
+  "id": "T-01",
+  "title": "Aeroport",
+  "titleUz": "Aeroport va pasport nazorati",
+  "phase": "arrival",
+  "icon": "plane-departure",
+  "isFree": true,
+  "words": [
+    {
+      "id": "w-safar",
+      "uzbekCognate": "safar",
+      "uzbekMeaning": "sayohat, yo'l",
+      "arabic": "سَفَر",
+      "transliteration": "safar",
+      "stressSyllable": 1,
+      "root": {
+        "letters": ["س", "ف", "ر"],
+        "meaning": "sayohat"
+      },
+      "family": [
+        {
+          "arabic": "سَفَر",
+          "transliteration": "safar",
+          "meaning": "sayohat",
+          "isKnownInUzbek": true
+        },
+        {
+          "arabic": "مُسَافِر",
+          "transliteration": "musofir",
+          "meaning": "yo'lovchi",
+          "isKnownInUzbek": true
+        },
+        {
+          "arabic": "سَافَرَ",
+          "transliteration": "safara",
+          "meaning": "u sayohat qildi",
+          "isKnownInUzbek": false
+        },
+        {
+          "arabic": "سَفَرِيَّة",
+          "transliteration": "safariyya",
+          "meaning": "sayohatga oid",
+          "isKnownInUzbek": false
+        }
+      ],
+      "listenOptions": [
+        {
+          "arabic": "سَفَر",
+          "meaning": "sayohat",
+          "isCorrect": true
+        },
+        {
+          "arabic": "سَمَك",
+          "meaning": "baliq",
+          "isCorrect": false
+        },
+        {
+          "arabic": "سُكَّر",
+          "meaning": "shakar",
+          "isCorrect": false
+        }
+      ],
+      "sentence": {
+        "promptUz": "\"Men musofirman\" deb ayting",
+        "correctOrder": ["أنا", "مُسَافِر"],
+        "wordBank": [
+          { "arabic": "أنا", "meaning": "men" },
+          { "arabic": "مُسَافِر", "meaning": "musofir" },
+          { "arabic": "سَمَك", "meaning": "baliq" }
+        ]
+      },
+      "scenario": {
+        "locationUz": "Jidda aeroporti. Xodim sizdan sayohat maqsadingizni so'raydi.",
+        "npcRole": "Pasport nazorati xodimi",
+        "npcQuestionArabic": "ما هو سبب سفرك؟",
+        "npcQuestionUz": "Safaringiz sababi nima?",
+        "options": [
+          {
+            "arabic": "سَفَر سِياحي",
+            "meaning": "sayohat safari",
+            "isCorrect": true
+          },
+          {
+            "arabic": "سَمَك طازج",
+            "meaning": "yangi baliq",
+            "isCorrect": false
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -9,6 +9,8 @@ import '../../features/onboarding/presentation/pages/daily_goal_selection_page.d
 import '../../features/onboarding/presentation/pages/path_selection_page.dart';
 import '../../features/placement_test/screens/placement_test_screen.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/lesson/lesson_screen.dart';
+import '../../features/lesson/lesson_agenda_page.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/otp_page.dart';
@@ -177,6 +179,22 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: '/agenda/:id',
+        name: 'agenda',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? 'T-01';
+          return LessonAgendaPage(id: id);
+        },
+      ),
+      GoRoute(
+        path: AppRoutes.lesson,
+        name: 'lesson',
+        builder: (context, state) {
+          final id = state.pathParameters['id'] ?? 'T-01';
+          return LessonScreen(id: id);
+        },
       ),
     ],
   );

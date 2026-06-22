@@ -127,7 +127,9 @@ class HomePage extends StatelessWidget {
 
   Widget _buildMainCourseCard(BuildContext context, CourseData data) {
     return InkWell(
-      onTap: () => _showTopToast(context, "Tez kunda (قريباً)"),
+      onTap: () {
+        context.push('/agenda/T-01');
+      },
       borderRadius: BorderRadius.circular(24),
       child: Container(
         padding: const EdgeInsets.all(24),

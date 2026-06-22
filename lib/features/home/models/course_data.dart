@@ -35,7 +35,7 @@ class CourseData {
 
 // Dummy data adapted for Arabic Learning (Tutor Style)
 const mockCourseData = CourseData(
-  title: "Arab Tili\n1-Bosqich (مستوى ١)",
+  title: "Arab tili demo dars",
   subtitle: "Alifbo va asosiy grammatikani o'rganing (100XP)",
   totalUsers: "15.2k",
   totalDuration: "12s 45d",

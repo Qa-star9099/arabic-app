@@ -45,7 +45,7 @@ abstract final class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.emerald,
-          foregroundColor: AppColors.textPrimary,
+          foregroundColor: const Color(0xFF0B1218), // Deep dark color for high contrast on green
           minimumSize: const Size(double.infinity, 54),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           textStyle: AppTypography.button,

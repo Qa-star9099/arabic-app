@@ -18,8 +18,6 @@ dependencies:
   go_router: ^14.2.7
 
   # ── Networking ───────────────────────────────────────────────────────────
-  dio: ^5.4.3+1
-  pretty_dio_logger: ^1.4.0
 
   # ── Serialization ────────────────────────────────────────────────────────
   freezed_annotation: ^2.4.1
@@ -66,6 +64,10 @@ dependencies:
   font_awesome_flutter: ^11.0.0
   firebase_auth: ^5.7.0
   cloud_firestore: ^5.6.12
+  cloud_functions: ^5.6.2
+  flutter_tts: ^4.2.0
+  speech_to_text: ^6.6.0
+  app_settings: ^7.0.0
 
 dev_dependencies:
   flutter_test:
@@ -95,26 +97,29 @@ flutter:
     - assets/icons/
     - assets/lottie/
     - assets/audio/
+    - assets/fonts/
+    - assets/content/
+    - assets/content/topics/
 
-#  fonts:
-#    # Geist — UI font (Latin)
-#    - family: Geist
-#      fonts:
-#        - asset: assets/fonts/Geist-Regular.ttf
-#          weight: 400
-#        - asset: assets/fonts/Geist-Medium.ttf
-#          weight: 500
-#        - asset: assets/fonts/Geist-SemiBold.ttf
-#          weight: 600
-#        - asset: assets/fonts/Geist-Bold.ttf
-#          weight: 700
-#
-#    # Noto Naskh Arabic — Arabic script
-#    - family: NotoNaskhArabic
-#      fonts:
-#        - asset: assets/fonts/NotoNaskhArabic-Regular.ttf
-#          weight: 400
-#        - asset: assets/fonts/NotoNaskhArabic-Medium.ttf
-#          weight: 500
-#        - asset: assets/fonts/NotoNaskhArabic-Bold.ttf
-#          weight: 700
+  fonts:
+    # Inter — UI font (Latin)
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/Inter-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Inter-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Inter-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Inter-Bold.ttf
+          weight: 700
+
+    # Noto Naskh Arabic — Arabic script
+    - family: NotoNaskhArabic
+      fonts:
+        - asset: assets/fonts/NotoNaskhArabic-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/NotoNaskhArabic-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/NotoNaskhArabic-Bold.ttf
+          weight: 700
