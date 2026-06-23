@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:arabcha/app/theme/app_colors.dart';
 import 'package:arabcha/app/theme/app_typography.dart';
 import 'package:arabcha/features/home/models/course_data.dart';
-import 'package:arabcha/app/router/app_router.dart';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,7 +13,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Switch to dark mode matching the rest of the app design
-    const bgColor = AppColors.background; 
+    const bgColor = AppColors.background;
     const textColor = AppColors.textPrimary;
 
     return Scaffold(
@@ -24,12 +23,16 @@ class HomePage extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.restart_alt_rounded, color: Colors.white, size: 20),
+          icon: const Icon(Icons.restart_alt_rounded,
+              color: Colors.white, size: 20),
           onPressed: () async {
             // FOR TESTING ONLY: Reset onboarding state
             final uid = FirebaseAuth.instance.currentUser?.uid;
             if (uid != null) {
-              await FirebaseFirestore.instance.collection('users').doc(uid).update({
+              await FirebaseFirestore.instance
+                  .collection('users')
+                  .doc(uid)
+                  .update({
                 'learningGoal': FieldValue.delete(),
                 'level': FieldValue.delete(),
               });
@@ -39,7 +42,8 @@ class HomePage extends StatelessWidget {
         ),
         title: Text(
           'Kurs Tafsilotlari',
-          style: AppTypography.heading2.copyWith(color: textColor, fontWeight: FontWeight.bold),
+          style: AppTypography.heading2
+              .copyWith(color: textColor, fontWeight: FontWeight.bold),
         ),
         actions: [
           Padding(
@@ -49,7 +53,8 @@ class HomePage extends StatelessWidget {
                 onTap: () => _showTopToast(context, "Tez kunda (قريباً)"),
                 borderRadius: BorderRadius.circular(20),
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppColors.goldLight.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -57,11 +62,13 @@ class HomePage extends StatelessWidget {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.diamond_rounded, color: AppColors.gold, size: 16),
+                      const Icon(Icons.diamond_rounded,
+                          color: AppColors.gold, size: 16),
                       const SizedBox(width: 4),
                       Text(
                         '10k',
-                        style: AppTypography.label.copyWith(color: AppColors.gold, fontWeight: FontWeight.bold),
+                        style: AppTypography.label.copyWith(
+                            color: AppColors.gold, fontWeight: FontWeight.bold),
                       ),
                     ],
                   ),
@@ -84,19 +91,22 @@ class HomePage extends StatelessWidget {
               children: [
                 Text(
                   'Boblar',
-                  style: AppTypography.heading2.copyWith(color: textColor, fontWeight: FontWeight.bold),
+                  style: AppTypography.heading2
+                      .copyWith(color: textColor, fontWeight: FontWeight.bold),
                 ),
                 InkWell(
                   onTap: () => _showTopToast(context, "Tez kunda (قريباً)"),
                   child: Text(
                     'Barchasi >',
-                    style: AppTypography.bodySmall.copyWith(color: AppColors.emerald, fontWeight: FontWeight.w600),
+                    style: AppTypography.bodySmall.copyWith(
+                        color: AppColors.emerald, fontWeight: FontWeight.w600),
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
-            ...mockCourseData.chapters.map((chapter) => _buildChapterCard(context, chapter, textColor)),
+            ...mockCourseData.chapters.map(
+                (chapter) => _buildChapterCard(context, chapter, textColor)),
           ],
         ),
       ),
@@ -109,7 +119,8 @@ class HomePage extends StatelessWidget {
       SnackBar(
         content: Text(
           message,
-          style: AppTypography.bodySmall.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
+          style: AppTypography.bodySmall
+              .copyWith(color: Colors.white, fontWeight: FontWeight.bold),
           textAlign: TextAlign.center,
         ),
         backgroundColor: AppColors.emerald,
@@ -155,7 +166,8 @@ class HomePage extends StatelessWidget {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(Icons.circle, size: 6, color: AppColors.emeraldLight),
+                const Icon(Icons.circle,
+                    size: 6, color: AppColors.emeraldLight),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
@@ -172,9 +184,12 @@ class HomePage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _buildStatPill(Icons.people_alt_rounded, data.totalUsers, AppColors.emeraldLight),
-                _buildStatPill(Icons.access_time_rounded, data.totalDuration, AppColors.violetLight),
-                _buildStatPill(Icons.star_rounded, data.rating, AppColors.goldLight),
+                _buildStatPill(Icons.people_alt_rounded, data.totalUsers,
+                    AppColors.emeraldLight),
+                _buildStatPill(Icons.access_time_rounded, data.totalDuration,
+                    AppColors.violetLight),
+                _buildStatPill(
+                    Icons.star_rounded, data.rating, AppColors.goldLight),
               ],
             )
           ],
@@ -207,7 +222,8 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  Widget _buildChapterCard(BuildContext context, CourseChapter chapter, Color textColor) {
+  Widget _buildChapterCard(
+      BuildContext context, CourseChapter chapter, Color textColor) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16.0),
       child: InkWell(
@@ -259,7 +275,8 @@ class HomePage extends StatelessWidget {
                       runSpacing: 4,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Icon(Icons.access_time_rounded, size: 14, color: chapter.accentColor),
+                        Icon(Icons.access_time_rounded,
+                            size: 14, color: chapter.accentColor),
                         Text(
                           chapter.duration,
                           style: AppTypography.bodySmall.copyWith(
@@ -268,7 +285,8 @@ class HomePage extends StatelessWidget {
                           ),
                         ),
                         const SizedBox(width: 8),
-                        Icon(Icons.library_books_rounded, size: 14, color: chapter.accentColor),
+                        Icon(Icons.library_books_rounded,
+                            size: 14, color: chapter.accentColor),
                         Text(
                           "${chapter.lessonCount} Dars",
                           style: AppTypography.bodySmall.copyWith(

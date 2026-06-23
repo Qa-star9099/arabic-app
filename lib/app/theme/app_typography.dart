@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'app_colors.dart';
 
-/// Typography tokens.
-/// UI font: Geist (loaded from assets).
-/// Arabic script: NotoNaskhArabic (loaded from assets).
+/// Typography tokens for the Arabcha design system.
+///
+/// UI font: Inter (loaded from assets/fonts/).
+/// Arabic script: NotoNaskhArabic (loaded from assets/fonts/).
+///
+/// Usage: `style: AppTypography.heading1` or `style: AppTypography.arabicHero`.
 abstract final class AppTypography {
   // ── Display ───────────────────────────────────────────────────────────────
   static const TextStyle display1 = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 32,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
@@ -16,7 +19,7 @@ abstract final class AppTypography {
   );
 
   static const TextStyle display2 = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 26,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
@@ -26,7 +29,7 @@ abstract final class AppTypography {
 
   // ── Headings ──────────────────────────────────────────────────────────────
   static const TextStyle heading1 = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 22,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
@@ -35,7 +38,7 @@ abstract final class AppTypography {
   );
 
   static const TextStyle heading2 = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 18,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
@@ -44,7 +47,7 @@ abstract final class AppTypography {
 
   // ── Body ──────────────────────────────────────────────────────────────────
   static const TextStyle bodyLarge = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 16,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
@@ -52,7 +55,7 @@ abstract final class AppTypography {
   );
 
   static const TextStyle body = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 14,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
@@ -60,7 +63,7 @@ abstract final class AppTypography {
   );
 
   static const TextStyle bodySmall = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 12,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
@@ -69,14 +72,14 @@ abstract final class AppTypography {
 
   // ── Labels / Captions ─────────────────────────────────────────────────────
   static const TextStyle label = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 13,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
   static const TextStyle labelSmall = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 11,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
@@ -84,7 +87,7 @@ abstract final class AppTypography {
   );
 
   static const TextStyle caption = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 10,
     fontWeight: FontWeight.w400,
     color: AppColors.textTertiary,
@@ -93,7 +96,7 @@ abstract final class AppTypography {
 
   // ── Button ────────────────────────────────────────────────────────────────
   static const TextStyle button = TextStyle(
-    fontFamily: 'Geist',
+    fontFamily: 'Inter',
     fontSize: 16,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,

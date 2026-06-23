@@ -3,8 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:arabcha/app/theme/app_colors.dart';
 import 'package:arabcha/app/theme/app_typography.dart';
-import 'package:arabcha/data/models/lesson_models.dart';
-import 'package:arabcha/data/repositories/content_repository.dart';
+
 import 'package:arabcha/features/lesson/steps/recognize_step.dart';
 import 'package:arabcha/features/lesson/steps/reveal_step.dart';
 import 'package:arabcha/features/lesson/steps/expand_step.dart';
@@ -50,8 +49,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // For testing, we just load T-01 regardless of the passed id.
-    final topicAsync = ref.watch(topicProvider('T-01'));
+    final topicAsync = ref.watch(topicProvider(widget.id));
 
     return Scaffold(
       backgroundColor: const Color(0xFF0B1218),
@@ -61,7 +59,8 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
           final currentWord = topic.words.first;
           return PageView(
             controller: _pageController,
-            physics: const NeverScrollableScrollPhysics(), // Only move on button tap
+            physics:
+                const NeverScrollableScrollPhysics(), // Only move on button tap
             children: [
               RecognizeStep(
                 topic: topic,
@@ -91,19 +90,21 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
                 topic: topic,
                 word: currentWord,
                 onNext: () {
-                   ScaffoldMessenger.of(context).showSnackBar(
-                     SnackBar(
-                       content: const Text(
-                         "Step 6 (Read) - coming next",
-                         style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-                         textAlign: TextAlign.center,
-                       ),
-                       backgroundColor: const Color(0xFF3DD68C),
-                       behavior: SnackBarBehavior.floating,
-                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                       duration: const Duration(seconds: 2),
-                     ),
-                   );
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text(
+                        "Step 6 (Combine) - soon",
+                        style: TextStyle(
+                            color: Colors.white, fontWeight: FontWeight.bold),
+                        textAlign: TextAlign.center,
+                      ),
+                      backgroundColor: const Color(0xFF3DD68C),
+                      behavior: SnackBarBehavior.floating,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      duration: const Duration(seconds: 2),
+                    ),
+                  );
                 },
                 onBack: _prevPage,
               ),
@@ -115,7 +116,7 @@ class _LessonScreenState extends ConsumerState<LessonScreen> {
         ),
         error: (err, stack) => Center(
           child: Text(
-            'Error: \$err',
+            'Error: $err',
             style: AppTypography.bodyLarge.copyWith(color: AppColors.error),
             textAlign: TextAlign.center,
           ),

@@ -57,7 +57,7 @@ const _taglineColors = [
 // ═════════════════════════════════════════════════════════════════════════════
 class LevelSelectionPage extends StatefulWidget {
   const LevelSelectionPage({super.key, required this.selectedGoal});
-  
+
   final String selectedGoal;
 
   @override
@@ -287,7 +287,8 @@ class _LevelSelectionPageState extends State<LevelSelectionPage>
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: _StartButton(
                       onPressed: () {
-                        final selectedLevelTitle = _levels[_selectedLevel].title;
+                        final selectedLevelTitle =
+                            _levels[_selectedLevel].title;
                         context.go(AppRoutes.dailyGoalSelection, extra: {
                           'goal': widget.selectedGoal,
                           'level': selectedLevelTitle,
@@ -589,8 +590,8 @@ class _HeroSection extends StatelessWidget {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: AppColors.emerald
-                        .withValues(alpha: ring1Opacity.value),
+                    color:
+                        AppColors.emerald.withValues(alpha: ring1Opacity.value),
                     width: 2,
                   ),
                   boxShadow: [
@@ -655,7 +656,8 @@ class _HeroSection extends StatelessWidget {
               duration: const Duration(milliseconds: 250),
               opacity: taglineVisible ? 1.0 : 0.0,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                 decoration: BoxDecoration(
                   color: taglineColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),

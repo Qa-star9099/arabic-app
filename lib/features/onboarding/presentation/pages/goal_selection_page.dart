@@ -284,7 +284,8 @@ class _GoalSelectionPageState extends State<GoalSelectionPage>
                     child: _StartButton(
                       onPressed: () {
                         final selectedGoalTitle = _goals[_selectedGoal].title;
-                        context.go(AppRoutes.levelSelection, extra: selectedGoalTitle);
+                        context.go(AppRoutes.levelSelection,
+                            extra: selectedGoalTitle);
                       },
                     ),
                   ),
@@ -795,6 +796,7 @@ class _GoalCardState extends State<_GoalCard>
     _scaleCtrl.forward();
     widget.onTap();
   }
+
   void _onTapCancel() => _scaleCtrl.forward();
 
   @override
@@ -818,7 +820,9 @@ class _GoalCardState extends State<_GoalCard>
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(14),
-            color: sel ? g.accentColor.withValues(alpha: 0.08) : Colors.transparent,
+            color: sel
+                ? g.accentColor.withValues(alpha: 0.08)
+                : Colors.transparent,
             border: Border.all(
               color: sel
                   ? g.accentColor.withValues(alpha: 0.5)

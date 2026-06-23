@@ -10,7 +10,8 @@ import 'package:arabcha/app/router/app_router.dart';
 import 'package:arabcha/features/auth/controllers/auth_controller.dart';
 
 class PlacementTestScreen extends ConsumerWidget {
-  const PlacementTestScreen({super.key, this.selectedGoal, this.expectedLevel, this.dailyGoal});
+  const PlacementTestScreen(
+      {super.key, this.selectedGoal, this.expectedLevel, this.dailyGoal});
   final String? selectedGoal;
   final String? expectedLevel;
   final String? dailyGoal;
@@ -28,10 +29,9 @@ class PlacementTestScreen extends ConsumerWidget {
 
     if (state.isFinished) {
       return TestResultScreen(
-        score: _getScoreLevel(state.correctCount), 
-        selectedGoal: selectedGoal, 
-        dailyGoal: dailyGoal
-      );
+          score: _getScoreLevel(state.correctCount),
+          selectedGoal: selectedGoal,
+          dailyGoal: dailyGoal);
     }
 
     final progress = (state.currentIndex + 1) / state.questions.length;
@@ -75,7 +75,9 @@ class PlacementTestScreen extends ConsumerWidget {
               isSubmitted: state.isAnswerSubmitted,
               onTap: () {
                 if (!state.isAnswerSubmitted) {
-                  ref.read(placementTestControllerProvider.notifier).submitAnswer();
+                  ref
+                      .read(placementTestControllerProvider.notifier)
+                      .submitAnswer();
                 } else {
                   ref.read(placementTestControllerProvider.notifier).advance();
                 }
@@ -100,7 +102,9 @@ class PlacementTestScreen extends ConsumerWidget {
       case QuestionType.audioTest:
       case QuestionType.fillInBlank:
       case QuestionType.errorId:
-        return q.correctAnswerIndex != null ? q.options[q.correctAnswerIndex!] : '';
+        return q.correctAnswerIndex != null
+            ? q.options[q.correctAnswerIndex!]
+            : '';
       case QuestionType.matchPairs:
         return "Mos keladigan juftliklar";
       case QuestionType.sentenceScramble:
@@ -155,7 +159,10 @@ class _TopBar extends StatelessWidget {
 }
 
 class _QuestionBody extends ConsumerWidget {
-  const _QuestionBody({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  const _QuestionBody(
+      {required this.question,
+      required this.selectedAnswer,
+      required this.isSubmitted});
   final TestQuestion question;
   final Object? selectedAnswer;
   final bool isSubmitted;
@@ -182,14 +189,16 @@ class _QuestionBody extends ConsumerWidget {
                 height: 150,
                 width: 150,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => const Icon(Icons.image_not_supported_rounded, size: 80, color: Colors.white24),
+                errorBuilder: (_, __, ___) => const Icon(
+                    Icons.image_not_supported_rounded,
+                    size: 80,
+                    color: Colors.white24),
               ),
             ),
           ),
           const SizedBox(height: 32),
         ],
-        if (question.imageUrl == null)
-          const SizedBox(height: 8),
+        if (question.imageUrl == null) const SizedBox(height: 8),
         _buildQuestionWidget(),
       ],
     );
@@ -198,25 +207,49 @@ class _QuestionBody extends ConsumerWidget {
   Widget _buildQuestionWidget() {
     switch (question.type) {
       case QuestionType.multipleChoice:
-        return _MultipleChoiceWidget(question: question, selectedAnswer: selectedAnswer as int?, isSubmitted: isSubmitted);
+        return _MultipleChoiceWidget(
+            question: question,
+            selectedAnswer: selectedAnswer as int?,
+            isSubmitted: isSubmitted);
       case QuestionType.visualId:
-        return _MultipleChoiceWidget(question: question, selectedAnswer: selectedAnswer as int?, isSubmitted: isSubmitted);
+        return _MultipleChoiceWidget(
+            question: question,
+            selectedAnswer: selectedAnswer as int?,
+            isSubmitted: isSubmitted);
       case QuestionType.errorId:
-        return _MultipleChoiceWidget(question: question, selectedAnswer: selectedAnswer as int?, isSubmitted: isSubmitted);
+        return _MultipleChoiceWidget(
+            question: question,
+            selectedAnswer: selectedAnswer as int?,
+            isSubmitted: isSubmitted);
       case QuestionType.audioTest:
-        return _AudioTestWidget(question: question, selectedAnswer: selectedAnswer as int?, isSubmitted: isSubmitted);
+        return _AudioTestWidget(
+            question: question,
+            selectedAnswer: selectedAnswer as int?,
+            isSubmitted: isSubmitted);
       case QuestionType.matchPairs:
-        return _MatchPairsWidget(question: question, selectedAnswer: selectedAnswer as Map<String, String>?, isSubmitted: isSubmitted);
+        return _MatchPairsWidget(
+            question: question,
+            selectedAnswer: selectedAnswer as Map<String, String>?,
+            isSubmitted: isSubmitted);
       case QuestionType.fillInBlank:
-        return _FillInBlankWidget(question: question, selectedAnswer: selectedAnswer as int?, isSubmitted: isSubmitted);
+        return _FillInBlankWidget(
+            question: question,
+            selectedAnswer: selectedAnswer as int?,
+            isSubmitted: isSubmitted);
       case QuestionType.sentenceScramble:
-        return _SentenceScrambleWidget(question: question, selectedAnswer: selectedAnswer as List<String>?, isSubmitted: isSubmitted);
+        return _SentenceScrambleWidget(
+            question: question,
+            selectedAnswer: selectedAnswer as List<String>?,
+            isSubmitted: isSubmitted);
     }
   }
 }
 
 class _MultipleChoiceWidget extends ConsumerWidget {
-  const _MultipleChoiceWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  const _MultipleChoiceWidget(
+      {required this.question,
+      required this.selectedAnswer,
+      required this.isSubmitted});
   final TestQuestion question;
   final int? selectedAnswer;
   final bool isSubmitted;
@@ -233,8 +266,10 @@ class _MultipleChoiceWidget extends ConsumerWidget {
           alignment: WrapAlignment.center,
           children: List.generate(question.options.length, (index) {
             final isSelected = selectedAnswer == index;
-            final isCorrectOption = index == question.correctAnswerIndex || (question.type == QuestionType.errorId && index == question.errorWordIndex);
-            
+            final isCorrectOption = index == question.correctAnswerIndex ||
+                (question.type == QuestionType.errorId &&
+                    index == question.errorWordIndex);
+
             Color bgColor = const Color(0xFF1E293B);
             Color borderColor = Colors.white10;
 
@@ -254,23 +289,36 @@ class _MultipleChoiceWidget extends ConsumerWidget {
             }
 
             return InkWell(
-              onTap: isSubmitted ? null : () => ref.read(placementTestControllerProvider.notifier).selectAnswer(index),
+              onTap: isSubmitted
+                  ? null
+                  : () => ref
+                      .read(placementTestControllerProvider.notifier)
+                      .selectAnswer(index),
               borderRadius: BorderRadius.circular(16),
               child: Container(
-                constraints: BoxConstraints(minWidth: question.options.length > 2 ? 140 : double.infinity),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                constraints: BoxConstraints(
+                    minWidth:
+                        question.options.length > 2 ? 140 : double.infinity),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: borderColor, width: 2),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 4))],
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 4))
+                  ],
                 ),
                 child: Text(
                   question.options[index],
                   textAlign: TextAlign.center,
                   style: AppTypography.heading2.copyWith(
                     color: Colors.white,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
@@ -283,7 +331,10 @@ class _MultipleChoiceWidget extends ConsumerWidget {
 }
 
 class _AudioTestWidget extends ConsumerStatefulWidget {
-  const _AudioTestWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  const _AudioTestWidget(
+      {required this.question,
+      required this.selectedAnswer,
+      required this.isSubmitted});
   final TestQuestion question;
   final int? selectedAnswer;
   final bool isSubmitted;
@@ -307,17 +358,21 @@ class _AudioTestWidgetState extends ConsumerState<_AudioTestWidget> {
     _audioPlayer.playerStateStream.listen((state) {
       if (mounted) {
         setState(() {
-          _isPlaying = state.playing && state.processingState != ProcessingState.completed;
-          _isLoading = state.processingState == ProcessingState.loading || state.processingState == ProcessingState.buffering;
+          _isPlaying = state.playing &&
+              state.processingState != ProcessingState.completed;
+          _isLoading = state.processingState == ProcessingState.loading ||
+              state.processingState == ProcessingState.buffering;
         });
       }
     });
-    
+
     try {
-      if (widget.question.audioUrl != null && widget.question.audioUrl!.startsWith('http')) {
+      if (widget.question.audioUrl != null &&
+          widget.question.audioUrl!.startsWith('http')) {
         await _audioPlayer.setUrl(widget.question.audioUrl!);
       } else {
-        await _audioPlayer.setUrl('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
+        await _audioPlayer.setUrl(
+            'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3');
       }
     } catch (e) {
       debugPrint("Error loading audio: $e");
@@ -362,16 +417,16 @@ class _AudioTestWidgetState extends ConsumerState<_AudioTestWidget> {
               color: AppColors.emerald.withValues(alpha: 0.2),
               shape: BoxShape.circle,
             ),
-            child: _isLoading 
+            child: _isLoading
                 ? const Padding(
                     padding: EdgeInsets.all(24.0),
-                    child: CircularProgressIndicator(color: AppColors.emerald, strokeWidth: 3),
+                    child: CircularProgressIndicator(
+                        color: AppColors.emerald, strokeWidth: 3),
                   )
                 : Icon(
-                    _isPlaying ? Icons.pause_rounded : Icons.volume_up_rounded, 
-                    color: AppColors.emerald, 
-                    size: 40
-                  ),
+                    _isPlaying ? Icons.pause_rounded : Icons.volume_up_rounded,
+                    color: AppColors.emerald,
+                    size: 40),
           ),
         ),
         const SizedBox(height: 40),
@@ -382,7 +437,7 @@ class _AudioTestWidgetState extends ConsumerState<_AudioTestWidget> {
           children: List.generate(widget.question.options.length, (index) {
             final isSelected = widget.selectedAnswer == index;
             final isCorrectOption = index == widget.question.correctAnswerIndex;
-            
+
             Color bgColor = const Color(0xFF1E293B);
             Color borderColor = Colors.white10;
 
@@ -402,23 +457,37 @@ class _AudioTestWidgetState extends ConsumerState<_AudioTestWidget> {
             }
 
             return InkWell(
-              onTap: widget.isSubmitted ? null : () => ref.read(placementTestControllerProvider.notifier).selectAnswer(index),
+              onTap: widget.isSubmitted
+                  ? null
+                  : () => ref
+                      .read(placementTestControllerProvider.notifier)
+                      .selectAnswer(index),
               borderRadius: BorderRadius.circular(16),
               child: Container(
-                constraints: BoxConstraints(minWidth: widget.question.options.length > 2 ? 140 : double.infinity),
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+                constraints: BoxConstraints(
+                    minWidth: widget.question.options.length > 2
+                        ? 140
+                        : double.infinity),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
                 decoration: BoxDecoration(
                   color: bgColor,
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: borderColor, width: 2),
-                  boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4, offset: Offset(0, 4))],
+                  boxShadow: const [
+                    BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 4,
+                        offset: Offset(0, 4))
+                  ],
                 ),
                 child: Text(
                   widget.question.options[index],
                   textAlign: TextAlign.center,
                   style: AppTypography.heading2.copyWith(
                     color: Colors.white,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
                 ),
               ),
@@ -431,7 +500,10 @@ class _AudioTestWidgetState extends ConsumerState<_AudioTestWidget> {
 }
 
 class _MatchPairsWidget extends ConsumerStatefulWidget {
-  const _MatchPairsWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  const _MatchPairsWidget(
+      {required this.question,
+      required this.selectedAnswer,
+      required this.isSubmitted});
   final TestQuestion question;
   final Map<String, String>? selectedAnswer;
   final bool isSubmitted;
@@ -474,9 +546,11 @@ class _MatchPairsWidgetState extends ConsumerState<_MatchPairsWidget> {
       matched[selectedLeft!] = selectedRight!;
       selectedLeft = null;
       selectedRight = null;
-      
+
       if (matched.length == widget.question.matchingPairs!.length) {
-        ref.read(placementTestControllerProvider.notifier).selectAnswer(matched);
+        ref
+            .read(placementTestControllerProvider.notifier)
+            .selectAnswer(matched);
       }
     }
   }
@@ -485,7 +559,7 @@ class _MatchPairsWidgetState extends ConsumerState<_MatchPairsWidget> {
   Widget build(BuildContext context) {
     final leftWords = widget.question.matchingPairs!.keys.toList();
     final rightWords = widget.question.matchingPairs!.values.toList();
-    rightWords.sort((a, b) => b.compareTo(a)); 
+    rightWords.sort((a, b) => b.compareTo(a));
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -494,31 +568,39 @@ class _MatchPairsWidgetState extends ConsumerState<_MatchPairsWidget> {
           child: Directionality(
             textDirection: TextDirection.rtl,
             child: Column(
-              children: leftWords.map((word) => _buildPairButton(
-                word: word,
-                isSelected: selectedLeft == word,
-                isMatched: matched.containsKey(word),
-                onTap: () => _onTapLeft(word),
-              )).toList(),
+              children: leftWords
+                  .map((word) => _buildPairButton(
+                        word: word,
+                        isSelected: selectedLeft == word,
+                        isMatched: matched.containsKey(word),
+                        onTap: () => _onTapLeft(word),
+                      ))
+                  .toList(),
             ),
           ),
         ),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
-            children: rightWords.map((word) => _buildPairButton(
-              word: word,
-              isSelected: selectedRight == word,
-              isMatched: matched.containsValue(word),
-              onTap: () => _onTapRight(word),
-            )).toList(),
+            children: rightWords
+                .map((word) => _buildPairButton(
+                      word: word,
+                      isSelected: selectedRight == word,
+                      isMatched: matched.containsValue(word),
+                      onTap: () => _onTapRight(word),
+                    ))
+                .toList(),
           ),
         ),
       ],
     );
   }
 
-  Widget _buildPairButton({required String word, required bool isSelected, required bool isMatched, required VoidCallback onTap}) {
+  Widget _buildPairButton(
+      {required String word,
+      required bool isSelected,
+      required bool isMatched,
+      required VoidCallback onTap}) {
     Color bgColor = const Color(0xFF1E293B);
     Color borderColor = Colors.white10;
 
@@ -544,7 +626,9 @@ class _MatchPairsWidgetState extends ConsumerState<_MatchPairsWidget> {
             borderRadius: BorderRadius.circular(12),
             border: Border.all(color: borderColor, width: 2),
           ),
-          child: Text(word, style: AppTypography.body.copyWith(color: isMatched ? Colors.white54 : Colors.white)),
+          child: Text(word,
+              style: AppTypography.body
+                  .copyWith(color: isMatched ? Colors.white54 : Colors.white)),
         ),
       ),
     );
@@ -552,7 +636,10 @@ class _MatchPairsWidgetState extends ConsumerState<_MatchPairsWidget> {
 }
 
 class _FillInBlankWidget extends ConsumerWidget {
-  const _FillInBlankWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  const _FillInBlankWidget(
+      {required this.question,
+      required this.selectedAnswer,
+      required this.isSubmitted});
   final TestQuestion question;
   final int? selectedAnswer;
   final bool isSubmitted;
@@ -561,7 +648,7 @@ class _FillInBlankWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     String firstPart = question.questionText.split('___').first;
     if (firstPart.contains(': ')) {
-        firstPart = firstPart.split(': ').last;
+      firstPart = firstPart.split(': ').last;
     }
     final lastPart = question.questionText.split('___').last;
 
@@ -593,18 +680,29 @@ class _FillInBlankWidget extends ConsumerWidget {
                       height: 40,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: selectedAnswer != null ? AppColors.emerald.withValues(alpha: 0.2) : Colors.white10,
+                        color: selectedAnswer != null
+                            ? AppColors.emerald.withValues(alpha: 0.2)
+                            : Colors.white10,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: selectedAnswer != null ? AppColors.emerald : Colors.white24, width: 2),
+                        border: Border.all(
+                            color: selectedAnswer != null
+                                ? AppColors.emerald
+                                : Colors.white24,
+                            width: 2),
                       ),
                       child: selectedAnswer != null
-                          ? Text(question.options[selectedAnswer!], style: AppTypography.body.copyWith(color: AppColors.emerald, fontWeight: FontWeight.bold))
+                          ? Text(question.options[selectedAnswer!],
+                              style: AppTypography.body.copyWith(
+                                  color: AppColors.emerald,
+                                  fontWeight: FontWeight.bold))
                           : null,
                     );
                   },
                   onAcceptWithDetails: (details) {
                     if (!isSubmitted) {
-                      ref.read(placementTestControllerProvider.notifier).selectAnswer(details.data);
+                      ref
+                          .read(placementTestControllerProvider.notifier)
+                          .selectAnswer(details.data);
                     }
                   },
                 ),
@@ -622,22 +720,27 @@ class _FillInBlankWidget extends ConsumerWidget {
           runSpacing: 12,
           alignment: WrapAlignment.center,
           children: List.generate(question.options.length, (index) {
-              final isSelected = selectedAnswer == index;
-              if (isSelected) return const SizedBox(width: 80, height: 40); 
-              return Draggable<int>(
-                data: index,
-                feedback: Material(
-                  color: Colors.transparent,
-                  child: _buildChip(question.options[index], isDragging: true),
-                ),
-                childWhenDragging: Opacity(opacity: 0.3, child: _buildChip(question.options[index])),
-                child: InkWell(
-                   onTap: isSubmitted ? null : () => ref.read(placementTestControllerProvider.notifier).selectAnswer(index),
-                   child: _buildChip(question.options[index]),
-                ),
-              );
-            }),
-          ),
+            final isSelected = selectedAnswer == index;
+            if (isSelected) return const SizedBox(width: 80, height: 40);
+            return Draggable<int>(
+              data: index,
+              feedback: Material(
+                color: Colors.transparent,
+                child: _buildChip(question.options[index], isDragging: true),
+              ),
+              childWhenDragging: Opacity(
+                  opacity: 0.3, child: _buildChip(question.options[index])),
+              child: InkWell(
+                onTap: isSubmitted
+                    ? null
+                    : () => ref
+                        .read(placementTestControllerProvider.notifier)
+                        .selectAnswer(index),
+                child: _buildChip(question.options[index]),
+              ),
+            );
+          }),
+        ),
       ],
     );
   }
@@ -648,24 +751,32 @@ class _FillInBlankWidget extends ConsumerWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF334155),
         borderRadius: BorderRadius.circular(12),
-        boxShadow: isDragging ? [const BoxShadow(color: Colors.black26, blurRadius: 10)] : null,
+        boxShadow: isDragging
+            ? [const BoxShadow(color: Colors.black26, blurRadius: 10)]
+            : null,
       ),
-      child: Text(text, style: AppTypography.body.copyWith(color: Colors.white)),
+      child:
+          Text(text, style: AppTypography.body.copyWith(color: Colors.white)),
     );
   }
 }
 
 class _SentenceScrambleWidget extends ConsumerStatefulWidget {
-  const _SentenceScrambleWidget({required this.question, required this.selectedAnswer, required this.isSubmitted});
+  const _SentenceScrambleWidget(
+      {required this.question,
+      required this.selectedAnswer,
+      required this.isSubmitted});
   final TestQuestion question;
   final List<String>? selectedAnswer;
   final bool isSubmitted;
 
   @override
-  ConsumerState<_SentenceScrambleWidget> createState() => _SentenceScrambleWidgetState();
+  ConsumerState<_SentenceScrambleWidget> createState() =>
+      _SentenceScrambleWidgetState();
 }
 
-class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget> {
+class _SentenceScrambleWidgetState
+    extends ConsumerState<_SentenceScrambleWidget> {
   List<String> _assembled = [];
   List<String> _available = [];
 
@@ -674,7 +785,9 @@ class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget
     super.initState();
     if (widget.selectedAnswer != null) {
       _assembled = List.from(widget.selectedAnswer!);
-      _available = widget.question.scrambledWords!.where((w) => !_assembled.contains(w)).toList();
+      _available = widget.question.scrambledWords!
+          .where((w) => !_assembled.contains(w))
+          .toList();
     } else {
       _available = List.from(widget.question.scrambledWords!);
     }
@@ -685,7 +798,9 @@ class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget
     setState(() {
       _available.remove(word);
       _assembled.add(word);
-      ref.read(placementTestControllerProvider.notifier).selectAnswer(_assembled.isNotEmpty ? _assembled : null);
+      ref
+          .read(placementTestControllerProvider.notifier)
+          .selectAnswer(_assembled.isNotEmpty ? _assembled : null);
     });
   }
 
@@ -694,7 +809,9 @@ class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget
     setState(() {
       _assembled.remove(word);
       _available.add(word);
-      ref.read(placementTestControllerProvider.notifier).selectAnswer(_assembled.isNotEmpty ? _assembled : null);
+      ref
+          .read(placementTestControllerProvider.notifier)
+          .selectAnswer(_assembled.isNotEmpty ? _assembled : null);
     });
   }
 
@@ -717,10 +834,12 @@ class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget
               alignment: WrapAlignment.center,
               spacing: 8,
               runSpacing: 8,
-              children: _assembled.map((word) => InkWell(
-                onTap: () => _onTapAssembled(word),
-                child: _buildChip(word),
-              )).toList(),
+              children: _assembled
+                  .map((word) => InkWell(
+                        onTap: () => _onTapAssembled(word),
+                        child: _buildChip(word),
+                      ))
+                  .toList(),
             ),
           ),
         ),
@@ -731,10 +850,12 @@ class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget
             alignment: WrapAlignment.center,
             spacing: 8,
             runSpacing: 8,
-            children: _available.map((word) => InkWell(
-              onTap: () => _onTapAvailable(word),
-              child: _buildChip(word),
-            )).toList(),
+            children: _available
+                .map((word) => InkWell(
+                      onTap: () => _onTapAvailable(word),
+                      child: _buildChip(word),
+                    ))
+                .toList(),
           ),
         ),
       ],
@@ -748,13 +869,15 @@ class _SentenceScrambleWidgetState extends ConsumerState<_SentenceScrambleWidget
         color: const Color(0xFF334155),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(text, style: AppTypography.body.copyWith(color: Colors.white)),
+      child:
+          Text(text, style: AppTypography.body.copyWith(color: Colors.white)),
     );
   }
 }
 
 class _FeedbackBanner extends StatelessWidget {
-  const _FeedbackBanner({required this.isCorrect, required this.correctAnswerText});
+  const _FeedbackBanner(
+      {required this.isCorrect, required this.correctAnswerText});
   final bool isCorrect;
   final String correctAnswerText;
 
@@ -764,27 +887,39 @@ class _FeedbackBanner extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: isCorrect ? AppColors.emerald.withValues(alpha: 0.1) : AppColors.error.withValues(alpha: 0.1),
-        border: Border(top: BorderSide(color: isCorrect ? AppColors.emerald : AppColors.error, width: 2)),
+        color: isCorrect
+            ? AppColors.emerald.withValues(alpha: 0.1)
+            : AppColors.error.withValues(alpha: 0.1),
+        border: Border(
+            top: BorderSide(
+                color: isCorrect ? AppColors.emerald : AppColors.error,
+                width: 2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded, color: isCorrect ? AppColors.emerald : AppColors.error, size: 28),
+              Icon(
+                  isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                  color: isCorrect ? AppColors.emerald : AppColors.error,
+                  size: 28),
               const SizedBox(width: 12),
               Text(
                 isCorrect ? "Barakalla!" : "Noto'g'ri",
-                style: AppTypography.heading2.copyWith(color: isCorrect ? AppColors.emerald : AppColors.error, fontSize: 22),
+                style: AppTypography.heading2.copyWith(
+                    color: isCorrect ? AppColors.emerald : AppColors.error,
+                    fontSize: 22),
               ),
             ],
           ),
           if (!isCorrect) ...[
             const SizedBox(height: 12),
-            Text("To'g'ri javob:", style: AppTypography.body.copyWith(color: Colors.white70)),
+            Text("To'g'ri javob:",
+                style: AppTypography.body.copyWith(color: Colors.white70)),
             const SizedBox(height: 4),
-            Text(correctAnswerText, style: AppTypography.heading2.copyWith(color: AppColors.error)),
+            Text(correctAnswerText,
+                style: AppTypography.heading2.copyWith(color: AppColors.error)),
           ],
         ],
       ),
@@ -793,7 +928,10 @@ class _FeedbackBanner extends StatelessWidget {
 }
 
 class _BottomBar extends StatelessWidget {
-  const _BottomBar({required this.isAnswerSelected, required this.isSubmitted, required this.onTap});
+  const _BottomBar(
+      {required this.isAnswerSelected,
+      required this.isSubmitted,
+      required this.onTap});
   final bool isAnswerSelected;
   final bool isSubmitted;
   final VoidCallback onTap;
@@ -802,9 +940,11 @@ class _BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(24),
-      color: isSubmitted 
-        ? (isAnswerSelected ? AppColors.emerald.withValues(alpha: 0.05) : AppColors.error.withValues(alpha: 0.05))
-        : AppColors.background,
+      color: isSubmitted
+          ? (isAnswerSelected
+              ? AppColors.emerald.withValues(alpha: 0.05)
+              : AppColors.error.withValues(alpha: 0.05))
+          : AppColors.background,
       child: SafeArea(
         top: false,
         child: SizedBox(
@@ -813,13 +953,19 @@ class _BottomBar extends StatelessWidget {
           child: ElevatedButton(
             onPressed: isAnswerSelected || isSubmitted ? onTap : null,
             style: ElevatedButton.styleFrom(
-              backgroundColor: isSubmitted ? (isAnswerSelected ? AppColors.emerald : AppColors.emerald) : AppColors.emerald,
+              backgroundColor: isSubmitted
+                  ? (isAnswerSelected ? AppColors.emerald : AppColors.emerald)
+                  : AppColors.emerald,
               disabledBackgroundColor: const Color(0xFF334155),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16)),
             ),
             child: Text(
               isSubmitted ? "DAVOM ETISH" : "TEKSHIRISH",
-              style: AppTypography.heading2.copyWith(color: isAnswerSelected || isSubmitted ? Colors.white : Colors.white54),
+              style: AppTypography.heading2.copyWith(
+                  color: isAnswerSelected || isSubmitted
+                      ? Colors.white
+                      : Colors.white54),
             ),
           ),
         ),
@@ -829,7 +975,8 @@ class _BottomBar extends StatelessWidget {
 }
 
 class TestResultScreen extends ConsumerStatefulWidget {
-  const TestResultScreen({super.key, required this.score, this.selectedGoal, this.dailyGoal});
+  const TestResultScreen(
+      {super.key, required this.score, this.selectedGoal, this.dailyGoal});
   final String score;
   final String? selectedGoal;
   final String? dailyGoal;
@@ -838,7 +985,8 @@ class TestResultScreen extends ConsumerStatefulWidget {
   ConsumerState<TestResultScreen> createState() => _TestResultScreenState();
 }
 
-class _TestResultScreenState extends ConsumerState<TestResultScreen> with SingleTickerProviderStateMixin {
+class _TestResultScreenState extends ConsumerState<TestResultScreen>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   late Animation<double> _fadeAnimation;
@@ -846,9 +994,14 @@ class _TestResultScreenState extends ConsumerState<TestResultScreen> with Single
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(milliseconds: 1200));
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(CurvedAnimation(parent: _controller, curve: const Interval(0.5, 1.0, curve: Curves.easeIn)));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 1200));
+    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
+        CurvedAnimation(parent: _controller, curve: Curves.elasticOut));
+    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
+        CurvedAnimation(
+            parent: _controller,
+            curve: const Interval(0.5, 1.0, curve: Curves.easeIn)));
     _controller.forward();
   }
 
@@ -879,7 +1032,8 @@ class _TestResultScreenState extends ConsumerState<TestResultScreen> with Single
                     color: AppColors.emerald.withValues(alpha: 0.2),
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.stars_rounded, color: AppColors.emerald, size: 80),
+                  child: const Icon(Icons.stars_rounded,
+                      color: AppColors.emerald, size: 80),
                 ),
               ),
               const SizedBox(height: 40),
@@ -890,7 +1044,8 @@ class _TestResultScreenState extends ConsumerState<TestResultScreen> with Single
                     Text(
                       'Test Yakunlandi!',
                       textAlign: TextAlign.center,
-                      style: AppTypography.heading1.copyWith(color: Colors.white),
+                      style:
+                          AppTypography.heading1.copyWith(color: Colors.white),
                     ),
                     const SizedBox(height: 16),
                     Text(
@@ -900,18 +1055,23 @@ class _TestResultScreenState extends ConsumerState<TestResultScreen> with Single
                     ),
                     const SizedBox(height: 16),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 32, vertical: 16),
                       decoration: BoxDecoration(
                         color: AppColors.emerald,
                         borderRadius: BorderRadius.circular(24),
                         boxShadow: [
-                          BoxShadow(color: AppColors.emerald.withValues(alpha: 0.3), blurRadius: 20, offset: const Offset(0, 10)),
+                          BoxShadow(
+                              color: AppColors.emerald.withValues(alpha: 0.3),
+                              blurRadius: 20,
+                              offset: const Offset(0, 10)),
                         ],
                       ),
                       child: Text(
                         widget.score,
                         textAlign: TextAlign.center,
-                        style: AppTypography.heading1.copyWith(color: AppColors.background, fontSize: 24),
+                        style: AppTypography.heading1.copyWith(
+                            color: AppColors.background, fontSize: 24),
                       ),
                     ),
                   ],
@@ -925,15 +1085,19 @@ class _TestResultScreenState extends ConsumerState<TestResultScreen> with Single
                     try {
                       if (ref.read(authControllerProvider).value != null) {
                         // If logged in, update data immediately
-                        await ref.read(authControllerProvider.notifier).updateUserData(
-                          learningGoal: widget.selectedGoal ?? 'Umumiy',
-                          level: widget.score,
-                          dailyGoal: widget.dailyGoal ?? '10 daqiqa / kuniga',
-                        );
+                        await ref
+                            .read(authControllerProvider.notifier)
+                            .updateUserData(
+                              learningGoal: widget.selectedGoal ?? 'Umumiy',
+                              level: widget.score,
+                              dailyGoal:
+                                  widget.dailyGoal ?? '10 daqiqa / kuniga',
+                            );
                         if (context.mounted) context.go(AppRoutes.home);
                       } else {
                         // Otherwise, just save to pending and go to home (or personal info if we need to sign up)
-                        ref.read(pendingOnboardingDataProvider.notifier).state = {
+                        ref.read(pendingOnboardingDataProvider.notifier).state =
+                            {
                           'learningGoal': widget.selectedGoal ?? 'Umumiy',
                           'level': widget.score,
                           'dailyGoal': widget.dailyGoal ?? '10 daqiqa / kuniga',
@@ -951,7 +1115,8 @@ class _TestResultScreenState extends ConsumerState<TestResultScreen> with Single
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.emerald,
                     padding: const EdgeInsets.symmetric(vertical: 20),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
                     elevation: 8,
                     shadowColor: AppColors.emerald.withValues(alpha: 0.5),
                   ),

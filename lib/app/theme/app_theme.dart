@@ -19,7 +19,7 @@ abstract final class AppTheme {
         onSurface: AppColors.textPrimary,
         error: AppColors.error,
       ),
-      fontFamily: 'Geist',
+      fontFamily: 'Inter',
       textTheme: const TextTheme(
         displayLarge: AppTypography.display1,
         displayMedium: AppTypography.display2,
@@ -45,9 +45,11 @@ abstract final class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.emerald,
-          foregroundColor: const Color(0xFF0B1218), // Deep dark color for high contrast on green
+          foregroundColor: const Color(
+              0xFF0B1218), // Deep dark color for high contrast on green
           minimumSize: const Size(double.infinity, 54),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           textStyle: AppTypography.button,
           elevation: 0,
         ),
@@ -57,7 +59,8 @@ abstract final class AppTheme {
           foregroundColor: AppColors.textPrimary,
           minimumSize: const Size(double.infinity, 54),
           side: const BorderSide(color: AppColors.borderSubtle),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           textStyle: AppTypography.button,
         ),
       ),

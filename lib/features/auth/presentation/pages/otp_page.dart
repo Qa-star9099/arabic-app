@@ -42,7 +42,8 @@ class _OtpPageState extends State<OtpPage> {
             right: 24,
           ),
           elevation: 10,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       );
     } else {
@@ -54,7 +55,8 @@ class _OtpPageState extends State<OtpPage> {
           ),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
     }
@@ -89,94 +91,95 @@ class _OtpPageState extends State<OtpPage> {
         child: SafeArea(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              const Text(
-                'Kodni tasdiqlash 💬',
-                style: TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Telefon raqamingizga yuborilgan 4 xonali kodni kiriting (Test kodi: 7777)',
-                style: TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 14,
-                  color: Color(0x99FFFFFF), // white 60%
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 40),
-              
-              // OTP Input
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0x0AFFFFFF),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0x1AFFFFFF)),
-                ),
-                child: TextField(
-                  controller: _otpController,
-                  keyboardType: TextInputType.number,
-                  textAlign: TextAlign.center,
-                  maxLength: 4,
-                  style: const TextStyle(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                const Text(
+                  'Kodni tasdiqlash 💬',
+                  style: TextStyle(
                     fontFamily: 'Geist',
-                    color: Colors.white,
-                    fontSize: 24,
-                    letterSpacing: 8,
+                    fontSize: 28,
                     fontWeight: FontWeight.w600,
-                  ),
-                  decoration: const InputDecoration(
-                    counterText: '',
-                    hintText: '----',
-                    hintStyle: TextStyle(
-                      fontFamily: 'Geist',
-                      color: Color(0x40FFFFFF),
-                      letterSpacing: 8,
-                    ),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    color: Colors.white,
+                    letterSpacing: -0.5,
                   ),
                 ),
-              ),
-              const SizedBox(height: 32),
-              
-              // Verify Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _verifyOtp,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.emerald,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
+                const SizedBox(height: 8),
+                const Text(
+                  'Telefon raqamingizga yuborilgan 4 xonali kodni kiriting (Test kodi: 7777)',
+                  style: TextStyle(
+                    fontFamily: 'Geist',
+                    fontSize: 14,
+                    color: Color(0x99FFFFFF), // white 60%
+                    height: 1.5,
                   ),
-                  child: const Text(
-                    'Tasdiqlash',
-                    style: TextStyle(
+                ),
+                const SizedBox(height: 40),
+
+                // OTP Input
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0x0AFFFFFF),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0x1AFFFFFF)),
+                  ),
+                  child: TextField(
+                    controller: _otpController,
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.center,
+                    maxLength: 4,
+                    style: const TextStyle(
                       fontFamily: 'Geist',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
                       color: Colors.white,
+                      fontSize: 24,
+                      letterSpacing: 8,
+                      fontWeight: FontWeight.w600,
+                    ),
+                    decoration: const InputDecoration(
+                      counterText: '',
+                      hintText: '----',
+                      hintStyle: TextStyle(
+                        fontFamily: 'Geist',
+                        color: Color(0x40FFFFFF),
+                        letterSpacing: 8,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 32),
+
+                // Verify Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _verifyOtp,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.emerald,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Tasdiqlash',
+                      style: TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

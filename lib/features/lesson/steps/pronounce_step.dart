@@ -43,7 +43,7 @@ class PronounceStep extends ConsumerStatefulWidget {
 class _PronounceStepState extends ConsumerState<PronounceStep> {
   late stt.SpeechToText _speech;
   bool _isSpeechAvailable = false;
-  
+
   PronounceState _state = PronounceState.initial;
   String _recognizedText = "";
   double _holdDuration = 0;
@@ -74,7 +74,9 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
     if (mounted) {
       setState(() {
         _isSpeechAvailable = hasSpeech;
-        if (!hasSpeech && _speech.hasError && _speech.lastError?.errorMsg == "error_permission") {
+        if (!hasSpeech &&
+            _speech.hasError &&
+            _speech.lastError?.errorMsg == "error_permission") {
           _state = PronounceState.permissionDenied;
         }
       });
@@ -106,7 +108,8 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
 
   void _onSpeechResult(SpeechRecognitionResult result) {
     if (!mounted) return;
-    if (_state != PronounceState.recording && _state != PronounceState.evaluating) return;
+    if (_state != PronounceState.recording &&
+        _state != PronounceState.evaluating) return;
 
     setState(() {
       _recognizedText = result.recognizedWords;
@@ -121,9 +124,10 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
     if (_state != PronounceState.recording) return;
 
     await _speech.stop();
-    
+
     if (_pressStartTime != null) {
-      _holdDuration = DateTime.now().difference(_pressStartTime!).inMilliseconds / 1000;
+      _holdDuration =
+          DateTime.now().difference(_pressStartTime!).inMilliseconds / 1000;
     }
 
     if (_holdDuration < 0.5 && _recognizedText.isEmpty) {
@@ -133,12 +137,14 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
           SnackBar(
             content: const Text(
               "Juda qisqa — qaytadan urining",
-              style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+              style:
+                  TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
               textAlign: TextAlign.center,
             ),
             backgroundColor: const Color(0xFFD64242),
             behavior: SnackBarBehavior.floating,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
             duration: const Duration(seconds: 2),
           ),
         );
@@ -159,12 +165,15 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
   }
 
   void _evaluateResult() {
-    if (_state == PronounceState.resultCorrect || _state == PronounceState.resultWrong || _state == PronounceState.resultClose) {
+    if (_state == PronounceState.resultCorrect ||
+        _state == PronounceState.resultWrong ||
+        _state == PronounceState.resultClose) {
       return; // Already evaluated
     }
     String spoken = _recognizedText.toLowerCase().trim();
     String expected = widget.word.transliteration.toLowerCase().trim();
-    String expectedArabicStripped = _stripArabicDiacritics(widget.word.arabic).trim();
+    String expectedArabicStripped =
+        _stripArabicDiacritics(widget.word.arabic).trim();
 
     int distLatin = _levenshteinDistance(spoken, expected);
     int distArabic = _levenshteinDistance(spoken, expectedArabicStripped);
@@ -174,7 +183,9 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
 
     if (spoken.isEmpty) {
       nextState = PronounceState.resultWrong;
-    } else if (bestDist == 0 || spoken == expected || spoken == expectedArabicStripped) {
+    } else if (bestDist == 0 ||
+        spoken == expected ||
+        spoken == expectedArabicStripped) {
       nextState = PronounceState.resultCorrect;
     } else if (bestDist <= 2 && spoken.length >= 3) {
       nextState = PronounceState.resultClose;
@@ -229,7 +240,9 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
   void _onContinue() {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
-      ref.read(progressRepositoryProvider).markStepCompleted(uid, widget.word.id, 5);
+      ref
+          .read(progressRepositoryProvider)
+          .markStepCompleted(uid, widget.word.id, 5);
     }
 
     if (widget.onNext != null) {
@@ -264,7 +277,9 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
     } else if (_state == PronounceState.resultWrong) {
       gradColor = const Color(0xFFD64242);
     }
-    double gradOpacity = _state == PronounceState.resultClose ? 0.12 : (_state == PronounceState.resultWrong ? 0.10 : 0.14);
+    double gradOpacity = _state == PronounceState.resultClose
+        ? 0.12
+        : (_state == PronounceState.resultWrong ? 0.10 : 0.14);
 
     return Scaffold(
       backgroundColor: const Color(0xFF0B1218),
@@ -292,13 +307,12 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 _buildTopNavigation(),
-                
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -306,9 +320,9 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                       children: [
                         _buildStepHeader(),
                         _buildNativeCard(),
-                        
+
                         const SizedBox(height: 28),
-                        
+
                         // State Content
                         AnimatedSwitcher(
                           duration: 350.ms,
@@ -316,13 +330,12 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                           switchOutCurve: Curves.easeIn,
                           child: _buildStateContent(),
                         ),
-                        
+
                         const SizedBox(height: 32),
                       ],
                     ),
                   ),
                 ),
-                
                 _buildBottomActions(),
               ],
             ),
@@ -356,7 +369,8 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                 border: Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
               ),
               child: const Center(
-                child: Icon(Icons.arrow_back_rounded, size: 17, color: Color(0xFF6B7A88)),
+                child: Icon(Icons.arrow_back_rounded,
+                    size: 17, color: Color(0xFF6B7A88)),
               ),
             ),
           ),
@@ -462,14 +476,17 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
         // simple parsing
         for (int i = 0; i < parts.length; i++) {
           bool isStressed = i == widget.word.stressSyllable;
-          syllableSpans.add(
-            TextSpan(
-              text: parts[i] + (i < parts.length - 1 ? "-" : ""),
-              style: isStressed 
-                  ? GoogleFonts.inter(color: const Color(0xFFE8EEF4), fontWeight: FontWeight.w500, fontStyle: FontStyle.normal)
-                  : GoogleFonts.inter(color: const Color(0xFF8FA4B8), fontStyle: FontStyle.italic),
-            )
-          );
+          syllableSpans.add(TextSpan(
+            text: parts[i] + (i < parts.length - 1 ? "-" : ""),
+            style: isStressed
+                ? GoogleFonts.inter(
+                    color: const Color(0xFFE8EEF4),
+                    fontWeight: FontWeight.w500,
+                    fontStyle: FontStyle.normal)
+                : GoogleFonts.inter(
+                    color: const Color(0xFF8FA4B8),
+                    fontStyle: FontStyle.italic),
+          ));
         }
       } else {
         syllableSpans.add(TextSpan(text: widget.word.transliteration));
@@ -503,10 +520,13 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                       decoration: BoxDecoration(
                         color: const Color.fromRGBO(61, 214, 140, 0.1),
                         shape: BoxShape.circle,
-                        border: Border.all(color: const Color.fromRGBO(61, 214, 140, 0.2), width: 0.5),
+                        border: Border.all(
+                            color: const Color.fromRGBO(61, 214, 140, 0.2),
+                            width: 0.5),
                       ),
                       child: const Center(
-                        child: Icon(Icons.volume_up_rounded, size: 18, color: Color(0xFF3DD68C)),
+                        child: Icon(Icons.volume_up_rounded,
+                            size: 18, color: Color(0xFF3DD68C)),
                       ),
                     ),
                   ),
@@ -594,9 +614,10 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
   }
 
   Widget _buildMicState({required Key key}) {
-    bool isRecording = _state == PronounceState.recording || _state == PronounceState.evaluating;
+    bool isRecording = _state == PronounceState.recording ||
+        _state == PronounceState.evaluating;
     bool isEvaluating = _state == PronounceState.evaluating;
-    
+
     return Container(
       key: key,
       child: Column(
@@ -613,7 +634,7 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                     painter: MicWaveformPainter(),
                   ),
                 ).animate().fadeIn(duration: 200.ms),
-                
+
               // Mic Button
               GestureDetector(
                 onLongPressStart: (_) => _startListening(),
@@ -622,66 +643,93 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                   duration: 200.ms,
                   width: 96,
                   height: 96,
-                  transform: Matrix4.identity()..scale(isRecording ? 1.06 : 1.0, isRecording ? 1.06 : 1.0, 1.0),
+                  transform: Matrix4.diagonal3Values(
+                      isRecording ? 1.06 : 1.0, isRecording ? 1.06 : 1.0, 1.0),
                   transformAlignment: Alignment.center,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     gradient: LinearGradient(
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
-                      colors: isEvaluating 
+                      colors: isEvaluating
                           ? [const Color(0xFFF59E0B), const Color(0xFFD97706)]
                           : isRecording
-                              ? [const Color(0xFFE54B4B), const Color(0xFFC13838)]
-                              : [const Color(0xFF3DD68C), const Color(0xFF2EB876)],
+                              ? [
+                                  const Color(0xFFE54B4B),
+                                  const Color(0xFFC13838)
+                                ]
+                              : [
+                                  const Color(0xFF3DD68C),
+                                  const Color(0xFF2EB876)
+                                ],
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: isEvaluating ? const Color.fromRGBO(245, 158, 11, 0.08) : isRecording ? const Color.fromRGBO(229, 75, 75, 0.08) : const Color.fromRGBO(61, 214, 140, 0.06),
+                        color: isEvaluating
+                            ? const Color.fromRGBO(245, 158, 11, 0.08)
+                            : isRecording
+                                ? const Color.fromRGBO(229, 75, 75, 0.08)
+                                : const Color.fromRGBO(61, 214, 140, 0.06),
                         spreadRadius: 8,
                       ),
                       BoxShadow(
-                        color: isEvaluating ? const Color.fromRGBO(245, 158, 11, 0.04) : isRecording ? const Color.fromRGBO(229, 75, 75, 0.04) : const Color.fromRGBO(61, 214, 140, 0.03),
+                        color: isEvaluating
+                            ? const Color.fromRGBO(245, 158, 11, 0.04)
+                            : isRecording
+                                ? const Color.fromRGBO(229, 75, 75, 0.04)
+                                : const Color.fromRGBO(61, 214, 140, 0.03),
                         spreadRadius: 16,
                       ),
                       BoxShadow(
-                        color: isEvaluating ? const Color.fromRGBO(245, 158, 11, 0.25) : isRecording ? const Color.fromRGBO(229, 75, 75, 0.25) : const Color.fromRGBO(61, 214, 140, 0.22),
+                        color: isEvaluating
+                            ? const Color.fromRGBO(245, 158, 11, 0.25)
+                            : isRecording
+                                ? const Color.fromRGBO(229, 75, 75, 0.25)
+                                : const Color.fromRGBO(61, 214, 140, 0.22),
                         blurRadius: 32,
                         offset: const Offset(0, 12),
                       ),
                     ],
                   ),
                   child: Center(
-                    child: isEvaluating 
-                        ? const CircularProgressIndicator(color: Color(0xFF0B1218))
+                    child: isEvaluating
+                        ? const CircularProgressIndicator(
+                            color: Color(0xFF0B1218))
                         : Icon(
-                            isRecording ? Icons.mic_none_rounded : Icons.mic_rounded, 
-                            size: 38, 
-                            color: const Color(0xFF0B1218)
-                          ),
+                            isRecording
+                                ? Icons.mic_none_rounded
+                                : Icons.mic_rounded,
+                            size: 38,
+                            color: const Color(0xFF0B1218)),
                   ),
                 ),
               ),
             ],
           ),
-          
           const SizedBox(height: 18),
-          
           Text(
-            isEvaluating 
-                ? "Kutib turing..." 
-                : isRecording ? "Yozib olinmoqda..." : "Bosib ushlab turing",
+            isEvaluating
+                ? "Kutib turing..."
+                : isRecording
+                    ? "Yozib olinmoqda..."
+                    : "Bosib ushlab turing",
             style: GoogleFonts.inter(
               fontSize: 13,
-              color: isEvaluating ? const Color(0xFFF59E0B) : isRecording ? const Color(0xFFE54B4B) : const Color(0xFFE8EEF4),
+              color: isEvaluating
+                  ? const Color(0xFFF59E0B)
+                  : isRecording
+                      ? const Color(0xFFE54B4B)
+                      : const Color(0xFFE8EEF4),
               fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 4),
           Text(
-            isEvaluating 
-                ? "natija tekshirilmoqda" 
-                : isRecording ? "gapiring" : "va so'zni ayting",
+            isEvaluating
+                ? "natija tekshirilmoqda"
+                : isRecording
+                    ? "gapiring"
+                    : "va so'zni ayting",
             style: GoogleFonts.inter(
               fontSize: 11,
               color: const Color(0xFF6B7A88),
@@ -717,9 +765,7 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
               child: Icon(icon, size: 36, color: iconColor),
             ),
           ),
-          
           const SizedBox(height: 14),
-          
           Text(
             title,
             style: GoogleFonts.inter(
@@ -737,9 +783,7 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
               height: 1.5,
             ),
           ),
-          
           const SizedBox(height: 14),
-          
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 22),
             child: Container(
@@ -762,12 +806,18 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        _recognizedText.isEmpty ? "— hech narsa —" : _recognizedText,
+                        _recognizedText.isEmpty
+                            ? "— hech narsa —"
+                            : _recognizedText,
                         style: GoogleFonts.inter(
                           fontSize: 13,
-                          color: _recognizedText.isEmpty ? const Color(0xFF8FA4B8) : const Color(0xFFE8EEF4),
+                          color: _recognizedText.isEmpty
+                              ? const Color(0xFF8FA4B8)
+                              : const Color(0xFFE8EEF4),
                           fontWeight: FontWeight.w500,
-                          fontStyle: _recognizedText.isEmpty ? FontStyle.italic : FontStyle.normal,
+                          fontStyle: _recognizedText.isEmpty
+                              ? FontStyle.italic
+                              : FontStyle.normal,
                         ),
                       ),
                       if (showCheckmark)
@@ -799,11 +849,14 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
         decoration: BoxDecoration(
           color: const Color.fromRGBO(214, 66, 66, 0.08),
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: const Color(0xFFD64242).withValues(alpha: 0.3), width: 0.5),
+          border: Border.all(
+              color: const Color(0xFFD64242).withValues(alpha: 0.3),
+              width: 0.5),
         ),
         child: Column(
           children: [
-            const Icon(Icons.mic_off_rounded, size: 36, color: Color(0xFFD64242)),
+            const Icon(Icons.mic_off_rounded,
+                size: 36, color: Color(0xFFD64242)),
             const SizedBox(height: 14),
             Text(
               "Talaffuz mashqi uchun mikrofon va ovoz tanish ruxsati kerak",
@@ -889,7 +942,8 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
                 ),
               ),
               const SizedBox(width: 10),
-              const Icon(Icons.arrow_forward_rounded, size: 17, color: Color(0xFF0B1218)),
+              const Icon(Icons.arrow_forward_rounded,
+                  size: 17, color: Color(0xFF0B1218)),
             ],
           ),
         ),
@@ -905,12 +959,14 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
               height: 48,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: const Color.fromRGBO(245, 158, 11, 0.3), width: 0.5),
+                border: Border.all(
+                    color: const Color.fromRGBO(245, 158, 11, 0.3), width: 0.5),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.refresh_rounded, size: 14, color: Color(0xFFF59E0B)),
+                  const Icon(Icons.refresh_rounded,
+                      size: 14, color: Color(0xFFF59E0B)),
                   const SizedBox(width: 6),
                   Text(
                     "Qaytadan urinish",
@@ -973,7 +1029,8 @@ class _PronounceStepState extends ConsumerState<PronounceStep> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.mic_rounded, size: 17, color: Color(0xFF0B1218)),
+                  const Icon(Icons.mic_rounded,
+                      size: 17, color: Color(0xFF0B1218)),
                   const SizedBox(width: 10),
                   Text(
                     "Qaytadan urinish",
@@ -1050,19 +1107,20 @@ class MicWaveformPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final centerY = size.height / 2;
-    
+
     // Simulate active waveform with slightly random heights around a base pattern
     final rnd = math.Random();
     List<double> baseHeights = [4.0, 16.0, 32.0, 50.0, 50.0, 32.0, 16.0, 4.0];
     List<double> opacities = [0.3, 0.5, 0.7, 0.9, 1.0, 0.7, 0.5, 0.3];
-    
+
     // Draw Left Side
     double startXLeft = size.width / 2 - 80;
     for (int i = 0; i < baseHeights.length; i++) {
       double randomJitter = (rnd.nextDouble() * 0.4 + 0.8); // 0.8x to 1.2x
       double height = baseHeights[i] * randomJitter;
-      
-      paint.color = const Color(0xFFE54B4B).withValues(alpha: opacities[i] * 0.5);
+
+      paint.color =
+          const Color(0xFFE54B4B).withValues(alpha: opacities[i] * 0.5);
       canvas.drawLine(
         Offset(startXLeft + (i * 8), centerY - height / 2),
         Offset(startXLeft + (i * 8), centerY + height / 2),
@@ -1076,8 +1134,9 @@ class MicWaveformPainter extends CustomPainter {
       int revIdx = baseHeights.length - 1 - i;
       double randomJitter = (rnd.nextDouble() * 0.4 + 0.8);
       double height = baseHeights[revIdx] * randomJitter;
-      
-      paint.color = const Color(0xFFE54B4B).withValues(alpha: opacities[revIdx] * 0.5);
+
+      paint.color =
+          const Color(0xFFE54B4B).withValues(alpha: opacities[revIdx] * 0.5);
       canvas.drawLine(
         Offset(startXRight + (i * 8), centerY - height / 2),
         Offset(startXRight + (i * 8), centerY + height / 2),
@@ -1087,5 +1146,6 @@ class MicWaveformPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true; // Re-paint continuously if animation controller was provided
+  bool shouldRepaint(covariant CustomPainter oldDelegate) =>
+      true; // Re-paint continuously if animation controller was provided
 }

@@ -133,7 +133,8 @@ class _AhaMomentPageState extends State<AhaMomentPage>
                             vertical: 12,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.emeraldLight.withValues(alpha: 0.5),
+                            color:
+                                AppColors.emeraldLight.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(

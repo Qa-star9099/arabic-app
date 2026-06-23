@@ -1,4 +1,7 @@
 /// Base URL and API endpoint constants.
+/// NOTE: This file is currently unused as the app uses a serverless architecture
+/// (Firebase + Cloud Functions) rather than a traditional REST API.
+/// Kept for reference or future hybrid use.
 abstract final class ApiConstants {
   static const String baseUrl = 'https://api.arabcha.uz/api/v1';
 

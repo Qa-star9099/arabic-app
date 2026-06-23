@@ -251,8 +251,8 @@ class _$UserModelImpl implements _UserModel {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, uid, email, displayName, xp, level, learningGoal, dailyGoal, createdAt);
+  int get hashCode => Object.hash(runtimeType, uid, email, displayName, xp,
+      level, learningGoal, dailyGoal, createdAt);
 
   /// Create a copy of UserModel
   /// with the given fields replaced by the non-null parameter values.

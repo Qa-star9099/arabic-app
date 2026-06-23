@@ -28,18 +28,18 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   // ── Orb breath controllers ────────────────────────────────────────────────
-  late final AnimationController _orbCtrl;      // r1 — center
-  late final AnimationController _orb2Ctrl;     // r2 — bottom-right
-  late final AnimationController _orb3Ctrl;     // r3 — top-left
+  late final AnimationController _orbCtrl; // r1 — center
+  late final AnimationController _orb2Ctrl; // r2 — bottom-right
+  late final AnimationController _orb3Ctrl; // r3 — top-left
 
   // ── One-shot entrance controllers ─────────────────────────────────────────
-  late final AnimationController _logoCtrl;     // pop-in
-  late final AnimationController _nameCtrl;     // fade-up
-  late final AnimationController _tagCtrl;      // tag-in
-  late final AnimationController _barCtrl;      // bar-fill
+  late final AnimationController _logoCtrl; // pop-in
+  late final AnimationController _nameCtrl; // fade-up
+  late final AnimationController _tagCtrl; // tag-in
+  late final AnimationController _barCtrl; // bar-fill
 
   // ── Loading dot controller ────────────────────────────────────────────────
-  late final AnimationController _dotCtrl;      // d1/d2/d3 loop
+  late final AnimationController _dotCtrl; // d1/d2/d3 loop
 
   // ── Derived animations ────────────────────────────────────────────────────
   // Orb: scale
@@ -176,7 +176,7 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
       CurvedAnimation(parent: _nameCtrl, curve: Curves.easeOut),
     );
     _nameSlide = Tween<Offset>(
-      begin: const Offset(0, 14 / 600),  // normalized
+      begin: const Offset(0, 14 / 600), // normalized
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _nameCtrl, curve: Curves.easeOut));
 
@@ -410,7 +410,6 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
               ],
             ),
           ),
-
         ],
       ),
     );
@@ -479,8 +478,7 @@ class _AmbientOrbs extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: Listenable.merge(
-          [orb1Scale, orb2Scale, orb3Scale]),
+      animation: Listenable.merge([orb1Scale, orb2Scale, orb3Scale]),
       builder: (context, _) {
         return Stack(
           children: [
@@ -495,7 +493,8 @@ class _AmbientOrbs extends StatelessWidget {
                   height: 320,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.emerald.withValues(alpha: orb3Opacity.value),
+                    color:
+                        AppColors.emerald.withValues(alpha: orb3Opacity.value),
                   ),
                 ),
               ),
@@ -512,7 +511,8 @@ class _AmbientOrbs extends StatelessWidget {
                   height: 280,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.violet.withValues(alpha: orb2Opacity.value),
+                    color:
+                        AppColors.violet.withValues(alpha: orb2Opacity.value),
                   ),
                 ),
               ),
@@ -579,7 +579,10 @@ class _LogoWidget extends StatelessWidget {
 
           // ── Layer 1: middle glass ─────────────────────────────────────
           Positioned(
-            top: 10, left: 10, right: 10, bottom: 10,
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom: 10,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(20),
@@ -594,7 +597,10 @@ class _LogoWidget extends StatelessWidget {
 
           // ── Layer 2: solid inner — Arabic letter ──────────────────────
           Positioned(
-            top: 20, left: 20, right: 20, bottom: 20,
+            top: 20,
+            left: 20,
+            right: 20,
+            bottom: 20,
             child: Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(14),
@@ -629,7 +635,7 @@ class _LogoWidget extends StatelessWidget {
               height: 28,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.gold,       // #BA7517
+                color: AppColors.gold, // #BA7517
                 border: Border.all(
                   color: AppColors.background,
                   width: 2.5,
@@ -654,7 +660,7 @@ class _LogoWidget extends StatelessWidget {
               height: 24,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: AppColors.violet,     // #533AB7
+                color: AppColors.violet, // #533AB7
                 border: Border.all(
                   color: AppColors.background,
                   width: 2,

@@ -26,7 +26,7 @@ class AuthRepository {
   Future<void> createOrUpdateUser(User firebaseUser) async {
     final userRef = _firestore.collection('users').doc(firebaseUser.uid);
     final doc = await userRef.get();
-    
+
     if (!doc.exists) {
       final newUser = UserModel(
         uid: firebaseUser.uid,
@@ -38,7 +38,8 @@ class AuthRepository {
     }
   }
 
-  Future<void> updateUserData({String? learningGoal, String? level, String? dailyGoal}) async {
+  Future<void> updateUserData(
+      {String? learningGoal, String? level, String? dailyGoal}) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('No user logged in');
 
@@ -56,21 +57,23 @@ class AuthRepository {
     try {
       // Trigger the Google Authentication flow
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       // If the user cancels the login, it returns null
       if (googleUser == null) {
         return; // Early return, no error thrown
       }
-      
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
-      
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
-      
-      final UserCredential userCredential = await _auth.signInWithCredential(credential);
-      
+
+      final UserCredential userCredential =
+          await _auth.signInWithCredential(credential);
+
       if (userCredential.user != null) {
         await createOrUpdateUser(userCredential.user!);
       }

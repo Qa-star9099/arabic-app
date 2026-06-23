@@ -35,7 +35,8 @@ class _ListenStepState extends ConsumerState<ListenStep> {
   void initState() {
     super.initState();
     // Shuffle options on mount
-    _shuffledOptions = List<ListenOption>.from(widget.word.listenOptions)..shuffle();
+    _shuffledOptions = List<ListenOption>.from(widget.word.listenOptions)
+      ..shuffle();
 
     // Auto-play target word after 300ms
     Future.delayed(const Duration(milliseconds: 300), () {
@@ -47,7 +48,7 @@ class _ListenStepState extends ConsumerState<ListenStep> {
 
   void _onOptionSelected(ListenOption option) {
     if (_isChecked) return; // Prevent changing after confirmed
-    
+
     // Pronounce the word when selecting
     ref.read(ttsServiceProvider).speak(option.arabic);
 
@@ -97,7 +98,8 @@ class _ListenStepState extends ConsumerState<ListenStep> {
           ),
           backgroundColor: const Color(0xFF3DD68C),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -133,7 +135,7 @@ class _ListenStepState extends ConsumerState<ListenStep> {
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -159,10 +161,12 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                           decoration: BoxDecoration(
                             color: const Color.fromRGBO(61, 214, 140, 0.04),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
+                            border: Border.all(
+                                color: const Color(0xFF1E2D3A), width: 0.5),
                           ),
                           child: const Center(
-                            child: Icon(Icons.arrow_back_rounded, size: 17, color: Color(0xFF6B7A88)),
+                            child: Icon(Icons.arrow_back_rounded,
+                                size: 17, color: Color(0xFF6B7A88)),
                           ),
                         ),
                       ),
@@ -212,7 +216,8 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                       children: [
                         // Step header
                         Padding(
-                          padding: const EdgeInsets.only(top: 28, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 28, left: 22, right: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -251,7 +256,9 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                               ),
                             ],
                           ),
-                        ).animate().fadeIn(duration: 200.ms, curve: Curves.easeOut),
+                        )
+                            .animate()
+                            .fadeIn(duration: 200.ms, curve: Curves.easeOut),
 
                         // Central audio button section
                         Padding(
@@ -266,14 +273,18 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                                 child: CustomPaint(
                                   painter: WaveformPainter(),
                                 ),
-                              ).animate().fadeIn(duration: 300.ms, delay: 100.ms),
-                              
+                              )
+                                  .animate()
+                                  .fadeIn(duration: 300.ms, delay: 100.ms),
+
                               // Main Audio Button
                               Column(
                                 children: [
                                   InkWell(
                                     onTap: () {
-                                      ref.read(ttsServiceProvider).speak(widget.word.arabic);
+                                      ref
+                                          .read(ttsServiceProvider)
+                                          .speak(widget.word.arabic);
                                     },
                                     borderRadius: BorderRadius.circular(42),
                                     child: Container(
@@ -284,30 +295,44 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                                         gradient: LinearGradient(
                                           begin: Alignment.topCenter,
                                           end: Alignment.bottomCenter,
-                                          colors: [Color(0xFF3DD68C), Color(0xFF2EB876)],
+                                          colors: [
+                                            Color(0xFF3DD68C),
+                                            Color(0xFF2EB876)
+                                          ],
                                         ),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: Color.fromRGBO(61, 214, 140, 0.08),
+                                            color: Color.fromRGBO(
+                                                61, 214, 140, 0.08),
                                             spreadRadius: 6,
                                           ),
                                           BoxShadow(
-                                            color: Color.fromRGBO(61, 214, 140, 0.04),
+                                            color: Color.fromRGBO(
+                                                61, 214, 140, 0.04),
                                             spreadRadius: 12,
                                           ),
                                           BoxShadow(
-                                            color: Color.fromRGBO(61, 214, 140, 0.2),
+                                            color: Color.fromRGBO(
+                                                61, 214, 140, 0.2),
                                             blurRadius: 24,
                                             offset: Offset(0, 8),
                                           ),
                                         ],
                                       ),
                                       child: const Center(
-                                        child: Icon(Icons.volume_up_rounded, size: 32, color: Color(0xFF0B1218)),
+                                        child: Icon(Icons.volume_up_rounded,
+                                            size: 32, color: Color(0xFF0B1218)),
                                       ),
                                     ),
-                                  ).animate().fadeIn(duration: 200.ms, curve: Curves.easeOut).scale(begin: const Offset(0.8, 0.8), duration: 200.ms, curve: Curves.easeOutBack),
-                                  
+                                  )
+                                      .animate()
+                                      .fadeIn(
+                                          duration: 200.ms,
+                                          curve: Curves.easeOut)
+                                      .scale(
+                                          begin: const Offset(0.8, 0.8),
+                                          duration: 200.ms,
+                                          curve: Curves.easeOutBack),
                                   const SizedBox(height: 14),
                                   Text(
                                     "qayta tinglash uchun bosing",
@@ -316,7 +341,9 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                                       color: const Color(0xFF6B7A88),
                                       letterSpacing: 1.2,
                                     ),
-                                  ).animate().fadeIn(duration: 200.ms, delay: 100.ms),
+                                  )
+                                      .animate()
+                                      .fadeIn(duration: 200.ms, delay: 100.ms),
                                 ],
                               ),
                             ],
@@ -325,7 +352,8 @@ class _ListenStepState extends ConsumerState<ListenStep> {
 
                         // Options section
                         Padding(
-                          padding: const EdgeInsets.only(top: 28, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 28, left: 22, right: 22),
                           child: Column(
                             children: [
                               Text(
@@ -335,18 +363,20 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                                   color: const Color(0xFF6B7A88),
                                   letterSpacing: 1.2,
                                 ),
-                              ).animate().fadeIn(duration: 150.ms, delay: 200.ms),
+                              )
+                                  .animate()
+                                  .fadeIn(duration: 150.ms, delay: 200.ms),
                               const SizedBox(height: 12),
-                              
                               for (int i = 0; i < _shuffledOptions.length; i++)
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
-                                  child: _buildOptionCard(_shuffledOptions[i], i),
+                                  child:
+                                      _buildOptionCard(_shuffledOptions[i], i),
                                 ),
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -355,7 +385,8 @@ class _ListenStepState extends ConsumerState<ListenStep> {
 
                 // Bottom Action Button
                 Padding(
-                  padding: const EdgeInsets.only(left: 22, right: 22, bottom: 24, top: 20),
+                  padding: const EdgeInsets.only(
+                      left: 22, right: 22, bottom: 24, top: 20),
                   child: AnimatedSwitcher(
                     duration: 300.ms,
                     child: hasSelected
@@ -371,31 +402,45 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                                   begin: Alignment.topCenter,
                                   end: Alignment.bottomCenter,
                                   colors: _isChecked
-                                    ? [const Color(0xFF1F4D3F), const Color(0xFF15202A)]
-                                    : [const Color(0xFF3DD68C), const Color(0xFF2EB876)],
+                                      ? [
+                                          const Color(0xFF1F4D3F),
+                                          const Color(0xFF15202A)
+                                        ]
+                                      : [
+                                          const Color(0xFF3DD68C),
+                                          const Color(0xFF2EB876)
+                                        ],
                                 ),
-                                boxShadow: _isChecked ? null : const [
-                                  BoxShadow(
-                                    color: Color.fromRGBO(61, 214, 140, 0.3),
-                                    spreadRadius: 0.5,
-                                  ),
-                                ],
+                                boxShadow: _isChecked
+                                    ? null
+                                    : const [
+                                        BoxShadow(
+                                          color:
+                                              Color.fromRGBO(61, 214, 140, 0.3),
+                                          spreadRadius: 0.5,
+                                        ),
+                                      ],
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    _isChecked ? "Kutib turing..." : "Tasdiqlash",
+                                    _isChecked
+                                        ? "Kutib turing..."
+                                        : "Tasdiqlash",
                                     style: GoogleFonts.inter(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
-                                      color: _isChecked ? const Color(0xFF6B7A88) : const Color(0xFF0B1218),
+                                      color: _isChecked
+                                          ? const Color(0xFF6B7A88)
+                                          : const Color(0xFF0B1218),
                                       letterSpacing: 0.5,
                                     ),
                                   ),
                                   if (!_isChecked) ...[
                                     const SizedBox(width: 10),
-                                    const Icon(Icons.check_rounded, size: 17, color: Color(0xFF0B1218)),
+                                    const Icon(Icons.check_rounded,
+                                        size: 17, color: Color(0xFF0B1218)),
                                   ],
                                 ],
                               ),
@@ -405,7 +450,9 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                             key: const ValueKey('sekinroq_tinglash'),
                             onTap: () {
                               // temporary: slower rate 0.3
-                              ref.read(ttsServiceProvider).speak(widget.word.arabic, slow: true);
+                              ref
+                                  .read(ttsServiceProvider)
+                                  .speak(widget.word.arabic, slow: true);
                             },
                             borderRadius: BorderRadius.circular(24),
                             child: Container(
@@ -413,12 +460,16 @@ class _ListenStepState extends ConsumerState<ListenStep> {
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(24),
                                 color: Colors.transparent,
-                                border: Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
+                                border: Border.all(
+                                    color: const Color(0xFF1E2D3A), width: 0.5),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.replay_circle_filled_rounded, size: 14, color: Color(0xFF6B7A88)), // Or any suitable icon
+                                  const Icon(Icons.replay_circle_filled_rounded,
+                                      size: 14,
+                                      color: Color(
+                                          0xFF6B7A88)), // Or any suitable icon
                                   const SizedBox(width: 8),
                                   Text(
                                     "sekinroq tinglash",
@@ -445,11 +496,11 @@ class _ListenStepState extends ConsumerState<ListenStep> {
 
   Widget _buildOptionCard(ListenOption option, int index) {
     final isSelected = _selectedOption == option;
-    
+
     // Determine colors
     Color borderColor = const Color(0xFF2A3E4F);
     Color bgColor = const Color.fromRGBO(255, 255, 255, 0.03);
-    
+
     if (_isChecked) {
       if (option.isCorrect) {
         borderColor = const Color(0xFF3DD68C);
@@ -485,15 +536,17 @@ class _ListenStepState extends ConsumerState<ListenStep> {
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(61, 214, 140, 0.1),
                 shape: BoxShape.circle,
-                border: Border.all(color: const Color.fromRGBO(61, 214, 140, 0.2), width: 0.5),
+                border: Border.all(
+                    color: const Color.fromRGBO(61, 214, 140, 0.2), width: 0.5),
               ),
               child: const Center(
-                child: Icon(Icons.volume_up_rounded, size: 14, color: Color(0xFF3DD68C)),
+                child: Icon(Icons.volume_up_rounded,
+                    size: 14, color: Color(0xFF3DD68C)),
               ),
             ),
           ),
           const SizedBox(width: 12),
-          
+
           // Texts
           Expanded(
             child: Column(
@@ -522,12 +575,16 @@ class _ListenStepState extends ConsumerState<ListenStep> {
               ],
             ),
           ),
-          
+
           // Status Icon
           if (_isChecked && (option.isCorrect || isSelected))
             Icon(
-              option.isCorrect ? Icons.check_circle_rounded : Icons.cancel_rounded,
-              color: option.isCorrect ? const Color(0xFF3DD68C) : const Color(0xFFD64242),
+              option.isCorrect
+                  ? Icons.check_circle_rounded
+                  : Icons.cancel_rounded,
+              color: option.isCorrect
+                  ? const Color(0xFF3DD68C)
+                  : const Color(0xFFD64242),
               size: 20,
             ).animate().scale(duration: 200.ms, curve: Curves.easeOutBack),
         ],
@@ -536,23 +593,28 @@ class _ListenStepState extends ConsumerState<ListenStep> {
 
     // Apply hit animation if just selected
     if (isSelected) {
-      cardContent = cardContent.animate().scale(
-        begin: const Offset(1.0, 1.0),
-        end: const Offset(1.02, 1.02),
-        duration: 100.ms,
-        curve: Curves.easeOut,
-      ).then().scale(
-        begin: const Offset(1.02, 1.02),
-        end: const Offset(1.0, 1.0),
-        duration: 100.ms,
-        curve: Curves.easeIn,
-      );
+      cardContent = cardContent
+          .animate()
+          .scale(
+            begin: const Offset(1.0, 1.0),
+            end: const Offset(1.02, 1.02),
+            duration: 100.ms,
+            curve: Curves.easeOut,
+          )
+          .then()
+          .scale(
+            begin: const Offset(1.02, 1.02),
+            end: const Offset(1.0, 1.0),
+            duration: 100.ms,
+            curve: Curves.easeIn,
+          );
     }
 
     return GestureDetector(
       onTap: () => _onOptionSelected(option),
       child: cardContent,
-    ).animate().fadeIn(duration: 300.ms, delay: (200 + index * 60).ms).slideY(begin: 0.1, end: 0, duration: 300.ms, delay: (200 + index * 60).ms);
+    ).animate().fadeIn(duration: 300.ms, delay: (200 + index * 60).ms).slideY(
+        begin: 0.1, end: 0, duration: 300.ms, delay: (200 + index * 60).ms);
   }
 }
 
@@ -566,15 +628,16 @@ class WaveformPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
 
     final centerY = size.height / 2;
-    
+
     // 8 bars pattern heights
     final heights = [4.0, 8.0, 16.0, 32.0, 50.0, 24.0, 12.0, 6.0];
     final opacities = [0.3, 0.4, 0.5, 0.7, 0.9, 0.7, 0.5, 0.3];
-    
+
     // Draw Left Side
     double startXLeft = size.width / 2 - 100; // starting far left from center
     for (int i = 0; i < heights.length; i++) {
-      paint.color = const Color(0xFF3DD68C).withValues(alpha: opacities[i] * 0.5); // Global opacity 0.5
+      paint.color = const Color(0xFF3DD68C)
+          .withValues(alpha: opacities[i] * 0.5); // Global opacity 0.5
       canvas.drawLine(
         Offset(startXLeft + (i * 8), centerY - heights[i] / 2),
         Offset(startXLeft + (i * 8), centerY + heights[i] / 2),
@@ -583,10 +646,12 @@ class WaveformPainter extends CustomPainter {
     }
 
     // Draw Right Side
-    double startXRight = size.width / 2 + 100 - (heights.length * 8); // starting far right
+    double startXRight =
+        size.width / 2 + 100 - (heights.length * 8); // starting far right
     for (int i = 0; i < heights.length; i++) {
       int revIdx = heights.length - 1 - i;
-      paint.color = const Color(0xFF3DD68C).withValues(alpha: opacities[revIdx] * 0.5);
+      paint.color =
+          const Color(0xFF3DD68C).withValues(alpha: opacities[revIdx] * 0.5);
       canvas.drawLine(
         Offset(startXRight + (i * 8), centerY - heights[revIdx] / 2),
         Offset(startXRight + (i * 8), centerY + heights[revIdx] / 2),

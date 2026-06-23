@@ -62,8 +62,10 @@ class DefaultFirebaseOptions {
     messagingSenderId: '123136436815',
     projectId: 'my-arabic-learn',
     storageBucket: 'my-arabic-learn.firebasestorage.app',
-    androidClientId: '123136436815-h3858hqhaoonvkgvegjug8d5coqk9p1i.apps.googleusercontent.com',
-    iosClientId: '123136436815-l73brhaunb7pssee08640uhfnl09oh20.apps.googleusercontent.com',
+    androidClientId:
+        '123136436815-h3858hqhaoonvkgvegjug8d5coqk9p1i.apps.googleusercontent.com',
+    iosClientId:
+        '123136436815-l73brhaunb7pssee08640uhfnl09oh20.apps.googleusercontent.com',
     iosBundleId: 'com.arabcha.arabcha',
   );
 }

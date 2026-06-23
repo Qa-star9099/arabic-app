@@ -4,8 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/router/app_router.dart';
 import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/app_typography.dart';
-import '../../../../features/auth/controllers/auth_controller.dart';
 
 class WelcomePage extends ConsumerStatefulWidget {
   const WelcomePage({super.key});
@@ -14,7 +12,8 @@ class WelcomePage extends ConsumerStatefulWidget {
   ConsumerState<WelcomePage> createState() => _WelcomePageState();
 }
 
-class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderStateMixin {
+class _WelcomePageState extends ConsumerState<WelcomePage>
+    with TickerProviderStateMixin {
   // ── Entrance & Fill Animations ─────────────────────────────────────────────
   late final AnimationController _entranceCtrl;
   late final AnimationController _fillCtrl; // For score circle & accuracy bar
@@ -29,11 +28,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
 
   // ── Entrance Animations (Intervals of _entranceCtrl) ──────────────────────
 
-
   late final Animation<double> _titleOpacity;
   late final Animation<double> _titleSlide;
-
-
 
   late final Animation<double> _feature1Opacity;
   late final Animation<double> _feature1Slide;
@@ -102,7 +98,6 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
 
     // ── 2. Configure Entrance Animations (Staggered Fade-Up) ─────────────────
 
-
     // Title ("The Arabic app...")
     _titleOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -117,8 +112,6 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
       ),
     );
 
-
-
     // Feature 1 (AI Makhraj evaluation)
     _feature1Opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
@@ -126,7 +119,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
         curve: const Interval(0.2, 0.55, curve: Curves.easeOut),
       ),
     );
-    _feature1Slide = Tween<double>(begin: -20.0, end: 0.0).animate( // Horizontal slide-in
+    _feature1Slide = Tween<double>(begin: -20.0, end: 0.0).animate(
+      // Horizontal slide-in
       CurvedAnimation(
         parent: _entranceCtrl,
         curve: const Interval(0.2, 0.55, curve: Curves.easeOut),
@@ -194,7 +188,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
       CurvedAnimation(parent: _fillCtrl, curve: Curves.fastOutSlowIn),
     );
 
-    _todayScoreProgress = Tween<double>(begin: 0.0, end: 0.77).animate( // (220-50)/220 = ~0.77 fill
+    _todayScoreProgress = Tween<double>(begin: 0.0, end: 0.77).animate(
+      // (220-50)/220 = ~0.77 fill
       CurvedAnimation(parent: _fillCtrl, curve: Curves.fastOutSlowIn),
     );
 
@@ -220,7 +215,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
     _orb2Scale = Tween<double>(begin: 1.0, end: 1.1).animate(
       CurvedAnimation(
         parent: _orbFloatCtrl,
-        curve: const Interval(0.375, 1.0, curve: Curves.easeInOut), // Delayed start simulation
+        curve: const Interval(0.375, 1.0,
+            curve: Curves.easeInOut), // Delayed start simulation
       ),
     );
     _orb2Opacity = Tween<double>(begin: 0.08, end: 0.14).animate(
@@ -374,7 +370,8 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
                             child: Transform.translate(
                               offset: Offset(0, _buttonSlide.value),
                               child: _GetStartedButton(
-                                onPressed: () => context.go(AppRoutes.goalSelection),
+                                onPressed: () =>
+                                    context.go(AppRoutes.goalSelection),
                               ),
                             ),
                           );
@@ -395,9 +392,11 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
                                   context.push(AppRoutes.login);
                                 },
                                 style: TextButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(vertical: 8),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
                                   foregroundColor: const Color(0xFFE8EEF4),
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  tapTargetSize:
+                                      MaterialTapTargetSize.shrinkWrap,
                                 ),
                                 child: RichText(
                                   text: const TextSpan(
@@ -408,7 +407,9 @@ class _WelcomePageState extends ConsumerState<WelcomePage> with TickerProviderSt
                                       color: Color(0xFF8FA4B8),
                                     ),
                                     children: [
-                                      TextSpan(text: "Allaqachon ro'yhatdan o'tganmisiz? "),
+                                      TextSpan(
+                                          text:
+                                              "Allaqachon ro'yhatdan o'tganmisiz? "),
                                       TextSpan(
                                         text: "Kirish",
                                         style: TextStyle(
@@ -510,7 +511,8 @@ class _AmbientWelcomeOrbs extends StatelessWidget {
                   height: 260,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.violet.withValues(alpha: orb1Opacity.value),
+                    color:
+                        AppColors.violet.withValues(alpha: orb1Opacity.value),
                   ),
                 ),
               ),
@@ -527,7 +529,8 @@ class _AmbientWelcomeOrbs extends StatelessWidget {
                   height: 220,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: AppColors.emerald.withValues(alpha: orb2Opacity.value),
+                    color:
+                        AppColors.emerald.withValues(alpha: orb2Opacity.value),
                   ),
                 ),
               ),

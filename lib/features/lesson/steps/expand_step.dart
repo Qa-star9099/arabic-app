@@ -36,14 +36,16 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
       try {
-        await ref.read(progressRepositoryProvider).markWordSeen(uid, widget.word.id);
+        await ref
+            .read(progressRepositoryProvider)
+            .markWordSeen(uid, widget.word.id);
       } catch (e) {
         debugPrint("Progress save error: \$e");
       }
     }
 
     if (!mounted) return;
-    
+
     if (widget.onNext != null) {
       widget.onNext!();
     } else {
@@ -57,7 +59,8 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
           ),
           backgroundColor: const Color(0xFF3DD68C),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           duration: const Duration(seconds: 2),
         ),
       );
@@ -89,7 +92,7 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -115,10 +118,12 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
                           decoration: BoxDecoration(
                             color: const Color.fromRGBO(61, 214, 140, 0.04),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
+                            border: Border.all(
+                                color: const Color(0xFF1E2D3A), width: 0.5),
                           ),
                           child: const Center(
-                            child: Icon(Icons.arrow_back_rounded, size: 17, color: Color(0xFF6B7A88)),
+                            child: Icon(Icons.arrow_back_rounded,
+                                size: 17, color: Color(0xFF6B7A88)),
                           ),
                         ),
                       ),
@@ -168,7 +173,8 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
                       children: [
                         // Step header
                         Padding(
-                          padding: const EdgeInsets.only(top: 28, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 28, left: 22, right: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -207,11 +213,14 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
                               ),
                             ],
                           ),
-                        ).animate().fadeIn(duration: 200.ms, curve: Curves.easeOut),
+                        )
+                            .animate()
+                            .fadeIn(duration: 200.ms, curve: Curves.easeOut),
 
                         // Intro text
                         Padding(
-                          padding: const EdgeInsets.only(top: 28, left: 36, right: 36),
+                          padding: const EdgeInsets.only(
+                              top: 28, left: 36, right: 36),
                           child: Text(
                             "O'zak bir xil qolsa-da, unga harflar qo'shish orqali yangi so'zlar yasaladi.",
                             textAlign: TextAlign.center,
@@ -222,18 +231,25 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
                               height: 1.6,
                             ),
                           ),
-                        ).animate().fadeIn(duration: 200.ms, curve: Curves.easeOut),
+                        )
+                            .animate()
+                            .fadeIn(duration: 200.ms, curve: Curves.easeOut),
 
                         // The Root display (Small context)
                         Padding(
-                          padding: const EdgeInsets.only(top: 24, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 24, left: 22, right: 22),
                           child: Center(
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
                               decoration: BoxDecoration(
                                 color: const Color.fromRGBO(61, 214, 140, 0.08),
                                 borderRadius: BorderRadius.circular(16),
-                                border: Border.all(color: const Color.fromRGBO(61, 214, 140, 0.15), width: 0.5),
+                                border: Border.all(
+                                    color: const Color.fromRGBO(
+                                        61, 214, 140, 0.15),
+                                    width: 0.5),
                               ),
                               child: Directionality(
                                 textDirection: TextDirection.rtl,
@@ -252,18 +268,22 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
 
                         // Family words list
                         Padding(
-                          padding: const EdgeInsets.only(top: 24, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 24, left: 22, right: 22),
                           child: Column(
                             children: [
-                              for (int i = 0; i < widget.word.family.length; i++)
+                              for (int i = 0;
+                                  i < widget.word.family.length;
+                                  i++)
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 12),
-                                  child: _buildFamilyCard(widget.word.family[i], i),
+                                  child: _buildFamilyCard(
+                                      widget.word.family[i], i),
                                 ),
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -272,7 +292,8 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
 
                 // Bottom CTA Button
                 Padding(
-                  padding: const EdgeInsets.only(left: 22, right: 22, bottom: 24),
+                  padding:
+                      const EdgeInsets.only(left: 22, right: 22, bottom: 24),
                   child: InkWell(
                     onTap: _onContinue,
                     borderRadius: BorderRadius.circular(28),
@@ -306,7 +327,8 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          const Icon(Icons.arrow_forward_rounded, size: 17, color: Color(0xFF0B1218)),
+                          const Icon(Icons.arrow_forward_rounded,
+                              size: 17, color: Color(0xFF0B1218)),
                         ],
                       ),
                     ),
@@ -340,71 +362,82 @@ class _ExpandStepState extends ConsumerState<ExpandStep> {
             children: [
               // Audio Button (visual only now, or keeps its own tap)
               Container(
-              width: 38,
-              height: 38,
-              decoration: const BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xFF3DD68C), Color(0xFF2EB876)],
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color.fromRGBO(61, 214, 140, 0.3),
-                    spreadRadius: 0.5,
-                    blurRadius: 0,
+                width: 38,
+                height: 38,
+                decoration: const BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [Color(0xFF3DD68C), Color(0xFF2EB876)],
                   ),
-                ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Color.fromRGBO(61, 214, 140, 0.3),
+                      spreadRadius: 0.5,
+                      blurRadius: 0,
+                    ),
+                  ],
+                ),
+                child: const Center(
+                  child: Icon(Icons.volume_up_rounded,
+                      size: 18, color: Color(0xFF0B1218)),
+                ),
               ),
-              child: const Center(
-                child: Icon(Icons.volume_up_rounded, size: 18, color: Color(0xFF0B1218)),
+              const SizedBox(width: 16),
+              // Uzbek Meaning & Transliteration
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      familyWord.meaning,
+                      style: GoogleFonts.inter(
+                        fontSize: 15,
+                        color: const Color(0xFFE8EEF4),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      familyWord.transliteration,
+                      style: GoogleFonts.notoSerif(
+                        fontSize: 13,
+                        color: const Color(0xFF8FA4B8),
+                        fontStyle: FontStyle.italic,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          const SizedBox(width: 16),
-          // Uzbek Meaning & Transliteration
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  familyWord.meaning,
-                  style: GoogleFonts.inter(
-                    fontSize: 15,
-                    color: const Color(0xFFE8EEF4),
+              const SizedBox(width: 16),
+              // Arabic Word
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: Text(
+                  familyWord.arabic,
+                  style: GoogleFonts.notoNaskhArabic(
+                    fontSize: 32,
                     fontWeight: FontWeight.w500,
+                    color: const Color(0xFFF4F8FC),
+                    height: 1.0,
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  familyWord.transliteration,
-                  style: GoogleFonts.notoSerif(
-                    fontSize: 13,
-                    color: const Color(0xFF8FA4B8),
-                    fontStyle: FontStyle.italic,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 16),
-          // Arabic Word
-          Directionality(
-            textDirection: TextDirection.rtl,
-            child: Text(
-              familyWord.arabic,
-              style: GoogleFonts.notoNaskhArabic(
-                fontSize: 32,
-                fontWeight: FontWeight.w500,
-                color: const Color(0xFFF4F8FC),
-                height: 1.0,
               ),
-            ),
+            ],
           ),
-        ],
+        ),
       ),
-    ),
-      ),
-    ).animate().fadeIn(duration: 300.ms, delay: (100 + index * 100).ms, curve: Curves.easeOut).slideX(begin: 0.05, end: 0, duration: 300.ms, delay: (100 + index * 100).ms);
+    )
+        .animate()
+        .fadeIn(
+            duration: 300.ms,
+            delay: (100 + index * 100).ms,
+            curve: Curves.easeOut)
+        .slideX(
+            begin: 0.05,
+            end: 0,
+            duration: 300.ms,
+            delay: (100 + index * 100).ms);
   }
 }

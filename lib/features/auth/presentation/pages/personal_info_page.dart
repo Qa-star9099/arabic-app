@@ -17,7 +17,7 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
   void _confirm() {
     final name = _nameController.text.trim();
     final age = _ageController.text.trim();
-    
+
     if (name.isEmpty || age.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -27,7 +27,8 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
           ),
           backgroundColor: Colors.redAccent,
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       );
       return;
@@ -95,118 +96,122 @@ class _PersonalInfoPageState extends State<PersonalInfoPage> {
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 20),
-              const Text(
-                'Shaxsiy ma\'lumotlar ',
-                style: TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
-                  letterSpacing: -0.5,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'O\'zingiz haqingizda qisqacha ma\'lumot bering',
-                style: TextStyle(
-                  fontFamily: 'Geist',
-                  fontSize: 14,
-                  color: Color(0x99FFFFFF), // white 60%
-                  height: 1.5,
-                ),
-              ),
-              const SizedBox(height: 40),
-              
-              // Name Input
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0x0AFFFFFF),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0x1AFFFFFF)),
-                ),
-                child: TextField(
-                  controller: _nameController,
-                  style: const TextStyle(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 20),
+                const Text(
+                  'Shaxsiy ma\'lumotlar ',
+                  style: TextStyle(
                     fontFamily: 'Geist',
+                    fontSize: 28,
+                    fontWeight: FontWeight.w600,
                     color: Colors.white,
-                    fontSize: 16,
-                  ),
-                  textCapitalization: TextCapitalization.words,
-                  decoration: const InputDecoration(
-                    hintText: 'Ismingiz',
-                    hintStyle: TextStyle(
-                      fontFamily: 'Geist',
-                      color: Color(0x40FFFFFF),
-                    ),
-                    prefixIcon: Icon(Icons.person_rounded, color: Color(0x80FFFFFF)),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    letterSpacing: -0.5,
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
+                const SizedBox(height: 8),
+                const Text(
+                  'O\'zingiz haqingizda qisqacha ma\'lumot bering',
+                  style: TextStyle(
+                    fontFamily: 'Geist',
+                    fontSize: 14,
+                    color: Color(0x99FFFFFF), // white 60%
+                    height: 1.5,
+                  ),
+                ),
+                const SizedBox(height: 40),
 
-              // Age Input
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0x0AFFFFFF),
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: const Color(0x1AFFFFFF)),
-                ),
-                child: TextField(
-                  controller: _ageController,
-                  keyboardType: TextInputType.number,
-                  style: const TextStyle(
-                    fontFamily: 'Geist',
-                    color: Colors.white,
-                    fontSize: 16,
+                // Name Input
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0x0AFFFFFF),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0x1AFFFFFF)),
                   ),
-                  decoration: const InputDecoration(
-                    hintText: 'Yoshingiz',
-                    hintStyle: TextStyle(
+                  child: TextField(
+                    controller: _nameController,
+                    style: const TextStyle(
                       fontFamily: 'Geist',
-                      color: Color(0x40FFFFFF),
-                    ),
-                    prefixIcon: Icon(Icons.calendar_today_rounded, color: Color(0x80FFFFFF)),
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 40),
-              
-              // Confirm Button
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _confirm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.emerald,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'Tasdiqlash',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
                       color: Colors.white,
+                      fontSize: 16,
+                    ),
+                    textCapitalization: TextCapitalization.words,
+                    decoration: const InputDecoration(
+                      hintText: 'Ismingiz',
+                      hintStyle: TextStyle(
+                        fontFamily: 'Geist',
+                        color: Color(0x40FFFFFF),
+                      ),
+                      prefixIcon:
+                          Icon(Icons.person_rounded, color: Color(0x80FFFFFF)),
+                      border: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                     ),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 20),
+
+                // Age Input
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0x0AFFFFFF),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0x1AFFFFFF)),
+                  ),
+                  child: TextField(
+                    controller: _ageController,
+                    keyboardType: TextInputType.number,
+                    style: const TextStyle(
+                      fontFamily: 'Geist',
+                      color: Colors.white,
+                      fontSize: 16,
+                    ),
+                    decoration: const InputDecoration(
+                      hintText: 'Yoshingiz',
+                      hintStyle: TextStyle(
+                        fontFamily: 'Geist',
+                        color: Color(0x40FFFFFF),
+                      ),
+                      prefixIcon: Icon(Icons.calendar_today_rounded,
+                          color: Color(0x80FFFFFF)),
+                      border: InputBorder.none,
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 40),
+
+                // Confirm Button
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _confirm,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.emerald,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'Tasdiqlash',
+                      style: TextStyle(
+                        fontFamily: 'Geist',
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }

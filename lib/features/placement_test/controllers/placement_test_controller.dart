@@ -49,7 +49,8 @@ class PlacementTestState {
       case QuestionType.audioTest:
       case QuestionType.fillInBlank:
       case QuestionType.errorId:
-        return selectedAnswer == currentQuestion.correctAnswerIndex || selectedAnswer == currentQuestion.errorWordIndex;
+        return selectedAnswer == currentQuestion.correctAnswerIndex ||
+            selectedAnswer == currentQuestion.errorWordIndex;
       case QuestionType.matchPairs:
         if (selectedAnswer is Map) {
           final map = selectedAnswer as Map;
@@ -64,7 +65,8 @@ class PlacementTestState {
       case QuestionType.sentenceScramble:
         if (selectedAnswer is List) {
           final list = selectedAnswer as List;
-          final correctList = currentQuestion.options; // Options store correct order
+          final correctList =
+              currentQuestion.options; // Options store correct order
           if (list.length != correctList.length) return false;
           for (int i = 0; i < correctList.length; i++) {
             if (list[i] != correctList[i]) return false;
@@ -88,7 +90,8 @@ class PlacementTestState {
       questions: questions ?? this.questions,
       currentIndex: currentIndex ?? this.currentIndex,
       correctCount: correctCount ?? this.correctCount,
-      selectedAnswer: selectedAnswer == _keep ? this.selectedAnswer : selectedAnswer,
+      selectedAnswer:
+          selectedAnswer == _keep ? this.selectedAnswer : selectedAnswer,
       isAnswerSubmitted: isAnswerSubmitted ?? this.isAnswerSubmitted,
       isFinished: isFinished ?? this.isFinished,
     );
@@ -139,8 +142,7 @@ class PlacementTestController extends AutoDisposeNotifier<PlacementTestState> {
     }
 
     state = state.copyWith(
-      correctCount:
-          isCorrect ? state.correctCount + 1 : state.correctCount,
+      correctCount: isCorrect ? state.correctCount + 1 : state.correctCount,
       isAnswerSubmitted: true,
     );
   }

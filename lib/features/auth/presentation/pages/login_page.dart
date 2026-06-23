@@ -46,22 +46,23 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(height: 60),
-              
+
               // App Logo / Illustration here
               Container(
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: AppColors.emerald.withOpacity(0.1),
+                  color: AppColors.emerald.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: const Center(
-                  child: FaIcon(FontAwesomeIcons.graduationCap, size: 60, color: AppColors.emerald),
+                  child: FaIcon(FontAwesomeIcons.graduationCap,
+                      size: 60, color: AppColors.emerald),
                 ),
               ),
-              
+
               const SizedBox(height: 40),
-              
+
               const Text(
                 'Xush kelibsiz',
                 style: TextStyle(
@@ -84,13 +85,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 ),
               ),
               const Spacer(),
-              
+
               if (authState.hasError)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 24.0),
                   child: Text(
                     'Xatolik yuz berdi: ${authState.error}',
-                    style: const TextStyle(color: Colors.redAccent, fontFamily: 'Geist'),
+                    style: const TextStyle(
+                        color: Colors.redAccent, fontFamily: 'Geist'),
                     textAlign: TextAlign.center,
                   ),
                 ),
@@ -101,9 +103,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 height: 56,
                 child: ElevatedButton.icon(
                   onPressed: isLoading ? null : _signInWithGoogle,
-                  icon: isLoading 
-                      ? const SizedBox(width: 24, height: 24, child: CircularProgressIndicator(color: Colors.black))
-                      : const FaIcon(FontAwesomeIcons.google, color: Colors.black, size: 20),
+                  icon: isLoading
+                      ? const SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(color: Colors.black))
+                      : const FaIcon(FontAwesomeIcons.google,
+                          color: Colors.black, size: 20),
                   label: Text(
                     isLoading ? 'Kirilmoqda...' : 'Google orqali kirish',
                     style: const TextStyle(
@@ -130,4 +136,3 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
   }
 }
-

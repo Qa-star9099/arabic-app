@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -7,7 +7,6 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'package:arabcha/data/models/lesson_models.dart';
 import 'package:arabcha/features/lesson/providers/lesson_providers.dart';
-import 'package:arabcha/core/services/tts_service.dart';
 
 class LessonAgendaPage extends ConsumerStatefulWidget {
   final String id;
@@ -67,7 +66,7 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
                 ),
               ),
             ),
-            
+
             // Main Content
             SafeArea(
               child: _buildContent(context, topic),
@@ -91,8 +90,9 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
     final wordObj = topic.words.isNotEmpty ? topic.words.first : null;
     final String cognateRaw = wordObj?.uzbekCognate ?? 'safar';
     final String cognate = cognateRaw.toLowerCase();
-    
-    final totalWords = topic.words.fold<int>(0, (sum, w) => sum + w.family.length);
+
+    final totalWords =
+        topic.words.fold<int>(0, (sum, w) => sum + w.family.length);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -110,7 +110,8 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
                   height: 40,
                   decoration: BoxDecoration(
                     color: const Color(0xFF3DD68C).withValues(alpha: 0.04),
-                    border: Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
+                    border:
+                        Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Center(
@@ -204,7 +205,7 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
                         painter: HeroWavesPainter(),
                       ),
                     ),
-                    
+
                     // Text Elements
                     Column(
                       mainAxisSize: MainAxisSize.min,
@@ -234,7 +235,8 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
                     ),
                   ],
                 ),
-              ).animate().fadeIn(duration: 300.ms, delay: 100.ms, curve: Curves.easeOut),
+              ).animate().fadeIn(
+                  duration: 300.ms, delay: 100.ms, curve: Curves.easeOut),
 
               const Spacer(flex: 3),
 
@@ -254,14 +256,20 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
                       const TextSpan(text: "Bu darsda "),
                       TextSpan(
                         text: cognate,
-                        style: const TextStyle(fontWeight: FontWeight.w500, color: Color(0xFFE8EEF4)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFE8EEF4)),
                       ),
                       const TextSpan(text: " so'zining ildizidan "),
                       TextSpan(
                         text: "$totalWords",
-                        style: const TextStyle(fontWeight: FontWeight.w500, color: Color(0xFFE8EEF4)),
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w500,
+                            color: Color(0xFFE8EEF4)),
                       ),
-                      const TextSpan(text: " ta yangi so'z ochasiz. So'ngida ulardan gap tuzib, suhbatda erkin ishlatasiz."),
+                      const TextSpan(
+                          text:
+                              " ta yangi so'z ochasiz. So'ngida ulardan gap tuzib, suhbatda erkin ishlatasiz."),
                     ],
                   ),
                 ),
@@ -274,11 +282,14 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
                 padding: const EdgeInsets.symmetric(horizontal: 30),
                 child: Column(
                   children: [
-                    _buildInfoRow("$totalWords ta yangi arab so'zi", "bitta ildizdan o'sgan", 300),
+                    _buildInfoRow("$totalWords ta yangi arab so'zi",
+                        "bitta ildizdan o'sgan", 300),
                     const SizedBox(height: 18),
-                    _buildInfoRow("gap tuzish mashqi", "suhbatda erkin ishlatish uchun", 400),
+                    _buildInfoRow("gap tuzish mashqi",
+                        "suhbatda erkin ishlatish uchun", 400),
                     const SizedBox(height: 18),
-                    _buildInfoRow("talaffuz va tinglash", "native ohang bilan", 500),
+                    _buildInfoRow(
+                        "talaffuz va tinglash", "native ohang bilan", 500),
                   ],
                 ),
               ),
@@ -411,7 +422,10 @@ class _LessonAgendaPageState extends ConsumerState<LessonAgendaPage> {
           ),
         ),
       ],
-    ).animate(delay: delay.ms).fadeIn(duration: 200.ms).slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
+    )
+        .animate(delay: delay.ms)
+        .fadeIn(duration: 200.ms)
+        .slideY(begin: 0.2, end: 0, curve: Curves.easeOut);
   }
 
   Widget _buildContextText(String text) {
@@ -446,9 +460,9 @@ class HeroWavesPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     final baseColor = const Color(0xFF3DD68C);
-    
+
     // Center it vertically in the available space, assuming original viewBox was 180h
-    final double verticalShift = (size.height / 2) - 90; 
+    final double verticalShift = (size.height / 2) - 90;
 
     // Helper function to map the SVG's M, Q, and T path commands
     void drawWave({
@@ -464,7 +478,7 @@ class HeroWavesPainter extends CustomPainter {
         ..isAntiAlias = true;
 
       final path = Path();
-      
+
       // X Coordinates based on the SVG
       const double startX = -20;
       const double cp1X = 60;
@@ -482,10 +496,10 @@ class HeroWavesPainter extends CustomPainter {
 
       // Start path (M)
       path.moveTo(startX, shiftedYOffset);
-      
+
       // First curve (Q)
       path.quadraticBezierTo(cp1X, shiftedCpY1Offset, midX, shiftedYOffset);
-      
+
       // Second smooth curve (T)
       path.quadraticBezierTo(cp2X, shiftedCpY2Offset, endX, shiftedYOffset);
 
@@ -498,21 +512,26 @@ class HeroWavesPainter extends CustomPainter {
     }
 
     // Replicating the exact lines from the <path> tags
-    
+
     // Wave 1 (Center)
-    drawWave(yOffset: 90, cpY1Offset: 50, strokeWidth: 0.8, opacityMultiplier: 1.0);
-    
+    drawWave(
+        yOffset: 90, cpY1Offset: 50, strokeWidth: 0.8, opacityMultiplier: 1.0);
+
     // Wave 2 (Lower 1)
-    drawWave(yOffset: 105, cpY1Offset: 65, strokeWidth: 0.6, opacityMultiplier: 0.7);
-    
+    drawWave(
+        yOffset: 105, cpY1Offset: 65, strokeWidth: 0.6, opacityMultiplier: 0.7);
+
     // Wave 3 (Lower 2)
-    drawWave(yOffset: 120, cpY1Offset: 80, strokeWidth: 0.5, opacityMultiplier: 0.5);
-    
+    drawWave(
+        yOffset: 120, cpY1Offset: 80, strokeWidth: 0.5, opacityMultiplier: 0.5);
+
     // Wave 4 (Upper 1 - inverted control points)
-    drawWave(yOffset: 75, cpY1Offset: 115, strokeWidth: 0.6, opacityMultiplier: 0.6);
-    
+    drawWave(
+        yOffset: 75, cpY1Offset: 115, strokeWidth: 0.6, opacityMultiplier: 0.6);
+
     // Wave 5 (Upper 2)
-    drawWave(yOffset: 60, cpY1Offset: 100, strokeWidth: 0.5, opacityMultiplier: 0.4);
+    drawWave(
+        yOffset: 60, cpY1Offset: 100, strokeWidth: 0.5, opacityMultiplier: 0.4);
 
     // Draw the two glowing dots floating on the center line
     final dotPaint = Paint()..color = baseColor.withValues(alpha: 0.4);

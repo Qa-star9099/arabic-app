@@ -66,7 +66,7 @@ class DailyGoalSelectionPage extends StatefulWidget {
     required this.selectedGoal,
     required this.selectedLevel,
   });
-  
+
   final String selectedGoal;
   final String selectedLevel;
 
@@ -213,7 +213,8 @@ class _DailyGoalSelectionPageState extends State<DailyGoalSelectionPage>
                     if (context.canPop()) {
                       context.pop();
                     } else {
-                      context.go(AppRoutes.levelSelection, extra: widget.selectedGoal);
+                      context.go(AppRoutes.levelSelection,
+                          extra: widget.selectedGoal);
                     }
                   }),
                 ),
@@ -253,7 +254,8 @@ class _DailyGoalSelectionPageState extends State<DailyGoalSelectionPage>
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: _StartButton(
                       onPressed: () {
-                        final selectedGoalTitle = _goals[_selectedGoalIdx].title;
+                        final selectedGoalTitle =
+                            _goals[_selectedGoalIdx].title;
                         context.go(AppRoutes.pathSelection, extra: {
                           'goal': widget.selectedGoal,
                           'level': widget.selectedLevel,
@@ -513,7 +515,8 @@ class _HeroSection extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFF0B1220), // Dark background matching screenshot
+              color: const Color(
+                  0xFF0B1220), // Dark background matching screenshot
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
                 color: selectedOption.accentLight.withValues(alpha: 0.3),
@@ -535,7 +538,8 @@ class _HeroSection extends StatelessWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(Icons.check_box_outline_blank_rounded, color: selectedOption.accentLight, size: 20),
+                    Icon(Icons.check_box_outline_blank_rounded,
+                        color: selectedOption.accentLight, size: 20),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -558,9 +562,11 @@ class _HeroSection extends StatelessWidget {
                     // Column 1
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 8),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF131B2A), // Slightly lighter inner box
+                          color: const Color(
+                              0xFF131B2A), // Slightly lighter inner box
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Column(
@@ -593,7 +599,8 @@ class _HeroSection extends StatelessWidget {
                     // Column 2
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 8),
                         decoration: BoxDecoration(
                           color: const Color(0xFF131B2A),
                           borderRadius: BorderRadius.circular(16),
@@ -628,7 +635,8 @@ class _HeroSection extends StatelessWidget {
                     // Column 3
                     Expanded(
                       child: Container(
-                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 16, horizontal: 8),
                         decoration: BoxDecoration(
                           color: const Color(0xFF131B2A),
                           borderRadius: BorderRadius.circular(16),
@@ -804,7 +812,8 @@ class _GoalCard extends StatelessWidget {
                     : Border.all(color: const Color(0x1FFFFFFF), width: 1.5),
               ),
               child: sel
-                  ? const Icon(Icons.check_rounded, color: Colors.white, size: 14)
+                  ? const Icon(Icons.check_rounded,
+                      color: Colors.white, size: 14)
                   : null,
             ),
           ],

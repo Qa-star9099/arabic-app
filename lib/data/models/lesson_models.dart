@@ -1,11 +1,11 @@
-/// ============================================================
-/// Lesson data models — Cognate-First Spiral (8 bosqich)
-/// Survival Arabic for Uzbekistan
-///
-/// Uslub mavjud `placement_test/models` bilan izchil:
-/// const konstruktorlar, /// dokumentatsiya, null-safety.
-/// Manba: statik JSON (assets) — serverless.
-/// ============================================================
+// ============================================================
+// Lesson data models — Cognate-First Spiral (8 bosqich)
+// Survival Arabic for Uzbekistan
+//
+// Uslub mavjud `placement_test/models` bilan izchil:
+// const konstruktorlar, dokumentatsiya, null-safety.
+// Manba: statik JSON (assets) — serverless.
+// ============================================================
 
 /// Bitta survival mavzu (masalan T-01 Aeroport).
 /// Bir mavzu bir nechta [LessonWord] dan iborat — har biri 8 bosqichdan o'tadi.

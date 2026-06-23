@@ -45,7 +45,8 @@ class ProgressRepository {
   }
 
   /// Marks a specific step (e.g. 1 to 8) as completed for the word.
-  Future<void> markStepCompleted(String userId, String wordId, int stepNumber) async {
+  Future<void> markStepCompleted(
+      String userId, String wordId, int stepNumber) async {
     final docRef = _firestore
         .collection('user_progress')
         .doc(userId)

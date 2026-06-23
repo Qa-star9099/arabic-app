@@ -1,7 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:arabcha/data/repositories/content_repository.dart';
-import 'package:arabcha/data/models/lesson_models.dart';
-import 'package:flutter/services.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -22,7 +20,7 @@ void main() {
       expect(topic.title, 'Aeroport');
       expect(topic.phase, 'arrival');
       expect(topic.words.length, 1);
-      
+
       final word = topic.words.first;
       expect(word.id, 'w-safar');
       expect(word.uzbekCognate, 'safar');

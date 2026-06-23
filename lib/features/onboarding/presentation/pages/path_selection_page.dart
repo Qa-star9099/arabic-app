@@ -14,7 +14,7 @@ class PathSelectionPage extends StatefulWidget {
     required this.selectedLevel,
     required this.selectedDailyGoal,
   });
-  
+
   final String selectedGoal;
   final String selectedLevel;
   final String selectedDailyGoal;
@@ -46,13 +46,19 @@ class _PathSelectionPageState extends State<PathSelectionPage>
     );
 
     _headerFade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entranceCtrl, curve: const Interval(0.0, 0.4, curve: Curves.easeOut)),
+      CurvedAnimation(
+          parent: _entranceCtrl,
+          curve: const Interval(0.0, 0.4, curve: Curves.easeOut)),
     );
     _cardsFade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entranceCtrl, curve: const Interval(0.2, 0.7, curve: Curves.easeOut)),
+      CurvedAnimation(
+          parent: _entranceCtrl,
+          curve: const Interval(0.2, 0.7, curve: Curves.easeOut)),
     );
     _buttonFade = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _entranceCtrl, curve: const Interval(0.5, 1.0, curve: Curves.easeOut)),
+      CurvedAnimation(
+          parent: _entranceCtrl,
+          curve: const Interval(0.5, 1.0, curve: Curves.easeOut)),
     );
 
     // Orb slow spin
@@ -115,7 +121,8 @@ class _PathSelectionPageState extends State<PathSelectionPage>
                         _PathCard(
                           isSelected: _selectedPath == 0,
                           title: 'Darajani aniqlash',
-                          subtitle: 'Siz bilgan mavzularni o\'tkazib yuboring.\nAynan o\'z darajangizdan boshlang.',
+                          subtitle:
+                              'Siz bilgan mavzularni o\'tkazib yuboring.\nAynan o\'z darajangizdan boshlang.',
                           icon: Icons.checklist_rtl_rounded,
                           accentColor: AppColors.emerald,
                           pills: const ['A1 -> B2 aniqlash', '10 ta savol'],
@@ -126,7 +133,8 @@ class _PathSelectionPageState extends State<PathSelectionPage>
                         _PathCard(
                           isSelected: _selectedPath == 1,
                           title: 'Noldan boshlash',
-                          subtitle: 'Arab tilini eng boshidan,\nalifbodan boshlab o\'rganing.',
+                          subtitle:
+                              'Arab tilini eng boshidan,\nalifbodan boshlab o\'rganing.',
                           icon: Icons.auto_stories_rounded,
                           accentColor: AppColors.violet,
                           pills: const ['Alifbo', 'Boshlang\'ich sozlar'],
@@ -201,13 +209,13 @@ class _PathCard extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? accentColor.withValues(alpha: 0.08) 
+          color: isSelected
+              ? accentColor.withValues(alpha: 0.08)
               : Colors.white.withValues(alpha: 0.02),
           borderRadius: BorderRadius.circular(24),
           border: Border.all(
-            color: isSelected 
-                ? accentColor.withValues(alpha: 0.5) 
+            color: isSelected
+                ? accentColor.withValues(alpha: 0.5)
                 : Colors.white.withValues(alpha: 0.05),
             width: 2,
           ),
@@ -236,7 +244,7 @@ class _PathCard extends StatelessWidget {
                   child: Icon(icon, color: accentColor, size: 28),
                 ),
                 const SizedBox(width: 16),
-                
+
                 // Title
                 Expanded(
                   child: Text(
@@ -249,11 +257,12 @@ class _PathCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                
+
                 // Optional Tag
                 if (tag != null)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: accentColor.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(12),
@@ -271,7 +280,7 @@ class _PathCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Subtitle
             Text(
               subtitle,
@@ -282,9 +291,9 @@ class _PathCard extends StatelessWidget {
                 height: 1.4,
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Pills
             Wrap(
               spacing: 8,
@@ -339,10 +348,10 @@ class _StartButton extends ConsumerWidget {
           try {
             if (ref.read(authControllerProvider).value != null) {
               await ref.read(authControllerProvider.notifier).updateUserData(
-                learningGoal: widget.selectedGoal,
-                level: widget.selectedLevel,
-                dailyGoal: widget.selectedDailyGoal,
-              );
+                    learningGoal: widget.selectedGoal,
+                    level: widget.selectedLevel,
+                    dailyGoal: widget.selectedDailyGoal,
+                  );
               if (context.mounted) context.go(AppRoutes.home);
             } else {
               ref.read(pendingOnboardingDataProvider.notifier).state = {
@@ -578,7 +587,9 @@ class _PageDots extends StatelessWidget {
           width: isCurrent ? 24 : 6,
           height: 6,
           decoration: BoxDecoration(
-            color: isCurrent ? AppColors.emerald : Colors.white.withValues(alpha: 0.2),
+            color: isCurrent
+                ? AppColors.emerald
+                : Colors.white.withValues(alpha: 0.2),
             borderRadius: BorderRadius.circular(3),
           ),
         );

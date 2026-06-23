@@ -36,31 +36,34 @@ class _RevealStepState extends ConsumerState<RevealStep> {
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid != null) {
       try {
-        await ref.read(progressRepositoryProvider).markWordSeen(uid, widget.word.id);
+        await ref
+            .read(progressRepositoryProvider)
+            .markWordSeen(uid, widget.word.id);
       } catch (e) {
         debugPrint("Progress save error: \$e");
       }
     }
 
     if (!mounted) return;
-    
+
     if (widget.onNext != null) {
       widget.onNext!();
     } else {
       // Placeholder for Step 3
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: const Text(
-          "Step 3 (Expand) - coming next",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: const Text(
+            "Step 3 (Expand) - coming next",
+            style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+          backgroundColor: const Color(0xFF3DD68C),
+          behavior: SnackBarBehavior.floating,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          duration: const Duration(seconds: 2),
         ),
-        backgroundColor: const Color(0xFF3DD68C),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+      );
     }
   }
 
@@ -76,7 +79,8 @@ class _RevealStepState extends ConsumerState<RevealStep> {
   @override
   Widget build(BuildContext context) {
     // Generate the "s — f — r" string dynamically
-    final latinLettersList = widget.word.root.letters.map((l) => _getLatin(l)).toList();
+    final latinLettersList =
+        widget.word.root.letters.map((l) => _getLatin(l)).toList();
     // Reversing is not needed for the combined string, we want left-to-right s - f - r
     final combinedLatin = latinLettersList.join(' — ');
 
@@ -103,7 +107,7 @@ class _RevealStepState extends ConsumerState<RevealStep> {
               ),
             ),
           ),
-          
+
           SafeArea(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -129,10 +133,12 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                           decoration: BoxDecoration(
                             color: const Color.fromRGBO(61, 214, 140, 0.04),
                             borderRadius: BorderRadius.circular(14),
-                            border: Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
+                            border: Border.all(
+                                color: const Color(0xFF1E2D3A), width: 0.5),
                           ),
                           child: const Center(
-                            child: Icon(Icons.arrow_back_rounded, size: 17, color: Color(0xFF6B7A88)),
+                            child: Icon(Icons.arrow_back_rounded,
+                                size: 17, color: Color(0xFF6B7A88)),
                           ),
                         ),
                       ),
@@ -182,7 +188,8 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                       children: [
                         // Step header (after 28px from top nav)
                         Padding(
-                          padding: const EdgeInsets.only(top: 28, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 28, left: 22, right: 22),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -221,11 +228,14 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                               ),
                             ],
                           ),
-                        ).animate().fadeIn(duration: 200.ms, curve: Curves.easeOut),
+                        )
+                            .animate()
+                            .fadeIn(duration: 200.ms, curve: Curves.easeOut),
 
                         // Intro text (after 28px from header)
                         Padding(
-                          padding: const EdgeInsets.only(top: 28, left: 36, right: 36),
+                          padding: const EdgeInsets.only(
+                              top: 28, left: 36, right: 36),
                           child: RichText(
                             textAlign: TextAlign.center,
                             text: TextSpan(
@@ -248,18 +258,23 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                               ],
                             ),
                           ),
-                        ).animate().fadeIn(duration: 200.ms, curve: Curves.easeOut),
+                        )
+                            .animate()
+                            .fadeIn(duration: 200.ms, curve: Curves.easeOut),
 
                         // Root card (after 24px from intro)
                         Padding(
-                          padding: const EdgeInsets.only(top: 24, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 24, left: 22, right: 22),
                           child: Container(
                             width: double.infinity,
-                            padding: const EdgeInsets.only(top: 28, left: 22, right: 22, bottom: 24),
+                            padding: const EdgeInsets.only(
+                                top: 28, left: 22, right: 22, bottom: 24),
                             decoration: BoxDecoration(
                               color: const Color.fromRGBO(255, 255, 255, 0.025),
                               borderRadius: BorderRadius.circular(24),
-                              border: Border.all(color: const Color(0xFF1E2D3A), width: 0.5),
+                              border: Border.all(
+                                  color: const Color(0xFF1E2D3A), width: 0.5),
                             ),
                             child: Column(
                               children: [
@@ -297,14 +312,19 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      for (int i = 0; i < widget.word.root.letters.length; i++) ...[
+                                      for (int i = 0;
+                                          i < widget.word.root.letters.length;
+                                          i++) ...[
                                         _buildLetterTile(
                                           widget.word.root.letters[i],
-                                          _getLatin(widget.word.root.letters[i]),
+                                          _getLatin(
+                                              widget.word.root.letters[i]),
                                         ),
-                                        if (i < widget.word.root.letters.length - 1)
+                                        if (i <
+                                            widget.word.root.letters.length - 1)
                                           Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8.0),
                                             child: Text(
                                               "·",
                                               style: GoogleFonts.inter(
@@ -324,7 +344,8 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                                   width: double.infinity,
                                   height: 1,
                                   child: CustomPaint(
-                                    painter: DashedLinePainter(color: const Color(0xFF1E2D3A)),
+                                    painter: DashedLinePainter(
+                                        color: const Color(0xFF1E2D3A)),
                                   ),
                                 ),
                                 const SizedBox(height: 18),
@@ -343,7 +364,8 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                                         ),
                                       ),
                                       TextSpan(
-                                        text: "  →  ", // 6px margin approximation
+                                        text:
+                                            "  →  ", // 6px margin approximation
                                         style: GoogleFonts.inter(
                                           fontSize: 13,
                                           color: const Color(0xFF3D4955),
@@ -371,13 +393,22 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                             ),
                           ),
                         )
-                        .animate()
-                        .fadeIn(duration: 300.ms, delay: 100.ms, curve: Curves.easeOut)
-                        .slideY(begin: 0.05, end: 0, duration: 300.ms, delay: 100.ms, curve: Curves.easeOut),
+                            .animate()
+                            .fadeIn(
+                                duration: 300.ms,
+                                delay: 100.ms,
+                                curve: Curves.easeOut)
+                            .slideY(
+                                begin: 0.05,
+                                end: 0,
+                                duration: 300.ms,
+                                delay: 100.ms,
+                                curve: Curves.easeOut),
 
                         // Hint line
                         Padding(
-                          padding: const EdgeInsets.only(top: 24, left: 22, right: 22),
+                          padding: const EdgeInsets.only(
+                              top: 24, left: 22, right: 22),
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -404,7 +435,7 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                             ],
                           ),
                         ),
-                        
+
                         const SizedBox(height: 32),
                       ],
                     ),
@@ -413,7 +444,8 @@ class _RevealStepState extends ConsumerState<RevealStep> {
 
                 // Bottom CTA Button
                 Padding(
-                  padding: const EdgeInsets.only(left: 22, right: 22, bottom: 24),
+                  padding:
+                      const EdgeInsets.only(left: 22, right: 22, bottom: 24),
                   child: InkWell(
                     onTap: _onContinue,
                     borderRadius: BorderRadius.circular(28),
@@ -447,7 +479,8 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                             ),
                           ),
                           const SizedBox(width: 10),
-                          const Icon(Icons.arrow_forward_rounded, size: 17, color: Color(0xFF0B1218)),
+                          const Icon(Icons.arrow_forward_rounded,
+                              size: 17, color: Color(0xFF0B1218)),
                         ],
                       ),
                     ),
@@ -478,12 +511,15 @@ class _RevealStepState extends ConsumerState<RevealStep> {
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
               constraints: const BoxConstraints(minWidth: 56),
-              padding: const EdgeInsets.only(left: 14, right: 14, top: 14, bottom: 16),
+              padding: const EdgeInsets.only(
+                  left: 14, right: 14, top: 14, bottom: 16),
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(11, 18, 24, 0.6),
                 borderRadius: BorderRadius.circular(14),
                 border: Border.all(
-                  color: isPressed ? const Color(0xFF3DD68C) : const Color(0xFF2A3E4F),
+                  color: isPressed
+                      ? const Color(0xFF3DD68C)
+                      : const Color(0xFF2A3E4F),
                   width: 0.5,
                 ),
               ),
@@ -503,7 +539,8 @@ class _RevealStepState extends ConsumerState<RevealStep> {
                   Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.volume_up_rounded, size: 10, color: Color(0xFF3DD68C)),
+                      const Icon(Icons.volume_up_rounded,
+                          size: 10, color: Color(0xFF3DD68C)),
                       const SizedBox(width: 4),
                       Text(
                         latin,
@@ -535,7 +572,7 @@ class DashedLinePainter extends CustomPainter {
       ..color = color
       ..strokeWidth = 0.5
       ..style = PaintingStyle.stroke;
-    
+
     double dashWidth = 4;
     double dashSpace = 4;
     double startX = 0;

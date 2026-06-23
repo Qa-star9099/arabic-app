@@ -44,7 +44,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   ref.listen<AsyncValue<UserModel?>>(authControllerProvider, (_, __) {
     listenable.value = !listenable.value;
   });
-  
+
   return GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
@@ -55,18 +55,19 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       final isAuth = authState.value != null;
       final user = authState.value;
-      
+
       final isSplash = state.uri.toString() == AppRoutes.splash;
       final isAuthRoute = state.uri.toString().startsWith('/auth');
       final isWelcomeRoute = state.uri.toString() == AppRoutes.welcome;
-      final isOnboardingRoute = state.uri.toString().startsWith('/onboarding') || 
-                                state.uri.toString().startsWith('/placement');
+      final isOnboardingRoute =
+          state.uri.toString().startsWith('/onboarding') ||
+              state.uri.toString().startsWith('/placement');
 
       // 1. Unauthenticated User Flow
       if (!isAuth) {
         // Allow them on splash, welcome, auth routes, AND onboarding routes!
         if (isSplash || isWelcomeRoute || isAuthRoute || isOnboardingRoute) {
-          return null; 
+          return null;
         }
         // Otherwise, force them to Welcome
         return AppRoutes.welcome;
@@ -74,7 +75,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // 2. Authenticated User Flow
       final pendingData = ref.read(pendingOnboardingDataProvider);
-      final hasCompletedOnboarding = user?.learningGoal != null || pendingData != null;
+      final hasCompletedOnboarding =
+          user?.learningGoal != null || pendingData != null;
 
       if (!hasCompletedOnboarding) {
         // User needs to onboard. Allow them on onboarding routes.
@@ -125,7 +127,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final extra = state.extra as Map<String, dynamic>?;
           final goal = extra?['goal'] as String? ?? 'Umumiy';
           final level = extra?['level'] as String? ?? 'Boshlang\'ich (A1)';
-          return DailyGoalSelectionPage(selectedGoal: goal, selectedLevel: level);
+          return DailyGoalSelectionPage(
+              selectedGoal: goal, selectedLevel: level);
         },
       ),
       GoRoute(
@@ -135,8 +138,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final extra = state.extra as Map<String, dynamic>?;
           final goal = extra?['goal'] as String? ?? 'Umumiy';
           final level = extra?['level'] as String? ?? 'Boshlang\'ich (A1)';
-          final dailyGoal = extra?['dailyGoal'] as String? ?? '30 daqiqa / kuniga';
-          return PathSelectionPage(selectedGoal: goal, selectedLevel: level, selectedDailyGoal: dailyGoal);
+          final dailyGoal =
+              extra?['dailyGoal'] as String? ?? '30 daqiqa / kuniga';
+          return PathSelectionPage(
+              selectedGoal: goal,
+              selectedLevel: level,
+              selectedDailyGoal: dailyGoal);
         },
       ),
       GoRoute(
@@ -146,8 +153,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           final extra = state.extra as Map<String, dynamic>?;
           final goal = extra?['goal'] as String? ?? 'Umumiy';
           final level = extra?['level'] as String? ?? 'Boshlang\'ich (A1)';
-          final dailyGoal = extra?['dailyGoal'] as String? ?? '30 daqiqa / kuniga';
-          return PlacementTestScreen(selectedGoal: goal, expectedLevel: level, dailyGoal: dailyGoal);
+          final dailyGoal =
+              extra?['dailyGoal'] as String? ?? '30 daqiqa / kuniga';
+          return PlacementTestScreen(
+              selectedGoal: goal, expectedLevel: level, dailyGoal: dailyGoal);
         },
       ),
       GoRoute(

@@ -1,3 +1,4 @@
+// ignore_for_file: avoid_print
 void main() {
   String arabic = "سَفَر";
   String expectedArabicStripped = arabic.replaceAll(RegExp(r'[\u064B-\u065F\u0670]'), '');

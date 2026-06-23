@@ -46,7 +46,8 @@ class TtsService {
       } else {
         _isAvailable = false;
         if (kDebugMode) {
-          print("TTS: No Arabic language found. Please download an Arabic voice in iOS Settings > Accessibility > Spoken Content > Voices.");
+          print(
+              "TTS: No Arabic language found. Please download an Arabic voice in iOS Settings > Accessibility > Spoken Content > Voices.");
         }
       }
     } catch (e) {
