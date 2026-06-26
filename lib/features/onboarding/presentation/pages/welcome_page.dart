@@ -1,431 +1,370 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../app/router/app_router.dart';
-import '../../../../app/theme/app_colors.dart';
 
-class WelcomePage extends ConsumerStatefulWidget {
-  const WelcomePage({super.key});
+// ─────────────────────────────────────────────────────────────────────────────
+// CONSTANTS
+// ─────────────────────────────────────────────────────────────────────────────
 
-  @override
-  ConsumerState<WelcomePage> createState() => _WelcomePageState();
+const _kBg = Color(0xFF080F18);
+const _kCard = Color(0xFF0E1620);
+const _kBorder = Color(0xFF15202C);
+const _kGreen = Color(0xFF3DD68C);
+const _kTextPrimary = Color(0xFFEAF2F8);
+const _kTextSecondary = Color(0xFF7B8C9C);
+const _kDarkGreen = Color(0xFF041A0E);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STATE & DATA MODELS
+// ─────────────────────────────────────────────────────────────────────────────
+
+class WelcomeFeature {
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String subtitle;
+  final String? arabicSubtitle;
+
+  WelcomeFeature({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.subtitle,
+    this.arabicSubtitle,
+  });
 }
 
-class _WelcomePageState extends ConsumerState<WelcomePage>
-    with TickerProviderStateMixin {
-  // ── Entrance & Fill Animations ─────────────────────────────────────────────
-  late final AnimationController _entranceCtrl;
-  late final AnimationController _fillCtrl; // For score circle & accuracy bar
+final welcomeFeaturesProvider = Provider<List<WelcomeFeature>>((ref) {
+  return [
+    WelcomeFeature(
+      icon: Icons.mic_rounded,
+      color: _kGreen,
+      title: "Maxrajni SI bilan tekshirish",
+      subtitle: "Talaffuzingiz to'g'riligini baholaymiz!",
+    ),
+    WelcomeFeature(
+      icon: Icons.emoji_events_rounded,
+      color: const Color(0xFFF5A623),
+      title: "O'zaro bog'liq O'zbek-Arab so'zlari",
+      subtitle: "Umumiy so'zlar orqali 2x tez o'rganing!",
+    ),
+    WelcomeFeature(
+      icon: Icons.chat_bubble_outline_rounded,
+      color: const Color(0xFF9580FF),
+      title: "Interaktiv o'rganish metodikasi",
+      subtitle: "XP yig'ing va peshqadam bo'ling! ",
+      arabicSubtitle: "ممتاز",
+    ),
+  ];
+});
 
-  // ── Card Floating Controllers ──────────────────────────────────────────────
-  late final AnimationController _card1FloatCtrl;
-  late final AnimationController _card2FloatCtrl;
-  late final AnimationController _card3FloatCtrl;
+final selectedFeatureProvider = StateProvider<int>((ref) => 0);
 
-  // ── Ambient Orb Controllers ────────────────────────────────────────────────
-  late final AnimationController _orbFloatCtrl;
+// ─────────────────────────────────────────────────────────────────────────────
+// MAIN PAGE
+// ─────────────────────────────────────────────────────────────────────────────
 
-  // ── Entrance Animations (Intervals of _entranceCtrl) ──────────────────────
-
-  late final Animation<double> _titleOpacity;
-  late final Animation<double> _titleSlide;
-
-  late final Animation<double> _feature1Opacity;
-  late final Animation<double> _feature1Slide;
-
-  late final Animation<double> _feature2Opacity;
-  late final Animation<double> _feature2Slide;
-
-  late final Animation<double> _feature3Opacity;
-  late final Animation<double> _feature3Slide;
-
-  late final Animation<double> _buttonOpacity;
-  late final Animation<double> _buttonSlide;
-
-  late final Animation<double> _footerOpacity;
-  late final Animation<double> _footerSlide;
-
-  // ── Fill Progress Animations ───────────────────────────────────────────────
-  late final Animation<double> _makhrajAccuracyProgress;
-  late final Animation<double> _todayScoreProgress;
-
-  // ── Card Float Animations ──────────────────────────────────────────────────
-  late final Animation<double> _card1Offset;
-  late final Animation<double> _card2Offset;
-  late final Animation<double> _card3Offset;
-
-  // ── Orb Animations ─────────────────────────────────────────────────────────
-  late final Animation<double> _orb1Scale;
-  late final Animation<double> _orb1Opacity;
-  late final Animation<double> _orb2Scale;
-  late final Animation<double> _orb2Opacity;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // ── 1. Initialize Animation Controllers ─────────────────────────────────
-    _entranceCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1400),
-    );
-
-    _fillCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1800),
-    );
-
-    _card1FloatCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4000),
-    );
-
-    _card2FloatCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4500),
-    );
-
-    _card3FloatCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3800),
-    );
-
-    _orbFloatCtrl = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 4000),
-    );
-
-    // ── 2. Configure Entrance Animations (Staggered Fade-Up) ─────────────────
-
-    // Title ("The Arabic app...")
-    _titleOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.15, 0.55, curve: Curves.easeOut),
-      ),
-    );
-    _titleSlide = Tween<double>(begin: 16.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.15, 0.55, curve: Curves.easeOut),
-      ),
-    );
-
-    // Feature 1 (AI Makhraj evaluation)
-    _feature1Opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.2, 0.55, curve: Curves.easeOut),
-      ),
-    );
-    _feature1Slide = Tween<double>(begin: -20.0, end: 0.0).animate(
-      // Horizontal slide-in
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.2, 0.55, curve: Curves.easeOut),
-      ),
-    );
-
-    // Feature 2 (Uzbek-Arab connections)
-    _feature2Opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.35, 0.7, curve: Curves.easeOut),
-      ),
-    );
-    _feature2Slide = Tween<double>(begin: -20.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.35, 0.7, curve: Curves.easeOut),
-      ),
-    );
-
-    // Feature 3 (Gamified learning)
-    _feature3Opacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.5, 0.85, curve: Curves.easeOut),
-      ),
-    );
-    _feature3Slide = Tween<double>(begin: -20.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.5, 0.85, curve: Curves.easeOut),
-      ),
-    );
-
-    // Get Started Button
-    _buttonOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
-      ),
-    );
-    _buttonSlide = Tween<double>(begin: 16.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.4, 0.8, curve: Curves.easeOut),
-      ),
-    );
-
-    // Sign in footer
-    _footerOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.5, 0.9, curve: Curves.easeOut),
-      ),
-    );
-    _footerSlide = Tween<double>(begin: 16.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _entranceCtrl,
-        curve: const Interval(0.5, 0.9, curve: Curves.easeOut),
-      ),
-    );
-
-    // ── 3. Configure Progress Fills ──────────────────────────────────────────
-    _makhrajAccuracyProgress = Tween<double>(begin: 0.0, end: 0.87).animate(
-      CurvedAnimation(parent: _fillCtrl, curve: Curves.fastOutSlowIn),
-    );
-
-    _todayScoreProgress = Tween<double>(begin: 0.0, end: 0.77).animate(
-      // (220-50)/220 = ~0.77 fill
-      CurvedAnimation(parent: _fillCtrl, curve: Curves.fastOutSlowIn),
-    );
-
-    // ── 4. Configure Card Floats (Infinite up/down floating) ─────────────────
-    _card1Offset = Tween<double>(begin: 0.0, end: -8.0).animate(
-      CurvedAnimation(parent: _card1FloatCtrl, curve: Curves.easeInOut),
-    );
-    _card2Offset = Tween<double>(begin: 0.0, end: -6.0).animate(
-      CurvedAnimation(parent: _card2FloatCtrl, curve: Curves.easeInOut),
-    );
-    _card3Offset = Tween<double>(begin: 0.0, end: -5.0).animate(
-      CurvedAnimation(parent: _card3FloatCtrl, curve: Curves.easeInOut),
-    );
-
-    // ── 5. Configure Orb Breathing ───────────────────────────────────────────
-    _orb1Scale = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(parent: _orbFloatCtrl, curve: Curves.easeInOut),
-    );
-    _orb1Opacity = Tween<double>(begin: 0.08, end: 0.14).animate(
-      CurvedAnimation(parent: _orbFloatCtrl, curve: Curves.easeInOut),
-    );
-
-    _orb2Scale = Tween<double>(begin: 1.0, end: 1.1).animate(
-      CurvedAnimation(
-        parent: _orbFloatCtrl,
-        curve: const Interval(0.375, 1.0,
-            curve: Curves.easeInOut), // Delayed start simulation
-      ),
-    );
-    _orb2Opacity = Tween<double>(begin: 0.08, end: 0.14).animate(
-      CurvedAnimation(
-        parent: _orbFloatCtrl,
-        curve: const Interval(0.375, 1.0, curve: Curves.easeInOut),
-      ),
-    );
-
-    // ── 6. Start Animations ──────────────────────────────────────────────────
-    _entranceCtrl.forward();
-    _fillCtrl.forward();
-
-    _card1FloatCtrl.repeat(reverse: true);
-    // Add staggered offsets for the other two cards
-    Future.delayed(const Duration(milliseconds: 800), () {
-      if (mounted) _card2FloatCtrl.repeat(reverse: true);
-    });
-    Future.delayed(const Duration(milliseconds: 1400), () {
-      if (mounted) _card3FloatCtrl.repeat(reverse: true);
-    });
-
-    _orbFloatCtrl.repeat(reverse: true);
-  }
-
-  @override
-  void dispose() {
-    _entranceCtrl.dispose();
-    _fillCtrl.dispose();
-    _card1FloatCtrl.dispose();
-    _card2FloatCtrl.dispose();
-    _card3FloatCtrl.dispose();
-    _orbFloatCtrl.dispose();
-    super.dispose();
-  }
+class WelcomePage extends StatelessWidget {
+  const WelcomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: _kBg,
       body: Stack(
         children: [
-          // ── Layer 0: Dot Grid Background ───────────────────────────────────
-          const _DotGridPainterWidget(),
-
-          // ── Layer 1: Ambient Glowing Orbs ──────────────────────────────────
-          _AmbientWelcomeOrbs(
-            orb1Scale: _orb1Scale,
-            orb1Opacity: _orb1Opacity,
-            orb2Scale: _orb2Scale,
-            orb2Opacity: _orb2Opacity,
+          // ── Ghost Watermark ────────────────────────────────────────────────
+          Positioned(
+            top: -40,
+            right: -20,
+            child: IgnorePointer(
+              child: Text(
+                'ع',
+                style: TextStyle(
+                  fontFamily: 'NotoNaskhArabic',
+                  fontSize: 180,
+                  fontWeight: FontWeight.w700,
+                  color: _kGreen.withValues(alpha: 0.07),
+                  height: 1.0,
+                ),
+              ),
+            ),
           ),
 
-          // ── Layer 2: Main Welcome Interface ─────────────────────────────────────
+          // ── Main Content ───────────────────────────────────────────────────
           SafeArea(
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // ── Showcase Floating Cards Area ───────────────────────────────
-                const SizedBox(height: 16),
-                _CardsShowcaseContainer(
-                  card1Offset: _card1Offset,
-                  card2Offset: _card2Offset,
-                  card3Offset: _card3Offset,
-                  makhrajAccuracyProgress: _makhrajAccuracyProgress,
-                  todayScoreProgress: _todayScoreProgress,
-                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                  // HERO ROW — two stat cards
+                  const SizedBox(height: 12),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: _HeroRow(),
+                  ),
 
-                // ── Middle Copy & Features Section ─────────────────────────────
-                const Spacer(flex: 2),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Title heading
-                      AnimatedBuilder(
-                        animation: _entranceCtrl,
-                        builder: (context, _) {
-                          return Opacity(
-                            opacity: _titleOpacity.value,
-                            child: Transform.translate(
-                              offset: Offset(0, _titleSlide.value),
-                              child: const Text(
-                                'Arab tili biz bilan osonroq! \n هيا نتعلم',
-                                style: TextStyle(
-                                  fontFamily: 'Geist',
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textPrimary,
-                                  letterSpacing: -0.5,
-                                  height: 1.25,
-                                ),
+                  // SOCIAL PROOF ROW
+                  const SizedBox(height: 16),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: _SocialProofRow(),
+                  ),
+
+                  // DIVIDER
+                  const SizedBox(height: 12),
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    height: 1,
+                    color: _kBorder,
+                  ),
+
+                  // TITLE BLOCK
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: _TitleBlock(),
+                  ),
+
+                  // FEATURE LIST (Riverpod Integrated)
+                  const SizedBox(height: 20),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
+                    child: _FeatureList(),
+                  ),
+
+                  // PRIMARY CTA
+                  const SizedBox(height: 24),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: SizedBox(
+                      height: 56,
+                      child: ElevatedButton(
+                        onPressed: () => context.go(AppRoutes.home),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: _kGreen,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          elevation: 0,
+                          padding: EdgeInsets.zero,
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            const Text(
+                              'Boshlash — mutlaqo bepul! ',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700,
+                                color: _kDarkGreen,
                               ),
                             ),
-                          );
-                        },
+                            Text(
+                              'انطلق',
+                              textDirection: TextDirection.rtl,
+                              style: TextStyle(
+                                fontFamily: 'NotoNaskhArabic',
+                                fontSize: 15,
+                                color: _kDarkGreen.withValues(alpha: 0.75),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 20),
+                    ),
+                  ),
 
-                      // Features List (slide in horizontally)
-                      _AnimatedFeatureItem(
-                        opacity: _feature1Opacity,
-                        slide: _feature1Slide,
-                        icon: Icons.mic_rounded,
-                        iconColor: AppColors.emeraldLight,
-                        iconBg: const Color(0x261D9E75),
-                        iconBorder: const Color(0x401D9E75),
-                        title: 'Maxrajni SI bilan tekshirish ',
-                        subtitle: 'Talaffuzingiz to\'g\'riligini baholaymiz!',
+                  // SECONDARY LINK
+                  const SizedBox(height: 14),
+                  Center(
+                    child: GestureDetector(
+                      onTap: () => context.push(AppRoutes.login),
+                      behavior: HitTestBehavior.opaque,
+                      child: RichText(
+                        text: const TextSpan(
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            color: _kTextSecondary,
+                          ),
+                          children: [
+                            TextSpan(text: "Allaqachon ro'yhatdan o'tganmisiz?"),
+                            TextSpan(
+                              text: " Kirish",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                color: _kGreen,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                      const SizedBox(height: 10),
-                      _AnimatedFeatureItem(
-                        opacity: _feature2Opacity,
-                        slide: _feature2Slide,
-                        icon: Icons.local_fire_department_rounded,
-                        iconColor: AppColors.goldLight,
-                        iconBg: const Color(0x26BA7517),
-                        iconBorder: const Color(0x40BA7517),
-                        title: 'O\'zaro bog\'liq O\'zbek-Arab so\'zlari ',
-                        subtitle: 'Umumiy so\'zlar orqali 2x tez o\'rganing!',
-                      ),
-                      const SizedBox(height: 10),
-                      _AnimatedFeatureItem(
-                        opacity: _feature3Opacity,
-                        slide: _feature3Slide,
-                        icon: Icons.emoji_events_rounded,
-                        iconColor: AppColors.violetLight,
-                        iconBg: const Color(0x26533AB7),
-                        iconBorder: const Color(0x40533AB7),
-                        title: 'Interaktiv o\'rganish metodikasi',
-                        subtitle: 'XP yig\'ing va peshqadam bo\'ling! ممتاز',
-                      ),
-                    ],
+                    ),
+                  ),
+
+                  const SizedBox(height: 24),
+                      ],
+                    ),
                   ),
                 ),
+                // WORDMARK & VERSION
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.only(bottom: 8.0, top: 4.0),
+                    child: Text(
+                      'Kalima 1.0',
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF3A4A54),
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
-                // ── Bottom Action Button Section ────────────────────────────────
-                const Spacer(flex: 3),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
+// ─────────────────────────────────────────────────────────────────────────────
+// FEATURE LIST (Interactive)
+// ─────────────────────────────────────────────────────────────────────────────
+class _FeatureList extends ConsumerWidget {
+  const _FeatureList();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final features = ref.watch(welcomeFeaturesProvider);
+
+    return Column(
+      children: List.generate(features.length, (index) {
+        return Padding(
+          padding: EdgeInsets.only(bottom: index == features.length - 1 ? 0 : 10),
+          child: _FeatureItem(
+            index: index,
+            feature: features[index],
+          ),
+        );
+      }),
+    );
+  }
+}
+
+class _FeatureItem extends ConsumerWidget {
+  final int index;
+  final WelcomeFeature feature;
+
+  const _FeatureItem({
+    required this.index,
+    required this.feature,
+  });
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isActive = ref.watch(selectedFeatureProvider) == index;
+    final themeColor = feature.color;
+
+    return GestureDetector(
+      onTap: () {
+        ref.read(selectedFeatureProvider.notifier).state = index;
+      },
+      child: Stack(
+        children: [
+          // Outer container to provide the left colored border for active item
+          Positioned.fill(
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              decoration: BoxDecoration(
+                color: isActive ? themeColor : Colors.transparent,
+                borderRadius: BorderRadius.circular(16),
+              ),
+            ),
+          ),
+          
+          // Inner container
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            margin: EdgeInsets.only(left: isActive ? 3.0 : 0),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+            decoration: BoxDecoration(
+              color: isActive ? const Color(0xFF141A20) : const Color(0xFF10151A),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Row(
+              children: [
+                // Icon
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: themeColor.withValues(alpha: 0.15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    feature.icon,
+                    color: themeColor,
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: 14),
+                
+                // Texts
+                Expanded(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // Get Started Button
-                      AnimatedBuilder(
-                        animation: _entranceCtrl,
-                        builder: (context, _) {
-                          return Opacity(
-                            opacity: _buttonOpacity.value,
-                            child: Transform.translate(
-                              offset: Offset(0, _buttonSlide.value),
-                              child: _GetStartedButton(
-                                onPressed: () =>
-                                    context.go(AppRoutes.goalSelection),
-                              ),
-                            ),
-                          );
-                        },
+                      Text(
+                        feature.title,
+                        style: const TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: _kTextPrimary,
+                        ),
                       ),
-                      const SizedBox(height: 8),
-
-                      // Simple Login Text Button
-                      AnimatedBuilder(
-                        animation: _entranceCtrl,
-                        builder: (context, _) {
-                          return Opacity(
-                            opacity: _footerOpacity.value,
-                            child: Transform.translate(
-                              offset: Offset(0, _footerSlide.value),
-                              child: TextButton(
-                                onPressed: () {
-                                  context.push(AppRoutes.login);
-                                },
-                                style: TextButton.styleFrom(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 8),
-                                  foregroundColor: const Color(0xFFE8EEF4),
-                                  tapTargetSize:
-                                      MaterialTapTargetSize.shrinkWrap,
-                                ),
-                                child: RichText(
-                                  text: const TextSpan(
-                                    style: TextStyle(
-                                      fontFamily: 'Geist',
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w400,
-                                      color: Color(0xFF8FA4B8),
-                                    ),
-                                    children: [
-                                      TextSpan(
-                                          text:
-                                              "Allaqachon ro'yhatdan o'tganmisiz? "),
-                                      TextSpan(
-                                        text: "Kirish",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.emerald,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
+                      const SizedBox(height: 4),
+                      if (feature.arabicSubtitle != null)
+                        RichText(
+                          text: TextSpan(
+                            style: const TextStyle(
+                              fontSize: 12,
+                              color: _kTextSecondary,
                             ),
-                          );
-                        },
-                      ),
-                      const SizedBox(height: 12),
+                            children: [
+                              TextSpan(
+                                text: feature.subtitle,
+                                style: const TextStyle(fontFamily: 'Inter'),
+                              ),
+                              TextSpan(
+                                text: feature.arabicSubtitle,
+                                style: const TextStyle(fontFamily: 'NotoNaskhArabic'),
+                              ),
+                            ],
+                          ),
+                        )
+                      else
+                        Text(
+                          feature.subtitle,
+                          style: const TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 12,
+                            color: _kTextSecondary,
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -439,653 +378,320 @@ class _WelcomePageState extends ConsumerState<WelcomePage>
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _DotGridPainterWidget — radial dot grid (28×28 spacing, 2.5% white)
+// HERO ROW — Two stat cards matching the design image
 // ─────────────────────────────────────────────────────────────────────────────
-class _DotGridPainterWidget extends StatelessWidget {
-  const _DotGridPainterWidget();
-
-  @override
-  Widget build(BuildContext context) {
-    return Positioned.fill(
-      child: CustomPaint(painter: _DotGridPainter()),
-    );
-  }
-}
-
-class _DotGridPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    const double spacing = 28.0;
-    const double dotRadius = 1.0;
-    final paint = Paint()..color = const Color(0x06FFFFFF);
-
-    final cols = (size.width / spacing).ceil() + 1;
-    final rows = (size.height / spacing).ceil() + 1;
-
-    for (int r = 0; r < rows; r++) {
-      for (int c = 0; c < cols; c++) {
-        canvas.drawCircle(
-          Offset(c * spacing, r * spacing),
-          dotRadius,
-          paint,
-        );
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _AmbientWelcomeOrbs — two breathing background orbs (matching HTML layout)
-// ─────────────────────────────────────────────────────────────────────────────
-class _AmbientWelcomeOrbs extends StatelessWidget {
-  const _AmbientWelcomeOrbs({
-    required this.orb1Scale,
-    required this.orb1Opacity,
-    required this.orb2Scale,
-    required this.orb2Opacity,
-  });
-
-  final Animation<double> orb1Scale;
-  final Animation<double> orb1Opacity;
-  final Animation<double> orb2Scale;
-  final Animation<double> orb2Opacity;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([orb1Scale, orb2Scale]),
-      builder: (context, _) {
-        return Stack(
-          children: [
-            // Orb 1 — top-right violet orb
-            Positioned(
-              top: -60,
-              right: -60,
-              child: Transform.scale(
-                scale: orb1Scale.value,
-                child: Container(
-                  width: 260,
-                  height: 260,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:
-                        AppColors.violet.withValues(alpha: orb1Opacity.value),
-                  ),
-                ),
-              ),
-            ),
-
-            // Orb 2 — middle-left green/emerald orb
-            Positioned(
-              top: 80,
-              left: -80,
-              child: Transform.scale(
-                scale: orb2Scale.value,
-                child: Container(
-                  width: 220,
-                  height: 220,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color:
-                        AppColors.emerald.withValues(alpha: orb2Opacity.value),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _CardsShowcaseContainer — absolute positioned floating cards canvas
-// ─────────────────────────────────────────────────────────────────────────────
-class _CardsShowcaseContainer extends StatelessWidget {
-  const _CardsShowcaseContainer({
-    required this.card1Offset,
-    required this.card2Offset,
-    required this.card3Offset,
-    required this.makhrajAccuracyProgress,
-    required this.todayScoreProgress,
-  });
-
-  final Animation<double> card1Offset;
-  final Animation<double> card2Offset;
-  final Animation<double> card3Offset;
-  final Animation<double> makhrajAccuracyProgress;
-  final Animation<double> todayScoreProgress;
+class _HeroRow extends StatelessWidget {
+  const _HeroRow();
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 280,
-      child: Stack(
-        clipBehavior: Clip.none,
+      height: 140,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // ── Card 1 (Left): Makhraj (float1) ────────────────────────────────
-          AnimatedBuilder(
-            animation: card1Offset,
-            builder: (context, _) {
-              return Positioned(
-                top: 15 + card1Offset.value,
-                left: 16,
-                child: Transform.rotate(
-                  angle: -1.5 * math.pi / 180,
-                  child: _MakhrajCard(
-                    accuracyProgress: makhrajAccuracyProgress,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          // ── Card 2 (Right): Today's Score (float2) ─────────────────────────
-          AnimatedBuilder(
-            animation: card2Offset,
-            builder: (context, _) {
-              return Positioned(
-                top: 20 + card2Offset.value,
-                right: 16,
-                child: Transform.rotate(
-                  angle: 2.0 * math.pi / 180,
-                  child: _TodayScoreCard(
-                    scoreProgress: todayScoreProgress,
-                  ),
-                ),
-              );
-            },
-          ),
-
-          // ── Card 3 (Center/Lower): Uzbek Learners (float3) ─────────────────
-          AnimatedBuilder(
-            animation: card3Offset,
-            builder: (context, _) {
-              return Positioned(
-                bottom: 12 + card3Offset.value,
-                left: 0,
-                right: 0,
-                child: Center(
-                  child: Transform.rotate(
-                    angle: -0.5 * math.pi / 180,
-                    child: const _UzbekLearnersCard(),
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _MakhrajCard — visual representation of AI Makhraj evaluation card
-// ─────────────────────────────────────────────────────────────────────────────
-class _MakhrajCard extends StatelessWidget {
-  const _MakhrajCard({required this.accuracyProgress});
-  final Animation<double> accuracyProgress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 180,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      decoration: BoxDecoration(
-        color: const Color(0x0AFFFFFF), // white 4%
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0x1AFFFFFF), // white 10%
-          width: 1,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Row 1: Rounded icon + text
-          Row(
-            children: [
-              Container(
-                width: 38,
-                height: 38,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(12),
-                  color: const Color(0x331D9E75), // emerald 20%
-                  border: Border.all(
-                    color: const Color(0x4D1D9E75), // emerald 30%
-                    width: 1,
-                  ),
-                ),
-                child: const Icon(
-                  Icons.mic_rounded,
-                  size: 20,
-                  color: AppColors.emeraldLight,
-                ),
+          // ── Left card: Pronunciation checker ──
+          Expanded(
+            flex: 16,
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: _kCard,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: _kBorder, width: 1),
               ),
-              const SizedBox(width: 10),
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Maxraj مخرج',
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                    ),
-                    Text(
-                      'AI tekshiruvi',
-                      style: TextStyle(
-                        fontFamily: 'Geist',
-                        fontSize: 10.5,
-                        color: Color(0x66FFFFFF), // white 40%
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Row 2: "ع" + accuracy slider
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'ع',
-                style: TextStyle(
-                  fontFamily: 'NotoNaskhArabic',
-                  fontSize: 28,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.white,
-                  height: 1.0,
-                ),
-              ),
-              const SizedBox(width: 10),
-              Expanded(
-                child: AnimatedBuilder(
-                  animation: accuracyProgress,
-                  builder: (context, _) {
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Slide container
-                        Container(
-                          height: 6,
-                          decoration: BoxDecoration(
-                            color: const Color(0x14FFFFFF), // white 8%
-                            borderRadius: BorderRadius.circular(3),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Top row — icon + labels
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: _kGreen.withValues(alpha: 0.10),
+                          borderRadius: BorderRadius.circular(9),
+                          border: Border.all(
+                            color: _kGreen.withValues(alpha: 0.25),
+                            width: 0.5,
                           ),
-                          child: Align(
-                            alignment: Alignment.centerLeft,
-                            child: FractionallySizedBox(
-                              widthFactor: accuracyProgress.value,
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: AppColors.emerald,
-                                  borderRadius: BorderRadius.circular(3),
-                                ),
+                        ),
+                        child: const Icon(
+                          Icons.mic_rounded,
+                          color: _kGreen,
+                          size: 18,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: const TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: 'Maxraj ',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w700,
+                                      color: _kTextPrimary,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: 'مخرج',
+                                    style: TextStyle(
+                                      fontFamily: 'NotoNaskhArabic',
+                                      fontSize: 15,
+                                      color: _kTextSecondary,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
+                            const SizedBox(height: 2),
+                            const Text(
+                              'AI tekshiruvi',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 10,
+                                color: _kTextSecondary,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(height: 4),
-                        Text(
-                          '${(accuracyProgress.value * 100).toInt()}% aniq',
-                          style: const TextStyle(
-                            fontFamily: 'Geist',
-                            fontSize: 10.5,
-                            fontWeight: FontWeight.w500,
-                            color: AppColors.emeraldLight,
-                          ),
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-
-          // Row 3: Waveform animation
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _WaveformBar(height: 13, opacity: 0.4),
-              _WaveformBar(height: 18, opacity: 0.6),
-              _WaveformBar(height: 26, opacity: 1.0),
-              _WaveformBar(height: 21, opacity: 0.7),
-              _WaveformBar(height: 16, opacity: 0.5),
-              _WaveformBar(height: 23, opacity: 0.8),
-              _WaveformBar(height: 13, opacity: 0.4),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _WaveformBar extends StatelessWidget {
-  const _WaveformBar({required this.height, required this.opacity});
-  final double height;
-  final double opacity;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 5,
-      height: height,
-      decoration: BoxDecoration(
-        color: AppColors.emerald.withValues(alpha: opacity),
-        borderRadius: BorderRadius.circular(2),
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _TodayScoreCard — visual representation of Today's score card
-// ─────────────────────────────────────────────────────────────────────────────
-class _TodayScoreCard extends StatelessWidget {
-  const _TodayScoreCard({required this.scoreProgress});
-  final Animation<double> scoreProgress;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 150,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-      decoration: BoxDecoration(
-        color: const Color(0x0AFFFFFF),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: const Color(0x1AFFFFFF),
-          width: 1,
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          // Circle score animation
-          SizedBox(
-            width: 86,
-            height: 86,
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: _ProgressCirclePainter(
-                      progress: scoreProgress,
-                      backgroundColor: const Color(0x12FFFFFF),
-                      color: AppColors.gold,
-                    ),
-                  ),
-                ),
-                Center(
-                  child: const Text(
-                    '94',
-                    style: TextStyle(
-                      fontFamily: 'Geist',
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: 10),
-
-          // Score text
-          Text(
-            'Bugungi Natija',
-            style: TextStyle(
-              fontFamily: 'Geist',
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
-              color: AppColors.goldLight,
-            ),
-          ),
-          const SizedBox(height: 3),
-
-          // Streak text
-          const Text(
-            ' 7 kunlik seriya',
-            style: TextStyle(
-              fontFamily: 'Geist',
-              fontSize: 11,
-              color: Color(0x59FFFFFF), // white 35%
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ProgressCirclePainter extends CustomPainter {
-  _ProgressCirclePainter({
-    required this.progress,
-    required this.backgroundColor,
-    required this.color,
-  }) : super(repaint: progress);
-
-  final Animation<double> progress;
-  final Color backgroundColor;
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final center = Offset(size.width / 2, size.height / 2);
-    final radius = (size.width - 6) / 2;
-
-    // Background circle
-    final bgPaint = Paint()
-      ..color = backgroundColor
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6;
-
-    canvas.drawCircle(center, radius, bgPaint);
-
-    // Progress arc
-    final progressPaint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 6
-      ..strokeCap = StrokeCap.round;
-
-    final sweepAngle = 2 * math.pi * progress.value;
-    canvas.drawArc(
-      Rect.fromCircle(center: center, radius: radius),
-      -math.pi / 2,
-      sweepAngle,
-      false,
-      progressPaint,
-    );
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => true;
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _UzbekLearnersCard — social proof card containing "12,400+ Uzbek learners"
-// ─────────────────────────────────────────────────────────────────────────────
-class _UzbekLearnersCard extends StatelessWidget {
-  const _UzbekLearnersCard();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 215,
-      padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
-      decoration: BoxDecoration(
-        color: const Color(0x26533AB7), // rgba(83,58,183,0.15)
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: const Color(0x4D533AB7), // rgba(83,58,183,0.3)
-          width: 1,
-        ),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Icon Circle
-          Container(
-            width: 38,
-            height: 38,
-            decoration: const BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColors.violet,
-            ),
-            child: const Icon(
-              Icons.people_alt_rounded,
-              size: 19,
-              color: Colors.white,
-            ),
-          ),
-          const SizedBox(width: 12),
-
-          // Count Text
-          const Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  '12,400+',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 15,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
-                  ),
-                ),
-                Text(
-                  'O\'quvchilar o\'rganmoqda ',
-                  style: TextStyle(
-                    fontFamily: 'Geist',
-                    fontSize: 11.5,
-                    color: Color(0x66FFFFFF),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// ─────────────────────────────────────────────────────────────────────────────
-// _AnimatedFeatureItem — beautiful glassmorphic rows for value propositions
-// ─────────────────────────────────────────────────────────────────────────────
-class _AnimatedFeatureItem extends StatelessWidget {
-  const _AnimatedFeatureItem({
-    required this.opacity,
-    required this.slide,
-    required this.icon,
-    required this.iconColor,
-    required this.iconBg,
-    required this.iconBorder,
-    required this.title,
-    required this.subtitle,
-  });
-
-  final Animation<double> opacity;
-  final Animation<double> slide;
-  final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
-  final Color iconBorder;
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: Listenable.merge([opacity, slide]),
-      builder: (context, _) {
-        return Opacity(
-          opacity: opacity.value,
-          child: Transform.translate(
-            offset: Offset(slide.value, 0.0), // slide horizontally
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              decoration: BoxDecoration(
-                color: const Color(0x08FFFFFF), // white 3%
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: const Color(0x12FFFFFF), // white 7%
-                  width: 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  // Icon
-                  Container(
-                    width: 36,
-                    height: 36,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10),
-                      color: iconBg,
-                      border: Border.all(
-                        color: iconBorder,
-                        width: 1,
                       ),
-                    ),
-                    child: Icon(
-                      icon,
-                      size: 18,
-                      color: iconColor,
-                    ),
+                    ],
                   ),
-                  const SizedBox(width: 12),
-
-                  // Texts
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          style: const TextStyle(
-                            fontFamily: 'Geist',
-                            fontSize: 13.5,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                          ),
+                  // Middle row — Arabic letter + accuracy
+                  const Row(
+                    children: [
+                      Text(
+                        'ع',
+                        style: TextStyle(
+                          fontFamily: 'NotoNaskhArabic',
+                          fontSize: 38,
+                          fontWeight: FontWeight.w600,
+                          color: _kTextPrimary,
+                          height: 1.0,
                         ),
-                        Text(
-                          subtitle,
-                          style: const TextStyle(
-                            fontFamily: 'Geist',
-                            fontSize: 12,
-                            color: Color(0x66FFFFFF),
-                          ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        '87%',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: _kGreen,
                         ),
-                      ],
+                      ),
+                      SizedBox(width: 4),
+                      Text(
+                        'aniq',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: _kTextSecondary,
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Bottom row — animated waveform bars (fixed height so
+                  // bar height changes don't shift ع and 87% above)
+                  const SizedBox(
+                    height: 16,
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: _AnimatedWaveform(),
                     ),
                   ),
                 ],
               ),
             ),
           ),
+          const SizedBox(width: 12),
+          // ── Right card: XP + Daily goal ──
+          Expanded(
+            flex: 10,
+            child: Container(
+              padding: const EdgeInsets.all(14),
+              decoration: BoxDecoration(
+                color: _kCard,
+                borderRadius: BorderRadius.circular(14),
+                border: Border.all(color: _kBorder, width: 1),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // XP value
+                  RichText(
+                    text: const TextSpan(
+                      children: [
+                        TextSpan(
+                          text: '240',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 32,
+                            fontWeight: FontWeight.w700,
+                            color: _kTextPrimary,
+                            letterSpacing: -1,
+                          ),
+                        ),
+                        TextSpan(
+                          text: ' XP',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: _kGreen,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  const Text(
+                    'bugun',
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 10,
+                      color: _kTextSecondary,
+                    ),
+                  ),
+                  const Spacer(),
+                  // Daily goal label + percentage
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Kunlik maqsad',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 9,
+                          color: _kTextSecondary,
+                        ),
+                      ),
+                      Text(
+                        '80%',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 9,
+                          fontWeight: FontWeight.w700,
+                          color: _kGreen,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  // Progress bar
+                  LayoutBuilder(
+                    builder: (context, constraints) {
+                      final totalWidth = constraints.maxWidth;
+                      return Container(
+                        width: totalWidth,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: _kBorder,
+                          borderRadius: BorderRadius.circular(2),
+                        ),
+                        alignment: Alignment.centerLeft,
+                        child: Container(
+                          width: totalWidth * 0.8,
+                          height: 4,
+                          decoration: BoxDecoration(
+                            color: _kGreen,
+                            borderRadius: BorderRadius.circular(2),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ANIMATED WAVEFORM — voice line bars that pulse/dance continuously
+// ─────────────────────────────────────────────────────────────────────────────
+class _AnimatedWaveform extends StatefulWidget {
+  const _AnimatedWaveform();
+
+  @override
+  State<_AnimatedWaveform> createState() => _AnimatedWaveformState();
+}
+
+class _AnimatedWaveformState extends State<_AnimatedWaveform>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  // Base heights for each bar — these get modulated by the animation
+  static const List<double> _baseHeights = [
+    0.30, 0.55, 0.80, 1.0, 0.60, 0.40, 0.75, 0.35,
+  ];
+
+  // Phase offsets to stagger each bar's animation
+  static const List<double> _phaseOffsets = [
+    0.0, 0.4, 0.8, 1.2, 1.6, 2.0, 2.4, 2.8,
+  ];
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  double _barHeight(int index, double animValue) {
+    final base = _baseHeights[index];
+    final phase = _phaseOffsets[index];
+    // Sine wave oscillation with per-bar phase offset
+    final wave = math.sin((animValue * 2 * math.pi) + phase);
+    // Modulate between 25% and 100% of the base height
+    final modulator = 0.625 + 0.375 * wave;
+    return (base * modulator).clamp(0.15, 1.0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _ctrl,
+      builder: (context, _) {
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: List.generate(_baseHeights.length, (i) {
+            final h = _barHeight(i, _ctrl.value);
+            return Padding(
+              padding: EdgeInsets.only(right: i < _baseHeights.length - 1 ? 2 : 0),
+              child: Container(
+                width: 4,
+                height: 16 * h,
+                decoration: BoxDecoration(
+                  color: _kGreen,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            );
+          }),
         );
       },
     );
@@ -1093,88 +699,101 @@ class _AnimatedFeatureItem extends StatelessWidget {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// _GetStartedButton — primary animated action button with angled glass banner
+// SOCIAL PROOF ROW
 // ─────────────────────────────────────────────────────────────────────────────
-class _GetStartedButton extends StatelessWidget {
-  const _GetStartedButton({required this.onPressed});
-  final VoidCallback onPressed;
+class _SocialProofRow extends StatelessWidget {
+  const _SocialProofRow();
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      height: 54,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
-        color: AppColors.emerald,
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: Stack(
-          children: [
-            // Angled shimmer polygon (right side of button)
-            Positioned(
-              top: 0,
-              right: 0,
-              width: 100,
-              height: 54,
-              child: CustomPaint(
-                painter: _AngledShimmerPainter(
-                  color: const Color(0x12FFFFFF),
+    return Row(
+      children: [
+        const Icon(
+          Icons.people_alt_outlined,
+          size: 18,
+          color: _kTextSecondary,
+        ),
+        const SizedBox(width: 8),
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(
+                text: '12,400+',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: _kTextPrimary,
                 ),
               ),
-            ),
+              TextSpan(
+                text: " o'quvchilar o'rganmoqda",
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 13,
+                  color: _kTextSecondary,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
 
-            // Button content
-            Positioned.fill(
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: onPressed,
-                  borderRadius: BorderRadius.circular(16),
-                  child: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        'Boshlash — mutlaqo bepul! انطلق',
-                        style: TextStyle(
-                          fontFamily: 'Geist',
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Color(0xFF0B1218),
-                        ),
-                      ),
-                    ],
-                  ),
+// ─────────────────────────────────────────────────────────────────────────────
+// TITLE BLOCK
+// ─────────────────────────────────────────────────────────────────────────────
+class _TitleBlock extends StatelessWidget {
+  const _TitleBlock();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              'ع',
+              style: TextStyle(
+                fontFamily: 'NotoNaskhArabic',
+                fontSize: 34,
+                fontWeight: FontWeight.w700,
+                color: _kGreen,
+                height: 1.0,
+              ),
+            ),
+            const SizedBox(width: 12),
+            const Expanded(
+              child: Text(
+                'Arab tili biz bilan osonroq!',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: _kTextPrimary,
+                  letterSpacing: -0.5,
+                  height: 1.2,
                 ),
               ),
             ),
           ],
         ),
-      ),
+        const SizedBox(height: 4),
+        const Text(
+          'هيا نتعلم',
+          textDirection: TextDirection.rtl,
+          style: TextStyle(
+            fontFamily: 'NotoNaskhArabic',
+            fontSize: 17,
+            fontWeight: FontWeight.w500,
+            color: _kTextSecondary,
+          ),
+        ),
+      ],
     );
   }
-}
-
-class _AngledShimmerPainter extends CustomPainter {
-  const _AngledShimmerPainter({required this.color});
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.fill;
-
-    final path = Path()
-      ..moveTo(size.width * 0.3, 0)
-      ..lineTo(size.width, 0)
-      ..lineTo(size.width, size.height)
-      ..lineTo(0, size.height)
-      ..close();
-
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }

@@ -35,16 +35,16 @@ class CourseData {
 
 // Dummy data adapted for Arabic Learning (Tutor Style)
 const mockCourseData = CourseData(
-  title: "Arab tili demo dars",
-  subtitle: "Alifbo va asosiy grammatikani o'rganing (100XP)",
-  totalUsers: "15.2k",
-  totalDuration: "12s 45d",
+  title: "1. Alifbo (الحروف)",
+  subtitle: "Arab alifbosi harflari va ularning talaffuzi",
+  totalUsers: "24.5k",
+  totalDuration: "3s 30d",
   rating: "4.9",
   chapters: [
     CourseChapter(
-      title: "1. Alifbo (الحروف)",
-      duration: "3 Soat 30 Daqiqa",
-      lessonCount: 10,
+      title: "Arab tili demo dars",
+      duration: "12 Soat 45 Daqiqa",
+      lessonCount: 1,
       accentColor: AppColors.emerald,
     ),
     CourseChapter(

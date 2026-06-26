@@ -11,6 +11,7 @@ import '../../features/placement_test/screens/placement_test_screen.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/lesson/lesson_screen.dart';
 import '../../features/lesson/lesson_agenda_page.dart';
+import '../../features/alifbo/presentation/pages/alifbo_map_page.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/otp_page.dart';
@@ -35,6 +36,7 @@ abstract final class AppRoutes {
   static const String home = '/home';
   static const String lesson = '/lesson/:id';
   static const String makhraj = '/makhraj/:id';
+  static const String alifboMap = '/alifbo-map';
   static const String profile = '/profile';
 }
 
@@ -59,6 +61,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       final isSplash = state.uri.toString() == AppRoutes.splash;
       final isAuthRoute = state.uri.toString().startsWith('/auth');
       final isWelcomeRoute = state.uri.toString() == AppRoutes.welcome;
+      final isHomeRoute = state.uri.toString() == AppRoutes.home;
+      final path = state.uri.path;
+      final isLessonRoute = path.contains('agenda') || path.contains('lesson') || path.contains('alifbo');
       final isOnboardingRoute =
           state.uri.toString().startsWith('/onboarding') ||
               state.uri.toString().startsWith('/placement');
@@ -66,7 +71,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       // 1. Unauthenticated User Flow
       if (!isAuth) {
         // Allow them on splash, welcome, auth routes, AND onboarding routes!
-        if (isSplash || isWelcomeRoute || isAuthRoute || isOnboardingRoute) {
+        if (isSplash || isWelcomeRoute || isAuthRoute || isOnboardingRoute || isHomeRoute || isLessonRoute) {
           return null;
         }
         // Otherwise, force them to Welcome
@@ -79,17 +84,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           user?.learningGoal != null || pendingData != null;
 
       if (!hasCompletedOnboarding) {
-        // User needs to onboard. Allow them on onboarding routes.
-        if (isOnboardingRoute) {
+        // User needs to onboard. Allow them on onboarding routes, splash, and welcome.
+        if (isSplash || isWelcomeRoute || isOnboardingRoute || isAuthRoute || isHomeRoute || isLessonRoute) {
           return null;
         }
-        // Force to Goal Selection if they try to go anywhere else (like Home, Splash, Welcome)
+        // Force to Goal Selection if they try to go anywhere else (like Home, Welcome)
         return AppRoutes.goalSelection;
       }
 
       // 3. Fully Onboarded User Flow
-      // If they try to go to splash, welcome, auth, or onboarding pages, redirect to Home
-      if (isSplash || isWelcomeRoute || isAuthRoute || isOnboardingRoute) {
+      // If they try to go to welcome, auth, or onboarding pages, redirect to Home
+      if (isWelcomeRoute || isAuthRoute || isOnboardingRoute) {
         return AppRoutes.home;
       }
 
@@ -188,6 +193,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.home,
         name: 'home',
         builder: (context, state) => const HomePage(),
+      ),
+      GoRoute(
+        path: AppRoutes.alifboMap,
+        name: 'alifbo-map',
+        builder: (context, state) => const AlifboMapPage(),
       ),
       GoRoute(
         path: '/agenda/:id',

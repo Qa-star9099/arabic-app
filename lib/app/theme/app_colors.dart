@@ -9,9 +9,9 @@ abstract final class AppColors {
   static const Color surfaceElevated = Color(0xFF111428);
 
   // ── Brand — Emerald (primary) ─────────────────────────────────────────────
-  static const Color emerald = Color(0xFF1D9E75);
-  static const Color emeraldLight = Color(0xFF5DCAA5);
-  static const Color emeraldDark = Color(0xFF0F6E56);
+  static const Color emerald = Color(0xFF3DD68C);
+  static const Color emeraldLight = Color(0xFF6EE8A8);
+  static const Color emeraldDark = Color(0xFF24A664);
 
   // ── Brand — Violet (accent) ───────────────────────────────────────────────
   static const Color violet = Color(0xFF533AB7);

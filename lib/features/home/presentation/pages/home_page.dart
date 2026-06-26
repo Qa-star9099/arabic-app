@@ -139,7 +139,7 @@ class HomePage extends StatelessWidget {
   Widget _buildMainCourseCard(BuildContext context, CourseData data) {
     return InkWell(
       onTap: () {
-        context.push('/agenda/T-01');
+        context.push('/alifbo-map');
       },
       borderRadius: BorderRadius.circular(24),
       child: Container(
@@ -228,7 +228,7 @@ class HomePage extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 16.0),
       child: InkWell(
         onTap: () {
-          _showTopToast(context, "Tez kunda (قريباً)");
+          context.push('/agenda/T-01');
         },
         borderRadius: BorderRadius.circular(20),
         child: Container(
