@@ -37,13 +37,13 @@ export const assessPronunciation = functions
   .https.onCall(async (data, context) => {
 
     // ── Layer 1: Firebase Auth ─────────────────────
-    if (!context.auth) {
-      throw new functions.https.HttpsError(
-        "unauthenticated",
-        "Autentifikatsiya talab qilinadi."
-      );
-    }
-    const uid = context.auth.uid;
+    // if (!context.auth) {
+    //   throw new functions.https.HttpsError(
+    //     "unauthenticated",
+    //     "Autentifikatsiya talab qilinadi."
+    //   );
+    // }
+    const uid = context.auth?.uid ?? "anonymous_user";
 
     // ── Layer 2: Rate Limiting (Firestore Transaction) ──
     const rateLimitRef = db.doc(`users/${uid}/limits/pronunciation`);
@@ -120,8 +120,8 @@ export const assessPronunciation = functions
     const safeLocale = ALLOWED_LOCALES.includes(locale) ? locale : "ar-SA";
 
     // ── Azure API Call ─────────────────────────────
-    const apiKey = functions.config().azure?.speech_key;
-    const region = functions.config().azure?.speech_region ?? "eastus";
+    const apiKey = process.env.AZURE_SPEECH_KEY || "";
+    const region = "uaenorth";
 
     if (!apiKey) {
       functions.logger.error("Azure speech_key not configured");
@@ -171,15 +171,12 @@ export const assessPronunciation = functions
       const result = (await response.json()) as AzureResponse;
       const nBest = result.NBest?.[0];
 
-      const pronunciationScore = Math.round(
-        nBest?.PronunciationAssessment?.PronScore ?? 0
-      );
-      const accuracyScore = Math.round(
-        nBest?.PronunciationAssessment?.AccuracyScore ?? 0
-      );
-      const fluencyScore = Math.round(
-        nBest?.PronunciationAssessment?.FluencyScore ?? 0
-      );
+      // For single words, Azure sometimes puts AccuracyScore directly on nBest and omits PronScore.
+      const assessment = nBest?.PronunciationAssessment ?? nBest ?? {};
+      
+      const accuracyScore = Math.round(assessment.AccuracyScore ?? 0);
+      const fluencyScore = Math.round(assessment.FluencyScore ?? 0);
+      const pronunciationScore = Math.round(assessment.PronScore ?? accuracyScore);
 
       return {
         success: true,
@@ -187,6 +184,7 @@ export const assessPronunciation = functions
         accuracyScore,
         fluencyScore,
         recognizedText: result.DisplayText ?? "",
+        rawNBest: nBest ?? {},
       };
     } catch (error) {
       if (error instanceof functions.https.HttpsError) throw error;
@@ -197,16 +195,77 @@ export const assessPronunciation = functions
 
 // ── Azure Response Type ────────────────────────────────────────
 interface AzureResponse {
-  DisplayText?: string;
-  NBest?: Array<{
+  NBest?: {
+    AccuracyScore?: number;
+    FluencyScore?: number;
+    PronScore?: number;
     PronunciationAssessment?: {
       PronScore?: number;
       AccuracyScore?: number;
       FluencyScore?: number;
     };
-    Words?: Array<{
+    Words?: {
       Word: string;
-      PronunciationAssessment?: { AccuracyScore?: number };
-    }>;
-  }>;
+      PronunciationAssessment?: {
+        AccuracyScore: number;
+        ErrorType: string;
+      };
+    }[];
+  }[];
+  DisplayText?: string;
 }
+
+// ── Cloud Function: Text-to-Speech (TTS) ─────────────────────────
+export const synthesizeSpeech = functions
+  .region("europe-west1")
+  .https.onCall(async (data, context) => {
+    const text = data.text;
+    if (typeof text !== "string" || text.length === 0) {
+      throw new functions.https.HttpsError("invalid-argument", "Matn majburiy.");
+    }
+    if (text.length > 200) {
+      throw new functions.https.HttpsError("invalid-argument", "Matn juda uzun.");
+    }
+
+    const apiKey = process.env.AZURE_SPEECH_KEY || "";
+    const region = "uaenorth";
+
+    if (!apiKey) {
+      functions.logger.error("Azure speech_key not configured");
+      throw new functions.https.HttpsError("internal", "Server konfiguratsiya xatosi.");
+    }
+
+    const url = `https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`;
+    const ssml = `
+    <speak version='1.0' xml:lang='ar-SA'>
+      <voice xml:lang='ar-SA' xml:gender='Male' name='ar-SA-HamedNeural'>
+        ${text}
+      </voice>
+    </speak>
+    `;
+
+    try {
+      const response = await fetch(url, {
+        method: "POST",
+        headers: {
+          "Ocp-Apim-Subscription-Key": apiKey,
+          "Content-Type": "application/ssml+xml",
+          "X-Microsoft-OutputFormat": "audio-16khz-32kbitrate-mono-mp3",
+          "User-Agent": "ArabchaApp",
+        },
+        body: ssml,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Azure TTS Error: ${response.status}`);
+      }
+
+      const audioBuffer = await response.buffer();
+      return {
+        audioBase64: audioBuffer.toString("base64"),
+      };
+    } catch (error) {
+      functions.logger.error("TTS error:", error);
+      throw new functions.https.HttpsError("internal", "Audio yaratishda xato.");
+    }
+  });

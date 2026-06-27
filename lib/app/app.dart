@@ -11,7 +11,7 @@ class ArabchaApp extends ConsumerWidget {
     final router = ref.watch(appRouterProvider);
 
     return MaterialApp.router(
-      title: 'Arabcha',
+      title: 'Kalima',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.dark,
       routerConfig: router,

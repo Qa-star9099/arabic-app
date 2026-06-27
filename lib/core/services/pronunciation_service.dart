@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 /// Verdikt — talaffuz baholash natijasi turi.
 enum PronunciationVerdict {
@@ -30,6 +31,7 @@ class PronunciationResult {
     required this.recognizedText,
     required this.verdict,
     this.errorMessage,
+    this.lexicalText,
   });
 
   /// 0–100 umumiy talaffuz balli.
@@ -43,6 +45,9 @@ class PronunciationResult {
 
   /// Azure tomonidan aniqlangan matn.
   final String recognizedText;
+
+  /// Azure tomonidan aniqlangan haqiqiy so'z (Lexical).
+  final String? lexicalText;
 
   /// Natija verdikti (correct / close / wrong / error / rateLimited).
   final PronunciationVerdict verdict;
@@ -87,6 +92,9 @@ class PronunciationService {
     String locale = 'ar-SA',
   }) async {
     try {
+      final user = FirebaseAuth.instance.currentUser;
+      debugPrint("PronunciationService: Current User UID = ${user?.uid}");
+
       final audioBase64 = base64Encode(audioBytes);
 
       final callable = _functions.httpsCallable(
@@ -101,16 +109,26 @@ class PronunciationService {
       });
 
       final data = result.data;
+      if (kDebugMode) {
+        print('Azure Raw NBest: ${data['rawNBest']}');
+      }
+
       final pronScore = (data['pronunciationScore'] as num?)?.toInt() ?? 0;
       final accScore = (data['accuracyScore'] as num?)?.toInt() ?? 0;
       final fluScore = (data['fluencyScore'] as num?)?.toInt() ?? 0;
       final recognized = data['recognizedText'] as String? ?? '';
+      
+      String? lexical;
+      if (data['rawNBest'] != null && data['rawNBest'] is Map) {
+        lexical = data['rawNBest']['Lexical'] as String?;
+      }
 
       return PronunciationResult(
         pronunciationScore: pronScore,
         accuracyScore: accScore,
         fluencyScore: fluScore,
         recognizedText: recognized,
+        lexicalText: lexical,
         verdict: PronunciationResult._verdictFromScore(pronScore),
       );
     } on FirebaseFunctionsException catch (e) {

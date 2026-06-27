@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/router/app_router.dart';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // Arabic alphabet data
@@ -19,10 +20,10 @@ class _LetterNode {
 }
 
 const _arabicLetters = [
-  _LetterNode(letter: 'ا', name: 'Alif', state: 'completed'),
-  _LetterNode(letter: 'ب', name: 'Ba', state: 'completed'),
-  _LetterNode(letter: 'ت', name: 'Ta', state: 'completed'),
-  _LetterNode(letter: 'ث', name: 'Tha', state: 'current'),
+  _LetterNode(letter: 'ا', name: 'Alif', state: 'current'),
+  _LetterNode(letter: 'ب', name: 'Ba', state: 'locked'),
+  _LetterNode(letter: 'ت', name: 'Ta', state: 'locked'),
+  _LetterNode(letter: 'ث', name: 'Tha', state: 'locked'),
   _LetterNode(letter: 'ج', name: 'Jim', state: 'locked'),
   _LetterNode(letter: 'ح', name: 'Ha', state: 'locked'),
   _LetterNode(letter: 'خ', name: 'Kha', state: 'locked'),
@@ -423,7 +424,9 @@ class _AlifboMapPageState extends State<AlifboMapPage>
             // Node circle
             GestureDetector(
               onTap: () {
-                // context.push('/lesson/${node.name}');
+                if (node.name == 'Alif') {
+                  context.push(AppRoutes.alifLesson);
+                }
               },
               child: Container(
                 width: _nodeSize,
@@ -477,7 +480,13 @@ class _AlifboMapPageState extends State<AlifboMapPage>
       top: y - _currentNodeSize / 2 - 40, // extra space for BOSHLASH label
       child: FadeTransition(
         opacity: _entranceCtrl,
-        child: Column(
+        child: GestureDetector(
+          onTap: () {
+            if (node.name == 'Alif') {
+              context.push(AppRoutes.alifLesson);
+            }
+          },
+          child: Column(
           children: [
             // "BOSHLASH" label
             Container(
@@ -609,6 +618,7 @@ class _AlifboMapPageState extends State<AlifboMapPage>
             ),
           ],
         ),
+      ),
       ),
     );
   }

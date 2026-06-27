@@ -12,6 +12,7 @@ import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/lesson/lesson_screen.dart';
 import '../../features/lesson/lesson_agenda_page.dart';
 import '../../features/alifbo/presentation/pages/alifbo_map_page.dart';
+import '../../features/alifbo/presentation/pages/alif_lesson_page.dart';
 
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/otp_page.dart';
@@ -37,6 +38,7 @@ abstract final class AppRoutes {
   static const String lesson = '/lesson/:id';
   static const String makhraj = '/makhraj/:id';
   static const String alifboMap = '/alifbo-map';
+  static const String alifLesson = '/alif-lesson';
   static const String profile = '/profile';
 }
 
@@ -93,8 +95,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       }
 
       // 3. Fully Onboarded User Flow
-      // If they try to go to welcome, auth, or onboarding pages, redirect to Home
-      if (isWelcomeRoute || isAuthRoute || isOnboardingRoute) {
+      // If they try to go to auth or onboarding pages, redirect to Home (WelcomePage allowed)
+      if (isAuthRoute || isOnboardingRoute) {
         return AppRoutes.home;
       }
 
@@ -198,6 +200,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.alifboMap,
         name: 'alifbo-map',
         builder: (context, state) => const AlifboMapPage(),
+      ),
+      GoRoute(
+        path: AppRoutes.alifLesson,
+        name: 'alif-lesson',
+        builder: (context, state) => const AlifLessonPage(),
       ),
       GoRoute(
         path: '/agenda/:id',

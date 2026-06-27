@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:arabcha/app/router/app_router.dart';
+import 'package:google_mlkit_digital_ink_recognition/google_mlkit_digital_ink_recognition.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -51,6 +52,9 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
   late final Animation<double> _pulseScale;
   late final Animation<double> _pulseOpacity;
 
+  bool _isDownloadingModel = false;
+  String _downloadStatusText = "Preparing learning materials...";
+
   @override
   void initState() {
     super.initState();
@@ -86,14 +90,9 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
     _setupAnimations();
 
-    _mainCtrl.forward().then((_) {
-      // Steady state reached. Wait 600ms then navigate.
-      Future.delayed(const Duration(milliseconds: 600), () {
-        if (mounted) {
-          context.go(AppRoutes.welcome);
-        }
-      });
-    });
+    _mainCtrl.forward();
+
+    _initializeApp();
 
     // Start continuous loops at correct times
 
@@ -104,6 +103,39 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
     Future.delayed(const Duration(milliseconds: 1800), () {
       if (mounted) _dotsCtrl.repeat();
     });
+  }
+
+  Future<void> _initializeApp() async {
+    final minimumDuration = Future.delayed(const Duration(milliseconds: 2600));
+
+    try {
+      final modelManager = DigitalInkRecognizerModelManager();
+      final isDownloaded = await modelManager.isModelDownloaded('ar');
+      
+      if (!isDownloaded) {
+        if (mounted) {
+          setState(() {
+            _isDownloadingModel = true;
+            _downloadStatusText = "Preparing learning materials (20MB)...";
+          });
+        }
+        await modelManager.downloadModel('ar');
+        if (mounted) {
+          setState(() {
+            _downloadStatusText = "Ready to learn!";
+            _isDownloadingModel = false;
+          });
+        }
+      }
+    } catch (e) {
+      debugPrint("Failed to download model: $e");
+    }
+
+    await minimumDuration;
+
+    if (mounted) {
+      context.go(AppRoutes.welcome);
+    }
   }
 
   
@@ -425,27 +457,49 @@ class _SplashPageState extends State<SplashPage> with TickerProviderStateMixin {
 
                     const SizedBox(height: 24),
 
-                    // Loading dots
-                    AnimatedBuilder(
-                      animation: _dotsCtrl,
-                      builder: (context, child) {
-                        return Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            _BlinkingDot(
-                                controller: _dotsCtrl, delayOffset: 0.0),
-                            const SizedBox(width: 6),
-                            _BlinkingDot(
-                                controller: _dotsCtrl,
-                                delayOffset: 0.2,
-                                isPrimary: true),
-                            const SizedBox(width: 6),
-                            _BlinkingDot(
-                                controller: _dotsCtrl, delayOffset: 0.4),
-                          ],
-                        );
-                      },
-                    ),
+                    // Loading indicator or download progress
+                    if (_isDownloadingModel)
+                      Column(
+                        children: [
+                          const SizedBox(
+                            width: 100,
+                            child: LinearProgressIndicator(
+                              color: Color(0xFF3DD68C),
+                              backgroundColor: Color(0x333DD68C),
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          Text(
+                            _downloadStatusText,
+                            style: const TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 10,
+                              color: Color(0xFF8BA5B8),
+                            ),
+                          ),
+                        ],
+                      )
+                    else
+                      AnimatedBuilder(
+                        animation: _dotsCtrl,
+                        builder: (context, child) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              _BlinkingDot(
+                                  controller: _dotsCtrl, delayOffset: 0.0),
+                              const SizedBox(width: 6),
+                              _BlinkingDot(
+                                  controller: _dotsCtrl,
+                                  delayOffset: 0.2,
+                                  isPrimary: true),
+                              const SizedBox(width: 6),
+                              _BlinkingDot(
+                                  controller: _dotsCtrl, delayOffset: 0.4),
+                            ],
+                          );
+                        },
+                      ),
 
                     const SizedBox(height: 30), // From bottom
                   ],
